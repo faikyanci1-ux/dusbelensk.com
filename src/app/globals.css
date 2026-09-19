@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg-main: #0a1628;
+  --color-bg-raised: #132844;
+  --color-bg-navy: #16345c;
+  --color-bg-pitch: #16345c;
+  --color-accent: #d41e37;
+  --color-accent-soft: rgba(212, 30, 55, 0.15);
+  --color-accent-bright: #f4364f;
+  --color-accent-2: #2e5c99;
+  --color-accent-2-soft: rgba(46, 92, 153, 0.15);
+  --color-text-main: #eef1f6;
+  --color-text-muted: #96a3b8;
+  --color-border-soft: rgba(150, 163, 184, 0.25);
+  --color-white: #f9fafb;
+  --color-cream: #f4f5f8;
+  --color-ink: #0f2038;
+  --color-ink-muted: #57647a;
+  --color-accent-tint: #fbe7e9;
+  --color-navy-tint: #e7edf6;
+}
+
+@theme inline {
+  --color-bg-main: var(--color-bg-main);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-bg-navy: var(--color-bg-navy);
+  --color-bg-pitch: var(--color-bg-pitch);
+  --color-accent: var(--color-accent);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-accent-bright: var(--color-accent-bright);
+  --color-accent-2: var(--color-accent-2);
+  --color-accent-2-soft: var(--color-accent-2-soft);
+  --color-text-main: var(--color-text-main);
+  --color-text-muted: var(--color-text-muted);
+  --color-border-soft: var(--color-border-soft);
+  --color-cream: var(--color-cream);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-accent-tint: var(--color-accent-tint);
+  --color-navy-tint: var(--color-navy-tint);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-anton);
+  --font-script: var(--font-caveat);
+}
+
+body {
+  background: radial-gradient(circle at top, #132844 0, #0a1628 45%, #000 100%);
+  background-attachment: fixed;
+  color: var(--color-text-main);
+}
+
+@keyframes ken-burns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.12);
+  }
+}
+
+.animate-ken-burns {
+  animation: ken-burns 20s ease-out infinite alternate;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 26s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(212, 30, 55, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(212, 30, 55, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
