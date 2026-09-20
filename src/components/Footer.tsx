@@ -79,7 +79,7 @@ export function Footer() {
           </ul>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <FooterHeading>İletişim</FooterHeading>
           <div className="mt-5 flex flex-col gap-4">
             <ContactRow icon={MapPin} label="Konumumuz" value={club.address} href={club.mapsUrl} />
