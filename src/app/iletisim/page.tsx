@@ -92,7 +92,7 @@ export default async function ContactPage() {
     />
     <div className="bg-cream py-16 text-ink">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
           <div className="order-2 space-y-8 lg:order-1">
             <SectionHeading
               eyebrow="İletişim Bilgilerimiz"
