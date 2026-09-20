@@ -340,9 +340,6 @@ export default async function HomePage() {
                     {group.range}
                   </div>
                   <p className="mt-3 text-sm text-text-muted">{group.description}</p>
-                  <div className="mt-5 flex items-center justify-between border-t border-border-soft/40 pt-3 text-xs text-text-muted">
-                    <span>{group.days}</span>
-                  </div>
                 </div>
               </div>
             ))}
