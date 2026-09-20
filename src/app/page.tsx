@@ -99,7 +99,7 @@ export default async function HomePage() {
     <>
       {/* HERO */}
       <section className="relative h-[92vh] min-h-[680px]">
-        <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
           <HeroSlider slides={heroSlides} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg-main/8 to-bg-main" />
           <div className="absolute inset-0 bg-gradient-to-r from-bg-main/70 via-bg-main/20 to-transparent sm:from-bg-main/50 sm:via-transparent sm:to-transparent" />

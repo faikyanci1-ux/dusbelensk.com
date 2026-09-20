@@ -99,7 +99,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         role="group"
         aria-label="Slayt gösterisi kontrolleri"
       >
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -107,17 +107,21 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               aria-label={`${i + 1}. görsele geç`}
               aria-current={i === index}
               onClick={() => goTo(i)}
-              className={`h-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-all ${
-                i === index ? "w-6 bg-accent" : "w-1.5 bg-white/50 hover:bg-white/80"
-              }`}
-            />
+              className="flex items-center justify-center p-2"
+            >
+              <span
+                className={`block h-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[width,background-color] duration-300 ${
+                  i === index ? "w-6 bg-accent" : "w-1.5 bg-white/50 hover:bg-white/80"
+                }`}
+              />
+            </button>
           ))}
         </div>
         <button
           type="button"
           onClick={() => setManuallyPaused((p) => !p)}
           aria-label={paused ? "Slayt gösterisini oynat" : "Slayt gösterisini duraklat"}
-          className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition hover:bg-white/30"
+          className="relative flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)] outline-none transition hover:bg-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-bright before:absolute before:-inset-2.5 before:content-['']"
         >
           {paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
         </button>

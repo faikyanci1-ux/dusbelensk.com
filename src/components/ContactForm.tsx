@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 const AGE_GROUPS = ["U-11", "U-12", "U-13", "U-14", "U-15", "U-16", "Emin değilim / Bilgi almak istiyorum"];
 
@@ -12,6 +13,23 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
   const [requestType, setRequestType] = useState<RequestType>("trial");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Sekme durumunu URL'de tut ki paylaşım/yenileme/geri-ileri navigasyonunda korunsun.
+  // window.location sadece client'ta var; SSR ile hydration uyuşmazlığı yaşamamak için
+  // başlangıç state'i "trial" kalıyor, URL'deki gerçek değer mount sonrası okunuyor.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL yalnızca client'ta okunabilir, tek seferlik senkronizasyon
+    if (params.get("form") === "genel") setRequestType("general");
+  }, []);
+
+  function selectRequestType(type: RequestType) {
+    setRequestType(type);
+    const url = new URL(window.location.href);
+    if (type === "general") url.searchParams.set("form", "genel");
+    else url.searchParams.delete("form");
+    window.history.replaceState(null, "", url);
+  }
 
   const isLight = variant === "light";
   const labelColor = isLight ? "text-ink-muted" : "text-text-muted";
@@ -81,7 +99,7 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
       <div className={toggleWrapClass}>
         <button
           type="button"
-          onClick={() => setRequestType("trial")}
+          onClick={() => selectRequestType("trial")}
           aria-pressed={requestType === "trial"}
           className={`flex-1 rounded-full px-4 py-2 font-medium transition ${
             requestType === "trial" ? "bg-accent text-white" : toggleInactiveClass
@@ -91,7 +109,7 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
         </button>
         <button
           type="button"
-          onClick={() => setRequestType("general")}
+          onClick={() => selectRequestType("general")}
           aria-pressed={requestType === "general"}
           className={`flex-1 rounded-full px-4 py-2 font-medium transition ${
             requestType === "general" ? "bg-accent text-white" : toggleInactiveClass
@@ -106,13 +124,21 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
           <label className={`text-xs font-medium ${labelColor}`} htmlFor="name">
             Veli Ad Soyad
           </label>
-          <input id="name" name="name" required className={fieldClass} />
+          <input id="name" name="name" required autoComplete="name" className={fieldClass} />
         </div>
         <div>
           <label className={`text-xs font-medium ${labelColor}`} htmlFor="phone">
             Telefon
           </label>
-          <input id="phone" name="phone" className={fieldClass} />
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="+90 5XX XXX XX XX"
+            className={fieldClass}
+          />
         </div>
       </div>
 
@@ -120,7 +146,7 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
         <label className={`text-xs font-medium ${labelColor}`} htmlFor="email">
           E-posta
         </label>
-        <input id="email" name="email" type="email" className={fieldClass} />
+        <input id="email" name="email" type="email" inputMode="email" autoComplete="email" className={fieldClass} />
       </div>
 
       {requestType === "trial" && (
@@ -192,9 +218,10 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {status === "sending" ? "Gönderiliyor..." : requestType === "trial" ? "Talebi Gönder" : "Mesajı Gönder"}
+        {status === "sending" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
+        {requestType === "trial" ? "Talebi Gönder" : "Mesajı Gönder"}
       </button>
     </form>
   );
