@@ -2,13 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/lib/nav";
 import { club } from "@/data/club";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border-soft/60 bg-bg-main/85 backdrop-blur">
@@ -44,7 +51,7 @@ export function Header() {
 
         <button
           type="button"
-          className="rounded-lg border border-border-soft p-2 text-white lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-border-soft text-white lg:hidden"
           aria-label="Menüyü aç/kapat"
           aria-expanded={open}
           aria-controls="mobile-menu"
