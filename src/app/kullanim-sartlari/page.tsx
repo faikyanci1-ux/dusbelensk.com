@@ -13,74 +13,100 @@ export const metadata: Metadata = buildMetadata({
 export default async function TermsPage() {
   const club = await getClubInfo();
 
+  const sections = [
+    {
+      title: "Kabul",
+      body: (
+        <p>
+          Bu web sitesini kullanarak aşağıdaki kullanım şartlarını kabul etmiş sayılırsınız. Kabul
+          etmiyorsanız lütfen siteyi kullanmayınız.
+        </p>
+      ),
+    },
+    {
+      title: "İçerik ve Telif Hakları",
+      body: (
+        <p>
+          Sitedeki logo, metin, fotoğraf ve video içerikleri{" "}
+          <strong className="font-semibold text-ink">{club.name}</strong>&apos;ya aittir. İçeriklerin kulübün
+          yazılı izni olmadan kopyalanması, çoğaltılması veya ticari amaçla kullanılması yasaktır.
+        </p>
+      ),
+    },
+    {
+      title: "Bilgilerin Doğruluğu",
+      body: (
+        <p>
+          Sitede yer alan maç tarihleri, antrenman bilgileri ve duyurular değişiklik gösterebilir. Güncel
+          bilgi için kulüple doğrudan iletişime geçmenizi öneririz.
+        </p>
+      ),
+    },
+    {
+      title: "Form Aracılığıyla Gönderilen Bilgiler",
+      body: (
+        <p>
+          İletişim veya kayıt/deneme antrenmanı formunu doldururken paylaştığınız bilgilerin doğru ve güncel
+          olmasından siz sorumlusunuz. Kişisel verilerin işlenmesi hakkında{" "}
+          <Link href="/kvkk" className="text-accent-deep underline underline-offset-2">
+            KVKK Aydınlatma Metni
+          </Link>
+          &apos;ni inceleyebilirsiniz.
+        </p>
+      ),
+    },
+    {
+      title: "Sorumluluğun Sınırlandırılması",
+      body: (
+        <p>
+          Site, mevcut haliyle sunulmaktadır. Sitenin kesintisiz veya hatasız çalışacağına dair garanti
+          verilmez.
+        </p>
+      ),
+    },
+    {
+      title: "Değişiklik Hakkı",
+      body: (
+        <p>
+          Kulüp, bu kullanım şartlarını dilediği zaman güncelleme hakkını saklı tutar. Güncel sürüm her zaman
+          bu sayfada yayınlanır.
+        </p>
+      ),
+    },
+    {
+      title: "İletişim",
+      body: (
+        <p>
+          Sorularınız için{" "}
+          <Link href="/iletisim" className="text-accent-deep underline underline-offset-2">
+            iletişim sayfamızdan
+          </Link>{" "}
+          bize ulaşabilirsiniz.
+        </p>
+      ),
+    },
+  ];
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <SectionHeading eyebrow="Yasal" title="Kullanım Şartları" />
+    <div className="bg-cream py-16 text-ink">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <SectionHeading as="h1" tone="light" align="left" eyebrow="Yasal" title="Kullanım Şartları" />
 
-      <div className="mt-12 space-y-8 text-sm leading-relaxed text-text-muted">
-        <section>
-          <h2 className="text-base font-semibold text-white">1. Kabul</h2>
-          <p className="mt-2">
-            Bu web sitesini kullanarak aşağıdaki kullanım şartlarını kabul etmiş sayılırsınız. Kabul
-            etmiyorsanız lütfen siteyi kullanmayınız.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">2. İçerik ve Telif Hakları</h2>
-          <p className="mt-2">
-            Sitedeki logo, metin, fotoğraf ve video içerikleri <strong className="text-text-main">{club.name}</strong>{" "}
-            &apos;ya aittir. İçeriklerin kulübün yazılı izni olmadan kopyalanması, çoğaltılması veya ticari
-            amaçla kullanılması yasaktır.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">3. Bilgilerin Doğruluğu</h2>
-          <p className="mt-2">
-            Sitede yer alan maç tarihleri, antrenman bilgileri ve duyurular değişiklik gösterebilir. Güncel
-            bilgi için kulüple doğrudan iletişime geçmenizi öneririz.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">4. Form Aracılığıyla Gönderilen Bilgiler</h2>
-          <p className="mt-2">
-            İletişim veya kayıt/deneme antrenmanı formunu doldururken paylaştığınız bilgilerin doğru ve güncel
-            olmasından siz sorumlusunuz. Kişisel verilerin işlenmesi hakkında{" "}
-            <Link href="/kvkk" className="text-accent hover:underline">
-              KVKK Aydınlatma Metni
-            </Link>
-            &apos;ni inceleyebilirsiniz.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">5. Sorumluluğun Sınırlandırılması</h2>
-          <p className="mt-2">
-            Site, mevcut haliyle sunulmaktadır. Sitenin kesintisiz veya hatasız çalışacağına dair garanti
-            verilmez.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">6. Değişiklik Hakkı</h2>
-          <p className="mt-2">
-            Kulüp, bu kullanım şartlarını dilediği zaman güncelleme hakkını saklı tutar. Güncel sürüm her
-            zaman bu sayfada yayınlanır.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">7. İletişim</h2>
-          <p className="mt-2">
-            Sorularınız için{" "}
-            <Link href="/iletisim" className="text-accent hover:underline">
-              iletişim sayfamızdan
-            </Link>{" "}
-            bize ulaşabilirsiniz.
-          </p>
-        </section>
+        <div className="mt-8 divide-y divide-black/10 rounded-3xl border border-black/10 bg-white px-6 shadow-sm sm:px-10">
+          {sections.map((section, i) => (
+            <section key={section.title} className="py-7 first:pt-8 last:pb-8">
+              <div className="flex items-start gap-3.5">
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-bold text-accent-deep">
+                  {i + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-semibold text-ink">{section.title}</h2>
+                  <div className="mt-2 text-sm leading-relaxed text-ink-muted">{section.body}</div>
+                </div>
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   );

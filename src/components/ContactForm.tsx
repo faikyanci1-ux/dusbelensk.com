@@ -16,8 +16,8 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
   const isLight = variant === "light";
   const labelColor = isLight ? "text-ink-muted" : "text-text-muted";
   const fieldClass = isLight
-    ? "mt-1 w-full rounded-lg border border-black/10 bg-black/[0.03] px-4 py-2.5 text-sm text-ink focus:border-accent focus:outline-none"
-    : "mt-1 w-full rounded-lg border border-border-soft bg-bg-raised/60 px-4 py-2.5 text-sm text-white focus:border-accent focus:outline-none";
+    ? "mt-1 w-full rounded-lg border border-black/10 bg-black/[0.03] px-4 py-2.5 text-sm text-ink focus:border-accent outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    : "mt-1 w-full rounded-lg border border-border-soft bg-bg-raised/60 px-4 py-2.5 text-sm text-white focus:border-accent outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-bright";
   const toggleWrapClass = isLight
     ? "flex gap-2 rounded-full border border-black/10 bg-black/[0.03] p-1 text-sm"
     : "flex gap-2 rounded-full border border-border-soft bg-bg-main/40 p-1 text-sm";
@@ -53,7 +53,12 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
 
   if (status === "success") {
     return (
-      <div className="rounded-2xl border border-accent/40 bg-accent-soft p-6 text-center text-sm text-accent">
+      <div
+        role="status"
+        className={`rounded-2xl border border-accent/40 bg-accent-soft p-6 text-center text-sm ${
+          isLight ? "text-accent-deep" : "text-accent-light"
+        }`}
+      >
         {requestType === "trial"
           ? "Talebiniz için teşekkürler! Deneme antrenmanı ve kayıt süreciyle ilgili en kısa sürede size dönüş yapacağız."
           : "Mesajınız için teşekkürler! En kısa sürede size dönüş yapacağız."}
@@ -77,8 +82,9 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
         <button
           type="button"
           onClick={() => setRequestType("trial")}
+          aria-pressed={requestType === "trial"}
           className={`flex-1 rounded-full px-4 py-2 font-medium transition ${
-            requestType === "trial" ? "bg-accent text-bg-main" : toggleInactiveClass
+            requestType === "trial" ? "bg-accent text-white" : toggleInactiveClass
           }`}
         >
           Deneme Antrenmanı / Kayıt
@@ -86,8 +92,9 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
         <button
           type="button"
           onClick={() => setRequestType("general")}
+          aria-pressed={requestType === "general"}
           className={`flex-1 rounded-full px-4 py-2 font-medium transition ${
-            requestType === "general" ? "bg-accent text-bg-main" : toggleInactiveClass
+            requestType === "general" ? "bg-accent text-white" : toggleInactiveClass
           }`}
         >
           Genel Mesaj
@@ -165,19 +172,27 @@ export function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }
           }`}
         />
         <span>
-          <Link href="/kvkk" target="_blank" className="text-accent hover:underline">
+          <Link
+            href="/kvkk"
+            target="_blank"
+            className={`underline underline-offset-2 ${isLight ? "text-accent-deep" : "text-accent-light"}`}
+          >
             KVKK Aydınlatma Metni
           </Link>
           &apos;ni okudum, kişisel verilerimin işlenmesini kabul ediyorum.
         </span>
       </label>
 
-      {status === "error" && <p className="text-sm text-red-400">{errorMessage}</p>}
+      {status === "error" && (
+        <p role="alert" className={`text-sm ${isLight ? "text-accent-deep" : "text-accent-light"}`}>
+          {errorMessage}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full rounded-full bg-accent px-6 py-3 text-sm font-semibold text-bg-main transition hover:brightness-110 disabled:opacity-60"
+        className="w-full rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
         {status === "sending" ? "Gönderiliyor..." : requestType === "trial" ? "Talebi Gönder" : "Mesajı Gönder"}
       </button>

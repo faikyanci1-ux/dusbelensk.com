@@ -10,6 +10,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    // AVIF öncelikli, desteklemeyen tarayıcılarda WebP'ye düşer (next/image varsayılanı sadece webp'dir).
+    formats: ["image/avif", "image/webp"],
+  },
   async headers() {
     return [
       {

@@ -44,6 +44,10 @@ const storyGallery: GalleryItem[] = [
   { id: 103, src: "/images/gallery/rakip-mac-1.jpg", alt: "Maç günü, rakip takımla grup fotoğrafı" },
   { id: 104, src: "/images/hakkinda-3.jpg", alt: "Düşbelen SK yedek kulübesi ve saha aydınlatması" },
   { id: 105, src: "/images/gallery/kupa-toreni-1.jpg", alt: "Kupa töreni" },
+  { id: 106, src: "/images/gallery/kulup-ailesi.jpg", alt: "Düşbelen SK aile sıcaklığı" },
+  { id: 107, src: "/images/gallery/takim-toplantisi.jpg", alt: "Maç öncesi taktik toplantısı" },
+  { id: 108, src: "/images/gallery/tesis-havadan-cati.jpg", alt: "Düşbelen SK tesis binası havadan görünüm" },
+  { id: 109, src: "/images/gallery/teknik-ekip-antrenman.jpg", alt: "Teknik ekip antrenman başında" },
 ];
 
 const JOIN_BENEFITS = [
@@ -73,7 +77,6 @@ export default async function HomePage() {
       getFaq(),
       getProgram(),
     ]);
-  const yearsActive = new Date().getFullYear() - club.foundedYear;
   const whatsappHref = `https://wa.me/${club.whatsappNumber}?text=${encodeURIComponent(
     "Merhaba, ücretsiz deneme antrenmanı hakkında bilgi almak istiyorum."
   )}`;
@@ -95,7 +98,7 @@ export default async function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative h-[85vh] min-h-[640px] overflow-hidden sm:h-[92vh]">
+      <section className="relative h-[92vh] min-h-[680px] overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <HeroSlider slides={heroSlides} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg-main/8 to-bg-main" />
@@ -111,7 +114,7 @@ export default async function HomePage() {
               <span className="h-px w-6 bg-accent-bright" />
               Köyceğiz&apos;in genç futbolcuları için
             </span>
-            <h1 className="mt-5 font-display text-5xl uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="mt-5 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-6xl lg:text-7xl">
               Geleceğin
               <br />
               <span className="text-accent-bright">Sporcularını</span>
@@ -125,7 +128,7 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/iletisim"
-                className="rounded-full bg-accent px-6 py-3 text-sm font-semibold uppercase tracking-wide text-bg-main transition hover:brightness-110"
+                className="rounded-full bg-accent px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:brightness-110"
               >
                 Ücretsiz Deneme Kaydı
               </Link>
@@ -195,7 +198,7 @@ export default async function HomePage() {
           <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
             <div>
               <span className="text-sm font-semibold uppercase tracking-wider text-accent">Bizim Hikayemiz</span>
-              <h2 className="mt-3 font-display text-4xl uppercase leading-[0.95] tracking-tight sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl uppercase leading-[1.6] tracking-tight sm:text-5xl">
                 Mahallenin
                 <br />
                 Yüreğinden,
@@ -204,10 +207,10 @@ export default async function HomePage() {
               </h2>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+                <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
                   {club.foundedYear}&apos;den beri sahada
                 </span>
-                <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+                <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
                   {club.licensedPlayerCount} lisanslı sporcu
                 </span>
                 <span className="rounded-full border border-accent-2/30 bg-accent-2-soft px-3 py-1 text-xs font-semibold text-accent-2">
@@ -234,43 +237,66 @@ export default async function HomePage() {
 
               <blockquote className="mt-6 rounded-r-xl border-l-2 border-accent bg-accent-soft/30 py-3 pl-4 pr-4 text-ink-muted italic">
                 &ldquo;{club.quote.text}&rdquo;
-                <span className="mt-2 block font-script text-xl not-italic text-accent">{club.quote.author}</span>
-                <span className="block text-xs not-italic uppercase tracking-wide text-ink-muted/80">
+                <span className="mt-2 block font-script text-xl not-italic text-accent-deep">{club.quote.author}</span>
+                <span className="block text-xs not-italic uppercase tracking-wide text-ink-muted">
                   {club.quote.role}
                 </span>
               </blockquote>
 
               <Link
                 href="/hakkimizda"
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
+                className="group mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
               >
                 Kulübümüzü Tanı
-                <ArrowRight size={16} />
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
 
             <div className="lg:sticky lg:top-28">
               <GalleryLightbox items={storyGallery} compact />
+              <div className="mt-4 flex items-start gap-3 rounded-2xl border border-black/10 bg-white p-4 shadow-sm">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+                  <MapPin size={18} />
+                </span>
+                <p className="text-sm text-ink-muted">
+                  <span className="font-semibold text-ink">Köyceğiz, Muğla</span> — Okaliptüs Tesisleri&apos;nde
+                  her hafta onlarca genç sporcu antrenman sahasında ter döküyor.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* TESİSTEN BİR KARE */}
-      <section className="border-t border-black/10 bg-cream pb-20 text-ink">
+      <section className="border-t border-black/10 bg-cream pt-16 pb-20 text-ink">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="overflow-hidden rounded-3xl border border-black/10 bg-white shadow-sm">
+          <SectionHeading
+            tone="light"
+            align="left"
+            eyebrow="Tesisimiz"
+            title="Tesisten Bir Kare"
+            description="Okaliptüs Tesisleri'nde sahalarımız, altyapımız ve rakamlarla Düşbelen SK."
+          />
+          <div className="mt-10 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-sm">
             <div className="grid lg:grid-cols-[1.3fr_1fr] lg:items-center">
               <VideoCard src={facilityVideo.src} poster={facilityVideo.poster} caption={facilityVideo.caption} />
-              <div className="grid grid-cols-2 gap-6 p-8 sm:p-10">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="text-center">
-                    <div className="font-display text-3xl text-accent sm:text-4xl">{stat.number}</div>
-                    <div className="mt-1 text-xs uppercase leading-tight tracking-wide text-ink-muted">
-                      {stat.label}
+              <div className="grid grid-cols-2 gap-4 p-8 sm:p-10">
+                {stats.map((stat, i) => {
+                  const Icon = STAT_ICONS[i];
+                  return (
+                    <div
+                      key={stat.label}
+                      className="rounded-xl border border-black/10 bg-black/[0.02] p-4 text-center transition duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-accent-soft/20"
+                    >
+                      {Icon && <Icon className="mx-auto mb-2 text-accent" size={22} strokeWidth={1.75} />}
+                      <div className="font-display text-3xl text-accent sm:text-4xl">{stat.number}</div>
+                      <div className="mt-1 text-xs uppercase leading-tight tracking-wide text-ink-muted">
+                        {stat.label}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -282,10 +308,10 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid gap-6 lg:grid-cols-[1fr_0.7fr] lg:items-end">
             <div>
-              <span className="text-sm font-semibold uppercase tracking-wider text-accent-bright">
+              <span className="text-sm font-semibold uppercase tracking-wider text-accent-light">
                 Gelişim Programı
               </span>
-              <h2 className="mt-3 font-display text-4xl uppercase leading-[0.95] tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
                 Her Yaşta
                 <br />
                 <span className="text-accent-bright">Bir Sonraki Adım.</span>
@@ -300,18 +326,23 @@ export default async function HomePage() {
             {program.map((group, i) => (
               <div
                 key={group.code}
-                className={`rounded-b-2xl border border-t-4 border-white/10 bg-black/20 p-5 ${PROGRAM_ACCENT_CLASSES[group.accent]}`}
+                className={`group relative overflow-hidden rounded-b-2xl border border-t-4 border-white/10 bg-black/20 p-5 transition duration-300 hover:-translate-y-1 hover:bg-black/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${PROGRAM_ACCENT_CLASSES[group.accent]}`}
               >
-                <div className="flex items-center justify-between text-xs font-semibold text-text-muted">
-                  <span>0{i + 1}</span>
-                </div>
-                <div className="mt-3 font-display text-3xl text-white">{group.code}</div>
-                <div className="mt-1 text-xs font-semibold uppercase tracking-wide text-accent-bright">
-                  {group.range}
-                </div>
-                <p className="mt-3 text-sm text-text-muted">{group.description}</p>
-                <div className="mt-5 flex items-center justify-between border-t border-border-soft/40 pt-3 text-xs text-text-muted">
-                  <span>{group.days}</span>
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-2 -top-3 font-display text-6xl text-white/[0.06] transition duration-300 group-hover:text-white/10"
+                >
+                  0{i + 1}
+                </span>
+                <div className="relative">
+                  <div className="font-display text-3xl text-white">{group.code}</div>
+                  <div className="mt-1 text-xs font-semibold uppercase tracking-wide text-accent-light">
+                    {group.range}
+                  </div>
+                  <p className="mt-3 text-sm text-text-muted">{group.description}</p>
+                  <div className="mt-5 flex items-center justify-between border-t border-border-soft/40 pt-3 text-xs text-text-muted">
+                    <span>{group.days}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -321,27 +352,27 @@ export default async function HomePage() {
 
 
       {/* DEĞERLERİMİZ */}
-      <section className="bg-accent-tint py-20 text-ink">
+      <section className="bg-bg-pitch py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center">
-            <span className="text-sm font-semibold uppercase tracking-wider text-accent-2">Düşbelen SK</span>
-            <h2 className="mt-2 font-display text-4xl uppercase leading-[0.95] tracking-tight text-ink sm:text-5xl">
+            <span className="text-sm font-semibold uppercase tracking-wider text-accent-light">Düşbelen SK</span>
+            <h2 className="mt-2 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
               Takım Değerlerimiz
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-ink-muted">
+            <p className="mx-auto mt-4 max-w-2xl text-text-muted">
               Sahada kazanmaktan önce doğru karakteri kazanmayı hedefleriz.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
-              <h3 className="font-display text-2xl uppercase tracking-tight text-ink">Düşbelen ruhu nedir?</h3>
-              <p className="mt-4 text-ink-muted">
+              <h3 className="font-display text-2xl uppercase tracking-tight text-white">Düşbelen ruhu nedir?</h3>
+              <p className="mt-4 text-text-muted">
                 Düşbelen SK&apos;da &ldquo;kazanan takım&rdquo; olmanın yolu; skordan önce doğru duruşa sahip
                 oyuncular yetiştirmekten geçer. Antrenmanlardan maç gününe kadar, her adımda bu dört temel değeri
                 merkeze alırız.
               </p>
-              <p className="mt-4 border-l-2 border-accent-2 bg-accent-2-soft/40 py-3 pl-4 pr-4 text-ink-muted">
+              <p className="mt-4 border-l-2 border-accent-bright py-3 pl-4 pr-4 text-text-muted">
                 Aile ortamı, disiplin ve saygı üzerine kurulu bu yapı; çocuklarımızın hem sahada hem de hayatta
                 güçlü bireyler olarak büyümesini hedefler.
               </p>
@@ -351,13 +382,13 @@ export default async function HomePage() {
               {values.map((value) => (
                 <div
                   key={value.title}
-                  className="rounded-2xl border border-l-4 border-black/10 border-l-accent-2 bg-white p-6 shadow-sm"
+                  className="rounded-2xl border border-l-4 border-border-soft border-l-accent-bright bg-bg-raised p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_24px_rgba(0,0,0,0.25)] transition duration-300 hover:-translate-y-1 hover:border-accent-bright/40 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_34px_rgba(0,0,0,0.4)]"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-2 text-2xl">
-                    {value.icon}
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-bright bg-accent-bright/10">
+                    <value.icon size={24} strokeWidth={2} className="text-accent-bright" aria-hidden="true" />
                   </span>
-                  <h3 className="mt-4 font-semibold text-ink">{value.title}</h3>
-                  <p className="mt-2 text-sm text-ink-muted">{value.description}</p>
+                  <h3 className="mt-4 font-semibold text-white">{value.title}</h3>
+                  <p className="mt-2 text-sm text-text-muted">{value.description}</p>
                 </div>
               ))}
             </div>
@@ -396,10 +427,10 @@ export default async function HomePage() {
               </div>
               <Link
                 href="/galeri"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent-2 decoration-2 underline-offset-4"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent-2 decoration-2 underline-offset-4"
               >
                 Tüm Galeriyi Gör
-                <ArrowRight size={16} />
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
 
@@ -423,10 +454,10 @@ export default async function HomePage() {
             <div className="mt-6 text-center">
               <Link
                 href="/haberler"
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-bg-main transition hover:brightness-110"
+                className="group inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
               >
                 Tüm Haberler
-                <ArrowRight size={16} />
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
@@ -449,7 +480,7 @@ export default async function HomePage() {
                 return (
                   <div
                     key={event.id}
-                    className="flex items-center gap-4 rounded-2xl border-l-4 border-accent bg-black/[0.03] p-5"
+                    className="flex items-center gap-4 rounded-2xl border-l-4 border-accent bg-black/[0.03] p-5 transition duration-300 hover:-translate-y-0.5 hover:bg-black/[0.05] hover:shadow-md"
                   >
                     <div className="flex w-14 shrink-0 flex-col items-center">
                       <span className="font-display text-2xl leading-none text-ink">{day}</span>
@@ -461,7 +492,7 @@ export default async function HomePage() {
                       <h3 className="font-semibold text-ink">{event.title}</h3>
                       <p className="mt-1 text-sm text-ink-muted">{event.detail}</p>
                     </div>
-                    <span className="shrink-0 rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
+                    <span className="shrink-0 rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent-deep">
                       {event.tag}
                     </span>
                   </div>
@@ -491,12 +522,12 @@ export default async function HomePage() {
       {/* İLK ADIMI AT — CTA + FORM */}
       <section className="relative overflow-hidden bg-bg-pitch py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-start">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
             <div>
-              <span className="text-sm font-semibold uppercase tracking-wider text-accent-bright">
+              <span className="text-sm font-semibold uppercase tracking-wider text-accent-light">
                 İlk Adımı At
               </span>
-              <h2 className="mt-3 font-display text-4xl uppercase leading-[0.95] tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
                 Çocuğunuzun
                 <br />
                 <span className="text-accent-bright">Oyunu Başlasın.</span>
@@ -539,9 +570,9 @@ export default async function HomePage() {
             {faq.slice(0, 4).map((item) => (
               <details
                 key={item.question}
-                className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 open:border-accent"
+                className="group rounded-2xl border border-black/10 bg-black/[0.02] p-5 transition duration-300 hover:border-accent/30 open:border-accent"
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink marker:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink marker:hidden transition group-hover:text-accent-deep">
                   {item.question}
                   <span className="shrink-0 text-lg leading-none text-accent transition group-open:rotate-45">
                     +
@@ -554,10 +585,10 @@ export default async function HomePage() {
           <div className="mt-6 text-center">
             <Link
               href="/sss"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4"
+              className="group inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4"
             >
               Tüm Soruları Gör
-              <ArrowRight size={16} />
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         </div>
@@ -569,7 +600,7 @@ export default async function HomePage() {
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
               <span className="text-sm font-semibold uppercase tracking-wider text-accent">Bize Ulaşın</span>
-              <h2 className="mt-3 font-display text-4xl uppercase leading-[0.95] tracking-tight sm:text-5xl">
+              <h2 className="mt-3 font-display text-4xl uppercase leading-[1.6] tracking-tight sm:text-5xl">
                 Takımın Bir Parçası
                 <br />
                 <span className="text-accent">Olmaya Hazır Mısın?</span>
@@ -614,10 +645,13 @@ export default async function HomePage() {
                 href={club.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-bg-main/90 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur transition hover:bg-accent-2"
+                className="group absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-bg-main/90 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur transition hover:bg-accent-2"
               >
                 Haritada Aç
-                <ArrowUpRight size={14} />
+                <ArrowUpRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
               </a>
             </div>
           </div>

@@ -9,20 +9,24 @@ import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
+  subsets: ["latin", "latin-ext"],
+  // "300" (font-light) kodda hiç kullanılmıyor (grep doğrulandı) — kaldırıldı, bir font dosyası daha az indirilir.
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 const anton = Anton({
   variable: "--font-anton",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: "400",
+  display: "swap",
 });
 
 const caveat = Caveat({
   variable: "--font-caveat",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: ["600", "700"],
+  display: "swap",
 });
 
 const title = "Düşbelen SK | Resmi Web Sitesi";
@@ -90,8 +94,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white"
+        >
+          Ana içeriğe geç
+        </a>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
         <Footer />
         <WhatsAppButton />
       </body>

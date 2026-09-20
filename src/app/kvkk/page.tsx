@@ -13,33 +13,24 @@ export const metadata: Metadata = buildMetadata({
 export default async function KvkkPage() {
   const club = await getClubInfo();
 
-  return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <SectionHeading eyebrow="Yasal" title="KVKK Aydınlatma Metni" />
-
-      <div className="mt-12 space-y-8 text-sm leading-relaxed text-text-muted">
-        <p>
-          <strong className="text-text-main">{club.name}</strong> olarak kişisel verilerinizin güvenliğine önem
-          veriyoruz. 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) uyarınca taşıdığımız
-          &quot;Veri Sorumlusu&quot; sıfatıyla, web sitemiz üzerinden bizimle paylaştığınız kişisel verilerin hangi
-          amaçla işlendiği, kimlerle paylaşıldığı ve bu konudaki haklarınız hakkında sizi aşağıda
-          bilgilendiriyoruz.
-        </p>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">1. Veri Sorumlusunun Kimliği</h2>
-          <div className="mt-2 space-y-1">
-            <p>
-              Unvan: <span className="text-text-main">{club.name}</span>
-            </p>
-            <p>Adres: {club.address}</p>
-            <p>Telefon: {club.phone}</p>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">2. Hangi Kişisel Verilerinizi Topluyoruz?</h2>
-          <p className="mt-2">
+  const sections = [
+    {
+      title: "Veri Sorumlusunun Kimliği",
+      body: (
+        <div className="space-y-1">
+          <p>
+            Unvan: <span className="font-medium text-ink">{club.name}</span>
+          </p>
+          <p>Adres: {club.address}</p>
+          <p>Telefon: {club.phone}</p>
+        </div>
+      ),
+    },
+    {
+      title: "Hangi Kişisel Verilerinizi Topluyoruz?",
+      body: (
+        <>
+          <p>
             Web sitemizdeki İletişim / Kayıt formunu doldurduğunuzda aşağıdaki kişisel verileriniz işlenir:
           </p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -52,21 +43,25 @@ export default async function KvkkPage() {
             nitelikli kişisel veri toplamaz. Formu doldurmadığınız sürece sizden herhangi bir bilgi talep
             edilmez.
           </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">3. Toplama Yöntemi ve Hukuki Sebep</h2>
-          <p className="mt-2">
-            Kişisel verileriniz, yalnızca web sitemizdeki İletişim / Kayıt formunu doldurup göndermeniz yoluyla,
-            elektronik ortamda toplanır. Bu veriler; KVKK&apos;nın 5. maddesinde yer alan &quot;ilgili kişinin
-            talebi üzerine bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması&quot; hukuki
-            sebebine ve formu gönderirken verdiğiniz açık rızaya dayanılarak işlenir.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">4. Kişisel Verilerinizi Hangi Amaçla İşliyoruz?</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-5">
+        </>
+      ),
+    },
+    {
+      title: "Toplama Yöntemi ve Hukuki Sebep",
+      body: (
+        <p>
+          Kişisel verileriniz, yalnızca web sitemizdeki İletişim / Kayıt formunu doldurup göndermeniz yoluyla,
+          elektronik ortamda toplanır. Bu veriler; KVKK&apos;nın 5. maddesinde yer alan &quot;ilgili kişinin
+          talebi üzerine bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması&quot; hukuki
+          sebebine ve formu gönderirken verdiğiniz açık rızaya dayanılarak işlenir.
+        </p>
+      ),
+    },
+    {
+      title: "Kişisel Verilerinizi Hangi Amaçla İşliyoruz?",
+      body: (
+        <>
+          <ul className="list-disc space-y-1 pl-5">
             <li>Deneme antrenmanı ve kayıt taleplerinizin değerlendirilmesi,</li>
             <li>Tarafınızla iletişime geçilmesi ve sorularınızın yanıtlanması,</li>
             <li>Kulüp faaliyetleri ve süreçleriyle ilgili bilgilendirme yapılması.</li>
@@ -75,39 +70,45 @@ export default async function KvkkPage() {
             Verileriniz; reklam, pazarlama veya profil çıkarma amacıyla kullanılmaz, otomatik karar
             mekanizmalarında işlenmez.
           </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">5. Kişisel Verileriniz Kimlerle Paylaşılır?</h2>
-          <p className="mt-2">
-            Form aracılığıyla ilettiğiniz bilgiler, tarafınıza dönüş yapılabilmesi amacıyla e-posta yoluyla
-            kulüp yönetimine iletilir. Bu iletim, e-posta altyapı hizmeti sağlayıcımız Resend (resend.com)
-            üzerinden gerçekleşir; bu kapsamda verileriniz teknik olarak yurt dışında bulunan sunucular
-            üzerinden geçebilir. Resend, yalnızca e-postanın iletilmesi amacıyla teknik altyapı sağlayan bir
-            hizmet sağlayıcıdır. Verileriniz bunun dışında hiçbir üçüncü kişi, kurum veya reklam
-            verenle paylaşılmaz, satılmaz veya pazarlama amacıyla kullanılmaz.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">6. Çocuklara Ait Veriler</h2>
-          <p className="mt-2">
-            Deneme antrenmanı / kayıt formu aracılığıyla bir çocuğun adı ve yaş grubu bilgisini paylaşıyorsanız,
-            bu bilgiyi veli veya yasal vasi sıfatıyla, çocuğunuz adına rıza vererek ilettiğinizi kabul edersiniz.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">7. Saklama Süresi</h2>
-          <p className="mt-2">
-            Kişisel verileriniz, talebinizin sonuçlandırılması için gerekli süre ve ilgili mevzuatta öngörülen
-            zamanaşımı süreleri boyunca saklanır; bu sürelerin sonunda silinir veya anonim hale getirilir.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-base font-semibold text-white">8. KVKK Kapsamındaki Haklarınız</h2>
-          <p className="mt-2">KVKK&apos;nın 11. maddesi uyarınca, kişisel verilerinizle ilgili olarak:</p>
+        </>
+      ),
+    },
+    {
+      title: "Kişisel Verileriniz Kimlerle Paylaşılır?",
+      body: (
+        <p>
+          Form aracılığıyla ilettiğiniz bilgiler, tarafınıza dönüş yapılabilmesi amacıyla e-posta yoluyla
+          kulüp yönetimine iletilir. Bu iletim, e-posta altyapı hizmeti sağlayıcımız Resend (resend.com)
+          üzerinden gerçekleşir; bu kapsamda verileriniz teknik olarak yurt dışında bulunan sunucular
+          üzerinden geçebilir. Resend, yalnızca e-postanın iletilmesi amacıyla teknik altyapı sağlayan bir
+          hizmet sağlayıcıdır. Verileriniz bunun dışında hiçbir üçüncü kişi, kurum veya reklam
+          verenle paylaşılmaz, satılmaz veya pazarlama amacıyla kullanılmaz.
+        </p>
+      ),
+    },
+    {
+      title: "Çocuklara Ait Veriler",
+      body: (
+        <p>
+          Deneme antrenmanı / kayıt formu aracılığıyla bir çocuğun adı ve yaş grubu bilgisini paylaşıyorsanız,
+          bu bilgiyi veli veya yasal vasi sıfatıyla, çocuğunuz adına rıza vererek ilettiğinizi kabul edersiniz.
+        </p>
+      ),
+    },
+    {
+      title: "Saklama Süresi",
+      body: (
+        <p>
+          Kişisel verileriniz, talebinizin sonuçlandırılması için gerekli süre ve ilgili mevzuatta öngörülen
+          zamanaşımı süreleri boyunca saklanır; bu sürelerin sonunda silinir veya anonim hale getirilir.
+        </p>
+      ),
+    },
+    {
+      title: "KVKK Kapsamındaki Haklarınız",
+      body: (
+        <>
+          <p>KVKK&apos;nın 11. maddesi uyarınca, kişisel verilerinizle ilgili olarak:</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>Kişisel verinizin işlenip işlenmediğini öğrenme,</li>
             <li>İşlenmişse buna ilişkin bilgi talep etme,</li>
@@ -119,19 +120,52 @@ export default async function KvkkPage() {
             <li>Kanuna aykırı işlenme sebebiyle zarara uğramanız halinde zararın giderilmesini talep etme</li>
           </ul>
           <p className="mt-2">haklarına sahipsiniz.</p>
-        </section>
+        </>
+      ),
+    },
+    {
+      title: "Başvuru Yöntemi",
+      body: (
+        <p>
+          Yukarıdaki haklarınızı kullanmak için {club.phone} numaralı telefondan veya{" "}
+          <Link href="/iletisim" className="text-accent-deep underline underline-offset-2">
+            iletişim sayfamızdaki
+          </Link>{" "}
+          kanallardan bize ulaşabilirsiniz. Talepleriniz, niteliğine göre en kısa sürede ve en geç 30 gün
+          içinde ücretsiz olarak sonuçlandırılır.
+        </p>
+      ),
+    },
+  ];
 
-        <section>
-          <h2 className="text-base font-semibold text-white">9. Başvuru Yöntemi</h2>
-          <p className="mt-2">
-            Yukarıdaki haklarınızı kullanmak için {club.phone} numaralı telefondan veya{" "}
-            <Link href="/iletisim" className="text-accent hover:underline">
-              iletişim sayfamızdaki
-            </Link>{" "}
-            kanallardan bize ulaşabilirsiniz. Talepleriniz, niteliğine göre en kısa sürede ve en geç 30 gün
-            içinde ücretsiz olarak sonuçlandırılır.
-          </p>
-        </section>
+  return (
+    <div className="bg-cream py-16 text-ink">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <SectionHeading as="h1" tone="light" align="left" eyebrow="Yasal" title="KVKK Aydınlatma Metni" />
+
+        <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ink-muted">
+          <strong className="font-semibold text-ink">{club.name}</strong> olarak kişisel verilerinizin
+          güvenliğine önem veriyoruz. 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) uyarınca
+          taşıdığımız &quot;Veri Sorumlusu&quot; sıfatıyla, web sitemiz üzerinden bizimle paylaştığınız kişisel
+          verilerin hangi amaçla işlendiği, kimlerle paylaşıldığı ve bu konudaki haklarınız hakkında sizi
+          aşağıda bilgilendiriyoruz.
+        </p>
+
+        <div className="mt-8 divide-y divide-black/10 rounded-3xl border border-black/10 bg-white px-6 shadow-sm sm:px-10">
+          {sections.map((section, i) => (
+            <section key={section.title} className="py-7 first:pt-8 last:pb-8">
+              <div className="flex items-start gap-3.5">
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-bold text-accent-deep">
+                  {i + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-semibold text-ink">{section.title}</h2>
+                  <div className="mt-2 text-sm leading-relaxed text-ink-muted">{section.body}</div>
+                </div>
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   );

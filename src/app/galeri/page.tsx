@@ -24,6 +24,7 @@ export default async function GalleryPage() {
     />
     <div className="bg-cream py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 className="sr-only">Fotoğraf Galerisi</h2>
         <GalleryLightbox items={items} />
       </div>
     </div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
+import { Pause, Play } from "lucide-react";
 import { useIsDesktop } from "@/lib/useIsDesktop";
 
 export type HeroSlide =
@@ -10,26 +11,47 @@ export type HeroSlide =
 
 const INTERVAL_MS = 6000;
 
+function subscribeReducedMotion(callback: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", callback);
+  return () => mq.removeEventListener("change", callback);
+}
+function getReducedMotionSnapshot() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+function getReducedMotionServerSnapshot() {
+  return false;
+}
+
 export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [index, setIndex] = useState(0);
+  // WCAG 2.2.2 (Pause, Stop, Hide): 5 saniyeden uzun süren, otomatik başlayan
+  // hareketli içerik için kullanıcının durdurabileceği bir kontrol gerekir.
+  // Ayrıca prefers-reduced-motion tercih edenler için otomatik geçiş kapalı kalır
+  // (useSyncExternalStore ile: effect içinde senkron setState gerektirmeden
+  // tarayıcı API'sine abone olunur).
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot
+  );
+  const [manuallyPaused, setManuallyPaused] = useState(false);
+  const paused = manuallyPaused || prefersReducedMotion;
   const isDesktop = useIsDesktop();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    if (paused) return;
     timerRef.current = setInterval(() => {
       setIndex((i) => (i + 1) % slides.length);
     }, INTERVAL_MS);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [slides.length]);
+  }, [slides.length, paused]);
 
   function goTo(i: number) {
     setIndex(i);
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setIndex((prev) => (prev + 1) % slides.length);
-    }, INTERVAL_MS);
   }
 
   const slide = slides[index];
@@ -44,8 +66,13 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           muted
           loop
           playsInline
-          poster={slide.poster}
-          className="animate-ken-burns h-full w-full object-cover brightness-110 contrast-105 saturate-110"
+          // LCP elementi genelde bu video (desktop hero, viewport'un çoğunu kaplıyor):
+          // poster next/image optimize edicisinden geçiriliyor, preload="auto" ile ilk kare erken hazır olur.
+          preload="auto"
+          poster={`/_next/image?url=${encodeURIComponent(slide.poster)}&w=1920&q=75`}
+          className={`h-full w-full object-cover brightness-110 contrast-105 saturate-110 ${
+            prefersReducedMotion ? "" : "animate-ken-burns"
+          }`}
         >
           <source src={slide.src} type="video/mp4" />
         </video>
@@ -56,27 +83,44 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           alt=""
           fill
           sizes="100vw"
-          priority={index === 0}
-          className="animate-ken-burns object-cover brightness-110 contrast-105 saturate-110"
+          preload={index === 0}
+          className={`object-cover brightness-110 contrast-105 saturate-110 ${
+            prefersReducedMotion ? "" : "animate-ken-burns"
+          }`}
         />
       )}
 
-      <div className="absolute bottom-20 left-1/2 z-20 -translate-x-1/2 text-xs font-semibold uppercase tracking-wide text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] sm:bottom-24">
+      <div className="absolute bottom-20 left-1/2 z-20 hidden -translate-x-1/2 text-xs font-semibold uppercase tracking-wide text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] sm:block sm:bottom-24">
         {slide.caption}
       </div>
 
-      <div className="absolute inset-x-0 bottom-14 z-20 flex justify-center gap-2 sm:bottom-16">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            aria-label={`${i + 1}. görsele geç`}
-            onClick={() => goTo(i)}
-            className={`h-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-all ${
-              i === index ? "w-6 bg-accent" : "w-1.5 bg-white/50 hover:bg-white/80"
-            }`}
-          />
-        ))}
+      <div
+        className="absolute inset-x-0 bottom-6 z-20 flex items-center justify-center gap-3 sm:bottom-16"
+        role="group"
+        aria-label="Slayt gösterisi kontrolleri"
+      >
+        <div className="flex gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`${i + 1}. görsele geç`}
+              aria-current={i === index}
+              onClick={() => goTo(i)}
+              className={`h-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-all ${
+                i === index ? "w-6 bg-accent" : "w-1.5 bg-white/50 hover:bg-white/80"
+              }`}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setManuallyPaused((p) => !p)}
+          aria-label={paused ? "Slayt gösterisini oynat" : "Slayt gösterisini duraklat"}
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition hover:bg-white/30"
+        >
+          {paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
+        </button>
       </div>
     </>
   );

@@ -39,7 +39,7 @@ export function LeadershipSlider({ items }: { items: LeadershipHighlight[] }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-4">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-accent">{item.role}</span>
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-light">{item.role}</span>
               <p className="mt-1 font-bold text-white">{item.name}</p>
             </div>
           </Link>

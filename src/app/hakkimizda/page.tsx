@@ -48,13 +48,13 @@ export default async function AboutPage() {
       <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
         <div>
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+            <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
               {club.foundedYear}&apos;den beri sahada
             </span>
-            <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+            <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
               {club.licensedPlayerCount} lisanslı sporcu
             </span>
-            <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+            <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
               Altyapı odaklı kulüp
             </span>
             {yearsActive > 0 && (
@@ -85,10 +85,10 @@ export default async function AboutPage() {
 
           <blockquote className="mt-8 rounded-r-xl border-l-2 border-accent bg-accent-soft/30 py-3 pl-4 pr-4 text-ink-muted italic">
             &ldquo;{club.quote.text}&rdquo;
-            <span className="mt-2 block font-script text-xl not-italic text-accent-bright">
+            <span className="mt-2 block font-script text-xl not-italic text-accent-deep">
               {club.quote.author}
             </span>
-            <span className="block text-xs not-italic uppercase tracking-wide text-ink-muted/80">
+            <span className="block text-xs not-italic uppercase tracking-wide text-ink-muted">
               {club.quote.role}
             </span>
           </blockquote>
@@ -106,7 +106,7 @@ export default async function AboutPage() {
         <Image src="/images/coach-bg.jpg" alt="" fill sizes="100vw" className="object-cover opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-r from-bg-main via-bg-main/80 to-transparent" />
         <div className="relative max-w-xl px-8 py-14">
-          <h3 className="text-xl font-bold text-white">Hoca&apos;nın Notu</h3>
+          <h2 className="text-xl font-bold text-white">Hoca&apos;nın Notu</h2>
           <p className="mt-4 text-text-muted italic">&ldquo;{club.coachNote.text}&rdquo;</p>
           <span className="mt-4 block text-sm font-semibold text-accent">{club.coachNote.signature}</span>
         </div>

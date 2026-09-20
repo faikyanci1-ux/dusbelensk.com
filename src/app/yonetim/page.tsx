@@ -27,16 +27,22 @@ export default async function BoardsPage() {
     <div className="bg-cream py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
       {president && (
-        <div className="mt-12 grid overflow-hidden rounded-2xl border border-border-soft bg-bg-navy sm:grid-cols-[260px_1fr]">
+        <div className="mt-12 grid overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm sm:grid-cols-[260px_1fr]">
           <div className="relative aspect-[2/3] w-full">
-            <Image src={president.photo!} alt={president.name} fill sizes="260px" className="object-cover" />
+            <Image
+              src={president.photo!}
+              alt={`${president.name} — ${president.role}`}
+              fill
+              sizes="260px"
+              className="object-cover"
+            />
           </div>
           <div className="flex flex-col justify-center p-8">
-            <span className="text-xs font-semibold uppercase tracking-wide text-accent-bright">{president.role}</span>
-            <h3 className="mt-2 text-2xl font-bold text-white">{president.name}</h3>
-            {president.bio && <p className="mt-4 text-sm leading-relaxed text-text-muted">{president.bio}</p>}
+            <span className="text-xs font-semibold uppercase tracking-wide text-accent-deep">{president.role}</span>
+            <h2 className="mt-2 text-2xl font-bold text-ink">{president.name}</h2>
+            {president.bio && <p className="mt-4 text-sm leading-relaxed text-ink-muted">{president.bio}</p>}
             {president.quote && (
-              <p className="mt-4 border-l-2 border-accent/40 pl-4 text-text-muted italic">
+              <p className="mt-4 border-l-2 border-accent/40 pl-4 text-ink-muted italic">
                 &ldquo;{president.quote}&rdquo;
               </p>
             )}
@@ -46,7 +52,7 @@ export default async function BoardsPage() {
                 {president.mottos.map((motto) => (
                   <span
                     key={motto}
-                    className="rounded-full border border-accent-2/30 bg-accent-2-soft px-3 py-1 text-xs font-medium text-accent-2"
+                    className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-medium text-accent-deep"
                   >
                     {motto}
                   </span>
@@ -55,11 +61,11 @@ export default async function BoardsPage() {
             )}
 
             {president.values && (
-              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-border-soft/40 pt-5">
+              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-black/10 pt-5">
                 {president.values.map((value) => (
                   <span
                     key={value}
-                    className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-text-muted"
+                    className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted"
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
                     {value}
@@ -72,38 +78,38 @@ export default async function BoardsPage() {
       )}
 
       <div className="mt-12 grid gap-8 md:grid-cols-2">
-        <div className="rounded-b-2xl border border-t-4 border-border-soft border-t-accent-bright bg-bg-main p-8 shadow-md">
-          <h3 className="text-lg font-bold text-white">Yönetim Kurulu</h3>
+        <div className="rounded-b-2xl border border-t-4 border-black/10 border-t-accent-bright bg-white p-8 shadow-sm">
+          <h3 className="text-lg font-bold text-ink">Yönetim Kurulu</h3>
           <span className="mt-2 block h-0.5 w-10 rounded-full bg-accent-bright" />
           <ul className="mt-6 space-y-4">
             {otherManagementMembers.map((member) => (
               <li
                 key={member.name}
-                className="flex items-center justify-between rounded-lg border border-border-soft/50 bg-white/5 px-4 py-3 transition hover:border-accent/40"
+                className="flex items-center justify-between rounded-lg border border-black/10 bg-black/[0.02] px-4 py-3 transition hover:border-accent/40"
               >
-                <span className="font-medium text-white">{member.name}</span>
-                <span className="text-xs text-text-muted">{member.role}</span>
+                <span className="font-medium text-ink">{member.name}</span>
+                <span className="text-xs text-ink-muted">{member.role}</span>
               </li>
             ))}
           </ul>
-          <p className="mt-6 text-sm text-text-muted">{management.note}</p>
+          <p className="mt-6 text-sm text-ink-muted">{management.note}</p>
         </div>
 
-        <div className="rounded-b-2xl border border-t-4 border-border-soft border-t-accent-2 bg-bg-main p-8 shadow-md">
-          <h3 className="text-lg font-bold text-white">Denetleme Kurulu</h3>
+        <div className="rounded-b-2xl border border-t-4 border-black/10 border-t-accent-2 bg-white p-8 shadow-sm">
+          <h3 className="text-lg font-bold text-ink">Denetleme Kurulu</h3>
           <span className="mt-2 block h-0.5 w-10 rounded-full bg-accent-2" />
           <ul className="mt-6 space-y-4">
             {audit.members.map((member) => (
               <li
                 key={member.name}
-                className="flex items-center justify-between rounded-lg border border-border-soft/50 bg-white/5 px-4 py-3 transition hover:border-accent-2/40"
+                className="flex items-center justify-between rounded-lg border border-black/10 bg-black/[0.02] px-4 py-3 transition hover:border-accent-2/40"
               >
-                <span className="font-medium text-white">{member.name}</span>
-                <span className="text-xs text-text-muted">{member.role}</span>
+                <span className="font-medium text-ink">{member.name}</span>
+                <span className="text-xs text-ink-muted">{member.role}</span>
               </li>
             ))}
           </ul>
-          <p className="mt-6 text-sm text-text-muted">{audit.note}</p>
+          <p className="mt-6 text-sm text-ink-muted">{audit.note}</p>
         </div>
       </div>
       </div>

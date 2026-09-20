@@ -1,5 +1,5 @@
 const PALETTE = [
-  "from-emerald-500/30 to-emerald-900/40 text-emerald-300",
+  "from-accent-2/40 to-bg-navy/70 text-white",
   "from-sky-500/30 to-sky-900/40 text-sky-300",
   "from-rose-500/30 to-rose-900/40 text-rose-300",
   "from-amber-500/30 to-amber-900/40 text-amber-300",

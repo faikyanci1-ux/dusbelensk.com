@@ -30,20 +30,26 @@ export function NewsCarousel({ items }: { items: NewsItem[] }) {
             <article
               key={item.id}
               data-card
-              className="w-[300px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border-soft bg-bg-raised/40 sm:w-[340px]"
+              className="group w-[300px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border-soft bg-bg-raised/40 transition duration-300 hover:-translate-y-1 hover:border-accent hover:bg-bg-raised/60 hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)] sm:w-[340px]"
             >
               {item.image && (
-                <div className="relative h-44 w-full">
-                  <Image src={item.image} alt={item.title} fill sizes="340px" className="object-cover" />
+                <div className="relative h-44 w-full overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="340px"
+                    className="object-cover transition duration-500 group-hover:scale-105"
+                  />
                   <div className="absolute left-3 top-3 rounded-lg bg-accent px-2.5 py-1.5 text-center shadow-lg">
-                    <div className="text-base font-extrabold leading-none text-bg-main">{day}</div>
-                    <div className="text-[9px] font-semibold uppercase tracking-wide text-bg-main">{month}</div>
+                    <div className="text-base font-extrabold leading-none text-white">{day}</div>
+                    <div className="text-[9px] font-semibold uppercase tracking-wide text-white">{month}</div>
                   </div>
                 </div>
               )}
               <div className="p-5">
                 {item.tag && (
-                  <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-medium text-accent">
+                  <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-medium text-accent-light">
                     {item.tag}
                   </span>
                 )}
@@ -51,10 +57,10 @@ export function NewsCarousel({ items }: { items: NewsItem[] }) {
                 <p className="mt-2 line-clamp-3 text-sm text-text-muted">{item.summary}</p>
                 <Link
                   href={`/haberler/${item.id}`}
-                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-light underline underline-offset-2"
                 >
                   Devamını Oku
-                  <ArrowUpRight size={14} />
+                  <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
               </div>
             </article>

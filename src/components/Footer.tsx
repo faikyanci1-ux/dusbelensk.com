@@ -1,9 +1,53 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Phone } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { club } from "@/data/club";
 import { navLinks } from "@/lib/nav";
+
+function FooterHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
+      <span className="h-px w-4 bg-accent-bright" />
+      {children}
+    </h4>
+  );
+}
+
+function ContactRow({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: LucideIcon | typeof InstagramIcon;
+  label: string;
+  value: string;
+  href: string;
+}) {
+  return (
+    <a
+      href={href}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      className="group flex items-center gap-3"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-bright/10 text-accent-bright transition group-hover:bg-accent-bright/20">
+        <Icon size={16} />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[10px] font-semibold uppercase tracking-wider text-text-muted/70">
+          {label}
+        </span>
+        <span className="block truncate text-sm text-white transition group-hover:text-accent-bright">
+          {value}
+        </span>
+      </span>
+    </a>
+  );
+}
 
 export function Footer() {
   return (
@@ -23,11 +67,11 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-white">Kulüp</h4>
-          <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-text-muted">
+          <FooterHeading>Kulüp</FooterHeading>
+          <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-text-muted">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="hover:text-white">
+                <Link href={link.href} className="hover:text-accent-bright">
                   {link.label}
                 </Link>
               </li>
@@ -36,29 +80,23 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-white">İletişim</h4>
-          <a
-            href={club.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 block text-sm text-text-muted hover:text-white"
-          >
-            Adres: {club.address}
-          </a>
-          <a
-            href={club.phoneHref}
-            className="mt-2 flex items-center gap-2 text-sm text-text-muted hover:text-white"
-          >
-            <Phone size={16} className="text-accent-2" /> {club.phone}
-          </a>
-          <a
-            href={club.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 flex items-center gap-2 text-sm text-text-muted hover:text-white"
-          >
-            <InstagramIcon size={16} className="text-accent-2" /> {club.instagramHandle}
-          </a>
+          <FooterHeading>İletişim</FooterHeading>
+          <div className="mt-5 flex flex-col gap-4">
+            <ContactRow icon={MapPin} label="Konumumuz" value={club.address} href={club.mapsUrl} />
+            <ContactRow icon={Phone} label="Telefon" value={club.phone} href={club.phoneHref} />
+            <ContactRow
+              icon={WhatsAppIcon}
+              label="WhatsApp"
+              value={club.phone}
+              href={`https://wa.me/${club.whatsappNumber}`}
+            />
+            <ContactRow
+              icon={InstagramIcon}
+              label="Instagram"
+              value={club.instagramHandle}
+              href={club.instagramUrl}
+            />
+          </div>
         </div>
       </div>
 

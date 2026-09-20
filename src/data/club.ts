@@ -1,3 +1,5 @@
+import { Trophy, Heart, Scale, TrendingUp, type LucideIcon } from "lucide-react";
+
 export const club = {
   name: "Düşbelen SK",
   tagline: "Sporla Büyüyen Nesiller",
@@ -10,6 +12,11 @@ export const club = {
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=D%C3%BC%C5%9Fbelen+Spor+Kul%C3%BCb%C3%BC+Okalipt%C3%BCs+Tesisleri",
   mapsEmbedSrc:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3187.0655462208592!2d28.583721279345706!3d36.984368599999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bf81002340344d%3A0xbe732e9caffd573c!2zRMO8xZ9iZWxlbiBTcG9yIEt1bMO8YsO8IE9rYWxpcHTDvHMgVGVzaXNsZXJp!5e0!3m2!1str!2str!4v1789826608910!5m2!1str!2str",
+  // mapsEmbedSrc içindeki !2d (lng) ve !3d (lat) parametrelerinden çıkarıldı — JSON-LD geo/LocalBusiness için gerçek koordinat.
+  geo: {
+    latitude: 36.984368599999996,
+    longitude: 28.583721279345706,
+  },
   phone: "+90 538 932 53 33",
   phoneHref: "tel:+905389325333",
   whatsappNumber: "905389325333",
@@ -55,32 +62,41 @@ export const stats = [
 export const statsBlurb =
   "Altyapıdan A takıma uzanan yapımızda; her sezon daha fazla çocuğa spor sevgisini aşılamayı hedefliyoruz.";
 
-export const values = [
+export type ValueItem = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+};
+
+// Tüm ikonlar kasıtlı olarak aynı vurgu rengiyle (accent-bright) render edilir —
+// dört değer eşit ağırlıkta olduğu için tek bir tutarlı renk, marka paletindeki
+// renk çeşitliliğinin (çok renkli emoji ikonlar) yarattığı uyumsuzluğu ortadan kaldırır.
+export const values: ValueItem[] = [
   {
-    icon: "🏆",
+    icon: Trophy,
     title: "Mücadele",
     description:
       "Skor tabelası ne olursa olsun; son düdüğe kadar pes etmeyen, rakibe saygılı ama oyuna asla teslim olmayan bir anlayışla sahadayız.",
   },
   {
-    icon: "🤝",
+    icon: Heart,
     title: "Takım Ruhu",
     description:
       "Her oyuncu, yanında oynayan arkadaşının da sorumluluğunu taşır. Birlikte savunur, birlikte hücum eder, hep beraber seviniriz.",
   },
   {
-    icon: "⚖️",
+    icon: Scale,
     title: "Fair-Play",
     description:
       "Hakeme, rakibe ve tribüne duyulan saygı; kulübümüzün kırmızı çizgisidir. Oyunun ruhuna ve kurallarına sadık kalmak, bizim için önceliktir.",
   },
   {
-    icon: "📚",
+    icon: TrendingUp,
     title: "Gelişim",
     description:
       "Her antrenman, her maç; oyuncularımız için bir öğrenme alanıdır. Hatalardan ders çıkaran, kendini sürekli geliştiren bir yapı hedefleriz.",
   },
-] as const;
+];
 
 export const parentInfo = {
   intro: [

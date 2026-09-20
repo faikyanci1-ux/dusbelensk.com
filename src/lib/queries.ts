@@ -15,7 +15,7 @@ import {
 import { lineup, lineupNote, type LineupSlot } from "@/data/lineup";
 import { gallery, type GalleryItem } from "@/data/gallery";
 import { news, type NewsItem } from "@/data/news";
-import { club, stats, statsBlurb, values, parentInfo } from "@/data/club";
+import { club, stats, statsBlurb, values, parentInfo, type ValueItem } from "@/data/club";
 import { videos, type VideoItem } from "@/data/videos";
 import { faq, type FaqItem } from "@/data/faq";
 import { events, type EventItem } from "@/data/events";
@@ -33,7 +33,7 @@ export async function getStatsBlurb() {
   return statsBlurb;
 }
 
-export async function getValues() {
+export async function getValues(): Promise<ValueItem[]> {
   return values;
 }
 

@@ -23,6 +23,7 @@ export default async function ParentsPage() {
     />
     <div className="bg-cream py-16 text-ink">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 className="sr-only">Veliler İçin Bilgiler</h2>
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
             {info.intro.map((paragraph) => (
@@ -44,7 +45,7 @@ export default async function ParentsPage() {
               {info.badges.map((badge) => (
                 <span
                   key={badge}
-                  className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-medium text-accent"
+                  className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-medium text-accent-deep"
                 >
                   {badge}
                 </span>

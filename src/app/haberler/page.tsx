@@ -35,12 +35,14 @@ export default async function NewsPage() {
           </p>
         </div>
       ) : (
+        <>
+        <h2 className="sr-only">Haberler Listesi</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <article
               key={item.id}
               id={`news-${item.id}`}
-              className="scroll-mt-24 overflow-hidden rounded-b-2xl border border-t-4 border-border-soft border-t-accent-bright bg-bg-main shadow-md target:border-accent"
+              className="scroll-mt-24 overflow-hidden rounded-b-2xl border border-t-4 border-black/10 border-t-accent-bright bg-white shadow-sm target:border-accent"
             >
               {item.image && (
                 <div className="relative h-40 w-full">
@@ -52,22 +54,22 @@ export default async function NewsPage() {
                     className="object-cover"
                   />
                   {item.tag && (
-                    <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-bg-main">
+                    <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-white">
                       {item.tag}
                     </span>
                   )}
                 </div>
               )}
               <div className="p-5">
-                <div className="flex items-center gap-1.5 text-xs text-text-muted">
+                <div className="flex items-center gap-1.5 text-xs text-ink-muted">
                   <CalendarDays size={14} />
                   {item.date}
                 </div>
-                <h3 className="mt-2 font-semibold text-white">{item.title}</h3>
-                <p className="mt-2 text-sm text-text-muted">{item.summary}</p>
+                <h3 className="mt-2 font-semibold text-ink">{item.title}</h3>
+                <p className="mt-2 text-sm text-ink-muted">{item.summary}</p>
                 <Link
                   href={`/haberler/${item.id}`}
-                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent underline underline-offset-2"
                 >
                   Devamını Oku
                   <ArrowUpRight size={14} />
@@ -76,6 +78,7 @@ export default async function NewsPage() {
             </article>
           ))}
         </div>
+        </>
       )}
       </div>
     </div>

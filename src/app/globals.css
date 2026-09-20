@@ -8,6 +8,12 @@
   --color-accent: #d41e37;
   --color-accent-soft: rgba(212, 30, 55, 0.15);
   --color-accent-bright: #f4364f;
+  /* WCAG AA (4.5:1) metin kontrastı için: accent ailesinin normal text-accent/
+     text-accent-bright'ın yetersiz kaldığı yerlerde kullanılan güvenli varyantlar.
+     accent-light: koyu (lacivert/siyah) zeminlerde küçük metin için.
+     accent-deep: açık (krem/beyaz) zeminlerde küçük metin için. */
+  --color-accent-light: #ff7f93;
+  --color-accent-deep: #a01527;
   --color-accent-2: #2e5c99;
   --color-accent-2-soft: rgba(46, 92, 153, 0.15);
   --color-text-main: #eef1f6;
@@ -29,6 +35,8 @@
   --color-accent: var(--color-accent);
   --color-accent-soft: var(--color-accent-soft);
   --color-accent-bright: var(--color-accent-bright);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-deep: var(--color-accent-deep);
   --color-accent-2: var(--color-accent-2);
   --color-accent-2-soft: var(--color-accent-2-soft);
   --color-text-main: var(--color-text-main);
@@ -48,6 +56,15 @@ body {
   background: radial-gradient(circle at top, #132844 0, #0a1628 45%, #000 100%);
   background-attachment: fixed;
   color: var(--color-text-main);
+}
+
+/* WCAG 2.4.7 Focus Visible: klavyeyle gezinirken tüm etkileşimli öğelerde
+   görünür, tutarlı bir odak göstergesi. accent-bright hem açık hem koyu
+   zeminlerde >=3:1 kontrast sağlıyor (bkz. erişilebilirlik denetimi notları). */
+:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 @keyframes ken-burns {
@@ -87,4 +104,14 @@ body {
 
 .animate-pulse-ring {
   animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* WCAG 2.3.3 / vestibular bozukluklar: hareketten rahatsız olan kullanıcılar
+   için sürekli tekrar eden animasyonları devre dışı bırak. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns,
+  .animate-marquee,
+  .animate-pulse-ring {
+    animation: none;
+  }
 }

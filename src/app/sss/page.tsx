@@ -17,12 +17,14 @@ export default async function FaqPage() {
     <div className="bg-cream py-16 text-ink">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <SectionHeading
+          as="h1"
           tone="light"
           eyebrow="Merak Edilenler"
           title="Sık Sorulan Sorular"
           description="Kayıt, antrenman ve kulüp süreçleri hakkında en çok sorulan sorular."
         />
 
+        <h2 className="sr-only">Sık Sorulan Sorular Listesi</h2>
         <div className="mt-12 space-y-3">
           {faq.map((item) => (
             <details

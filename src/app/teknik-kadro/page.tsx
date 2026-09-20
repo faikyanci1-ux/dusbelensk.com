@@ -24,6 +24,7 @@ export default async function StaffPage() {
     />
     <div className="bg-cream py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 className="sr-only">Teknik Kadro Listesi</h2>
         <StaffLightbox items={staff} />
       </div>
     </div>
