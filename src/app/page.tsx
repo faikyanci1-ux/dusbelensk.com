@@ -98,14 +98,14 @@ export default async function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative h-[92vh] min-h-[680px] overflow-hidden">
-        <div className="absolute inset-0 -z-10">
+      <section className="relative h-[92vh] min-h-[680px]">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
           <HeroSlider slides={heroSlides} />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg-main/8 to-bg-main" />
           <div className="absolute inset-0 bg-gradient-to-r from-bg-main/70 via-bg-main/20 to-transparent sm:from-bg-main/50 sm:via-transparent sm:to-transparent" />
         </div>
 
-        <div className="mx-auto flex h-full max-w-6xl flex-col justify-center px-4 sm:px-6">
+        <div className="mx-auto flex h-full max-w-6xl flex-col justify-center px-4 pt-20 pb-8 sm:px-6 sm:pt-0 sm:pb-0">
           <div className="max-w-2xl">
             <span className="font-script mb-5 block -rotate-2 text-3xl leading-none text-accent-bright sm:text-4xl">
               {club.motto}
