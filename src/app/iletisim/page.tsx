@@ -5,7 +5,6 @@ import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { getClubInfo } from "@/lib/queries";
 import { PageHero } from "@/components/PageHero";
-import { ContactForm } from "@/components/ContactForm";
 import { SectionHeading } from "@/components/SectionHeading";
 import { buildMetadata } from "@/lib/metadata";
 import { siteUrl } from "@/lib/site";
@@ -87,13 +86,13 @@ export default async function ContactPage() {
     <PageHero
       eyebrow="Kulübe Katıl"
       title="Bize Ulaşın"
-      description="Deneme antrenmanı, kayıt veya genel sorularınız için formu doldurun ya da doğrudan bize ulaşın."
+      description="Deneme antrenmanı, kayıt veya genel sorularınız için WhatsApp'tan doğrudan bize ulaşın."
       image="/images/facility-1.jpg"
     />
     <div className="bg-cream py-16 text-ink">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-          <div className="order-2 min-w-0 space-y-8 lg:order-1">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+          <div className="min-w-0 space-y-6">
             <SectionHeading
               eyebrow="İletişim Bilgilerimiz"
               title="Bize ulaşın."
@@ -119,35 +118,45 @@ export default async function ContactPage() {
               />
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">
-              <div className="flex items-center gap-2 px-5 pb-4 pt-5">
+            <a
+              href={`https://wa.me/${club.whatsappNumber}?text=${encodeURIComponent(
+                "Merhaba, Düşbelen SK hakkında bilgi almak istiyorum."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-base font-semibold text-white shadow-lg shadow-black/10 transition hover:brightness-110"
+            >
+              <WhatsAppIcon size={22} />
+              WhatsApp&apos;tan Yaz
+            </a>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">
+            <div className="flex items-center justify-between gap-2 px-5 py-4">
+              <div className="flex items-center gap-2">
                 <MapPin size={14} className="text-accent-bright" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Konum</span>
               </div>
-              <iframe
-                src={club.mapsEmbedSrc}
-                width="100%"
-                height="240"
-                style={{ border: 0, display: "block" }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title={`${club.name} Konum`}
-              />
               <a
                 href={club.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 border-t border-black/10 py-3 text-xs font-semibold text-accent-2 transition hover:text-accent-bright"
+                className="flex items-center gap-1 text-xs font-semibold text-accent-2 transition hover:text-accent-bright"
               >
                 Haritalar&apos;da Aç
                 <ArrowUpRight size={14} />
               </a>
             </div>
-          </div>
-
-          <div className="order-1 rounded-2xl border border-black/10 bg-white p-6 shadow-sm sm:p-8 lg:order-2">
-            <h2 className="sr-only">İletişim Formu</h2>
-            <ContactForm variant="light" />
+            <iframe
+              src={club.mapsEmbedSrc}
+              width="100%"
+              height="480"
+              style={{ border: 0, display: "block" }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={`${club.name} Konum`}
+              className="min-h-[320px] lg:h-[560px]"
+            />
           </div>
         </div>
       </div>

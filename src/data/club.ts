@@ -5,7 +5,7 @@ export const club = {
   tagline: "Sporla Büyüyen Nesiller",
   motto: "Daha Güçlü, Daha İleri Düşbelen!",
   foundedYear: 2022,
-  ageRange: "11-16",
+  ageRange: "11-17",
   licensedPlayerCount: 48,
   officialMatchCount: "+50",
   address: "Yangı Mahallesi Merkez Yangı Sokak No:3 Köyceğiz/Muğla",
@@ -17,9 +17,9 @@ export const club = {
     latitude: 36.984368599999996,
     longitude: 28.583721279345706,
   },
-  phone: "+90 538 932 53 33",
-  phoneHref: "tel:+905389325333",
-  whatsappNumber: "905389325333",
+  phone: "0532 616 00 48",
+  phoneHref: "tel:+905326160048",
+  whatsappNumber: "905326160048",
   instagramHandle: "@dusbelensk",
   instagramUrl: "https://www.instagram.com/dusbelensk/",
   description: [
@@ -54,7 +54,7 @@ export const club = {
 
 export const stats = [
   { number: String(club.licensedPlayerCount), label: "Lisanslı Oyuncu" },
-  { number: "4", label: "Yaş Grubu" },
+  { number: "6", label: "Yaş Grubu" },
   { number: String(club.foundedYear), label: "Kuruluş Yılı" },
   { number: club.officialMatchCount, label: "Resmi / Özel Maç" },
 ] as const;

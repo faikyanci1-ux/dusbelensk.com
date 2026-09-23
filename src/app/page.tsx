@@ -30,9 +30,9 @@ import { VideoCard } from "@/components/VideoCard";
 import { GalleryLightbox } from "@/components/GalleryLightbox";
 import { LeadershipSlider } from "@/components/LeadershipSlider";
 import { HeroSlider, type HeroSlide } from "@/components/HeroSlider";
-import { ContactForm } from "@/components/ContactForm";
 import { NewsCarousel } from "@/components/NewsCarousel";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 
@@ -550,10 +550,26 @@ export default async function HomePage() {
             </div>
 
             <div className="rounded-2xl bg-cream p-6 shadow-2xl sm:p-8">
-              <h3 className="font-display text-xl uppercase tracking-tight text-ink">Ücretsiz Deneme Formu</h3>
-              <div className="mt-6">
-                <ContactForm variant="light" />
-              </div>
+              <h3 className="font-display text-xl uppercase tracking-tight text-ink">Ücretsiz Deneme Kaydı</h3>
+              <p className="mt-2 text-sm text-ink-muted">
+                Form doldurmanıza gerek yok — WhatsApp&apos;tan yazın, size hemen dönelim.
+              </p>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 flex items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-base font-semibold text-white shadow-lg shadow-black/10 transition hover:brightness-110"
+              >
+                <WhatsAppIcon size={22} />
+                WhatsApp&apos;tan Yaz
+              </a>
+              <a
+                href={club.phoneHref}
+                className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-ink-muted transition hover:text-ink"
+              >
+                <Phone size={16} />
+                {club.phone}
+              </a>
             </div>
           </div>
         </div>

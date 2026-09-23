@@ -46,11 +46,12 @@ export const staff: StaffMember[] = [
   },
   {
     id: 3,
-    name: "İsmail Kaya",
+    name: "Ozan Öztürk",
     role: "Kaleci Departmanı Sorumlusu",
     description:
       "Kalecilerin teknik çalışmaları, refleks gelişimi ve maç performanslarını planlar ve takip eder.",
-    photo: "/images/staff/kaleci-antrenoru.jpg",
+    photo: "/images/staff/ozan-ozturk.jpg",
+    quote: "İyi kaleciler daha güçlü takımlar yaratır.",
   },
   {
     id: 4,

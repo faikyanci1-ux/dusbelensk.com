@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
-const AGE_GROUPS = ["U-11", "U-12", "U-13", "U-14", "U-15", "U-16", "Emin değilim / Bilgi almak istiyorum"];
+const AGE_GROUPS = ["U-11", "U-12", "U-13", "U-14", "U-15", "U-17", "Emin değilim / Bilgi almak istiyorum"];
 
 type Status = "idle" | "sending" | "success" | "error";
 type RequestType = "trial" | "general";
