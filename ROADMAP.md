@@ -42,22 +42,19 @@ Altyapı hazır, henüz bağlanmadı. Şema: `src/db/schema.ts` (players, staff,
 lineup_slots, gallery_items, news_items, contact_messages), bağlantı `src/db/client.ts`,
 mevcut verileri aktaracak script `src/db/seed.ts`.
 
-`DATABASE_URL` Vercel'de zaten tanımlı (Production + Preview, 4 gün önce eklenmiş) ama
-**"sensitive" işaretli** — bu yüzden CLI/API ile gerçek değeri asla geri çekilemiyor,
-sadece Vercel'in build ortamında kullanılabiliyor. Yerelde migration/seed çalıştırmak için
-gerçek bağlantı dizesi gerekiyor.
+`DATABASE_URL` Vercel'de tanımlı, Neon veritabanı bağlandı ve migration uygulandı (bkz. aşağı).
 
 **Adım adım plan:**
 
-0. **(Sizden gerekli)** DATABASE_URL'in gerçek değerini bulun — Vercel Dashboard →
-   Storage sekmesinde bağlı bir Postgres/Neon veritabanı var mı bakın; varsa oradan
-   connection string'i kopyalayıp bana verin (ya da `.env.local`'e ekleyin). Yoksa/bilmiyorsanız
-   sıfırdan yeni bir Neon veritabanı bağlarız — bu durumda değeri baştan ben de görebilirim.
-1. `npm run db:generate && npm run db:migrate` — tabloları oluştur
-2. `npm run db:seed` — `/src/data` içindeki mevcut içeriği veritabanına aktar
-3. Basit admin girişi: `/admin` altında tek şifreli, cookie tabanlı hafif bir oturum
-   (NextAuth gibi ağır bir sistem yerine — bu ölçekte gereksiz karmaşıklık)
-4. İlk CRUD modülü: **Haberler** (en sık değişen içerik) — listele / ekle / düzenle / sil
+0. ~~DATABASE_URL'in gerçek değerini bul~~ ✅ — Neon connection string alındı, `.env.local`'e eklendi
+1. ~~`npm run db:generate && npm run db:migrate`~~ ✅ — 7 tablo oluşturuldu
+2. ~~`npm run db:seed`~~ ✅ — mevcut içerik aktarıldı (47 oyuncu, 6 personel, 8 kurul üyesi,
+   11 kadro slotu, 26 galeri, 4 haber)
+3. ~~Basit admin girişi~~ ✅ — `/admin` şifre korumalı (tek şifre + imzalı, 12 saatlik cookie
+   oturumu). Şifre: `.env.local` / Vercel `ADMIN_PASSWORD`. Canlıda test edildi.
+   **Not:** Next.js 16'da `middleware.ts` kaldırılıp `src/proxy.ts` (+ `proxy` adında export)
+   oldu — bu proje o yeni convention'ı kullanıyor.
+4. **(Sıradaki)** İlk CRUD modülü: **Haberler** — listele / ekle / düzenle / sil
 5. `src/lib/queries.ts` içindeki `getNews()`'ü Drizzle sorgusuna çevir — `page.tsx` dosyaları
    hiç değişmez, veri kaynağı arkada değişir
 6. Sırayla diğer modüller: Galeri → Teknik Kadro → Yönetim Kurulu → (ileride) Sporcularımız
