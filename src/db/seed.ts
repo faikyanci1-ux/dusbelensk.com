@@ -1,4 +1,6 @@
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
+
 import { getDb } from "./client";
 import * as schema from "./schema";
 import { players } from "../data/players";

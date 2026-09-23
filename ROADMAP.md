@@ -38,25 +38,42 @@ Netleştirme sonrası karar: **"Sporcularımız" bölümü/sayfası şimdilik hi
 
 ## Faz 2 — Vercel Postgres + Admin Panel
 
-Altyapı şimdiden hazırlandı, henüz bağlanmadı:
+Altyapı hazır, henüz bağlanmadı. Şema: `src/db/schema.ts` (players, staff, board_members,
+lineup_slots, gallery_items, news_items, contact_messages), bağlantı `src/db/client.ts`,
+mevcut verileri aktaracak script `src/db/seed.ts`.
 
-- `src/db/schema.ts` — Drizzle ORM şeması (players, staff, board_members, lineup_slots, gallery_items, news_items, contact_messages)
-- `src/db/client.ts` — Neon/Postgres bağlantısı (`DATABASE_URL` bekliyor)
-- `src/db/seed.ts` — `/src/data` içeriğini veritabanına aktaran script
+`DATABASE_URL` Vercel'de zaten tanımlı (Production + Preview, 4 gün önce eklenmiş) ama
+**"sensitive" işaretli** — bu yüzden CLI/API ile gerçek değeri asla geri çekilemiyor,
+sadece Vercel'in build ortamında kullanılabiliyor. Yerelde migration/seed çalıştırmak için
+gerçek bağlantı dizesi gerekiyor.
 
-**Yapılacaklar:**
-1. Vercel projesinde bir Postgres (Neon) veritabanı oluştur, `DATABASE_URL`'i `.env.local`'e ekle
-2. `npm run db:generate && npm run db:migrate` — tabloları oluştur
-3. `npm run db:seed` — mevcut verileri veritabanına aktar
-4. `src/lib/queries.ts` içindeki fonksiyonları `/src/data` yerine Drizzle sorgularına çevir (sayfalar değişmez)
-5. Admin panel: `/admin` altında, oturum açma (NextAuth veya benzeri) + sporcu/kadro/haber/galeri CRUD ekranları
+**Adım adım plan:**
+
+0. **(Sizden gerekli)** DATABASE_URL'in gerçek değerini bulun — Vercel Dashboard →
+   Storage sekmesinde bağlı bir Postgres/Neon veritabanı var mı bakın; varsa oradan
+   connection string'i kopyalayıp bana verin (ya da `.env.local`'e ekleyin). Yoksa/bilmiyorsanız
+   sıfırdan yeni bir Neon veritabanı bağlarız — bu durumda değeri baştan ben de görebilirim.
+1. `npm run db:generate && npm run db:migrate` — tabloları oluştur
+2. `npm run db:seed` — `/src/data` içindeki mevcut içeriği veritabanına aktar
+3. Basit admin girişi: `/admin` altında tek şifreli, cookie tabanlı hafif bir oturum
+   (NextAuth gibi ağır bir sistem yerine — bu ölçekte gereksiz karmaşıklık)
+4. İlk CRUD modülü: **Haberler** (en sık değişen içerik) — listele / ekle / düzenle / sil
+5. `src/lib/queries.ts` içindeki `getNews()`'ü Drizzle sorgusuna çevir — `page.tsx` dosyaları
+   hiç değişmez, veri kaynağı arkada değişir
+6. Sırayla diğer modüller: Galeri → Teknik Kadro → Yönetim Kurulu → (ileride) Sporcularımız
+   (gerçek kadro verisi/foto politikası netleşince)
+7. Görsel yükleme kararı: yeni haber/galeri fotoğrafı admin panelden nasıl yüklenecek
+   (Vercel Blob mu, yoksa dosya sisteminden manuel mi)
+8. Her modül bitince: commit → push → Vercel otomatik deploy (bu akış zaten kurulu ve çalışıyor)
 
 ## Faz 3 — Yayına alma
 
-1. GitHub reposu oluştur, projeyi push'la
-2. Vercel'de repo'yu import et, `DATABASE_URL`, `RESEND_API_KEY`, `CONTACT_EMAIL_TO` env değişkenlerini gir
-3. `dusbelensk.com` domainini Vercel projesine bağla (DNS kaydı)
-4. Eski statik site (`legacy-static-site/`) yayından kaldırılır
+**Durum: Tamamlandı ✅**
+
+1. ~~GitHub reposu oluştur, projeyi push'la~~ — yapıldı (`faikyanci1-ux/dusbelensk.com`)
+2. ~~Vercel'de repo'yu import et, env değişkenlerini gir~~ — yapıldı, Git push'ta otomatik deploy tetikleniyor
+3. ~~`dusbelensk.com` domainini Vercel projesine bağla~~ — yapıldı, site canlıda
+4. Eski statik site (`legacy-static-site/`) zaten yayında değil, sadece arşiv olarak duruyor
 
 ## Onayınızı bekleyen kararlar
 
