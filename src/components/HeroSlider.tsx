@@ -83,7 +83,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           alt=""
           fill
           sizes="100vw"
-          preload={index === 0}
+          priority={index === 0}
           className={`object-cover brightness-110 contrast-105 saturate-110 ${
             prefersReducedMotion ? "" : "animate-ken-burns"
           }`}
