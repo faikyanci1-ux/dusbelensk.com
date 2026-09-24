@@ -33,7 +33,7 @@ import { HeroSlider, type HeroSlide } from "@/components/HeroSlider";
 import { NewsCarousel } from "@/components/NewsCarousel";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
+import { SchoolQrBlock, SchoolRegisterButton, schoolBirthYears } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 
@@ -123,8 +123,8 @@ export default async function HomePage() {
               Yetiştiriyoruz.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-text-muted">
-              {club.ageRange} yaş arası çocuk ve gençlere, {club.nextMatch.location}&apos;nde lisanslı
-              antrenörler eşliğinde futbol eğitimi.
+              Futbol okulunda {schoolBirthYears} doğumlulara, altyapıda {club.ageRange} yaş arası gençlere
+              lisanslı antrenörler eşliğinde futbol eğitimi.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <SchoolRegisterButton label="Futbol Okulu Ön Kayıt" />

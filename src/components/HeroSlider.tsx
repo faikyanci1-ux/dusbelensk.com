@@ -90,16 +90,16 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         />
       )}
 
-      <div className="absolute bottom-20 left-1/2 z-20 hidden -translate-x-1/2 text-xs font-semibold uppercase tracking-wide text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] sm:block sm:bottom-24">
+      <div className="pointer-events-none absolute bottom-20 left-1/2 z-20 hidden -translate-x-1/2 text-xs font-semibold uppercase tracking-wide text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] sm:block sm:bottom-24 lg:left-auto lg:right-36 lg:translate-x-0">
         {slide.caption}
       </div>
 
       <div
-        className="absolute inset-x-0 bottom-6 z-20 flex items-center justify-center gap-3 sm:bottom-16"
+        className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex items-center justify-center gap-3 sm:bottom-16 lg:justify-end lg:pr-24"
         role="group"
         aria-label="Slayt gösterisi kontrolleri"
       >
-        <div className="flex gap-3">
+        <div className="pointer-events-auto flex gap-3">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -121,7 +121,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           type="button"
           onClick={() => setManuallyPaused((p) => !p)}
           aria-label={paused ? "Slayt gösterisini oynat" : "Slayt gösterisini duraklat"}
-          className="relative flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)] outline-none transition hover:bg-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-bright before:absolute before:-inset-2.5 before:content-['']"
+          className="pointer-events-auto relative flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)] outline-none transition hover:bg-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-bright before:absolute before:-inset-2.5 before:content-['']"
         >
           {paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
         </button>
