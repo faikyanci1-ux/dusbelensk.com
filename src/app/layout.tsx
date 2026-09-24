@@ -9,6 +9,7 @@ import { getClubInfo } from "@/lib/queries";
 import type { ClubInfo } from "@/lib/siteSettings";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
+import { jsonLdHtml } from "@/lib/jsonLd";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -91,6 +92,10 @@ function buildJsonLd(club: ClubInfo) {
   };
 }
 
+// Sayfalar statik üretilir; admin panelde kayıt anında yenilenir (revalidatePath). Ayrıca saatte bir
+// yenilenir ki tarihi geçen "Sıradaki Maç" ve etkinlikler kayıt beklenmeden gizlensin.
+export const revalidate = 3600;
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const jsonLd = buildJsonLd(await getClubInfo());
   return (
@@ -98,7 +103,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
         />
         <a
           href="#main-content"

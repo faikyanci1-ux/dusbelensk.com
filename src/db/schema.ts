@@ -2,8 +2,7 @@ import { pgTable, serial, integer, text, boolean, timestamp, jsonb } from "drizz
 
 /**
  * Admin panelden yönetilen içerik. Site bu tabloları src/lib/queries.ts üzerinden okur;
- * src/data/*.ts dosyaları yalnızca ilk aktarımın (src/db/sync-content.ts) kaynağı ve
- * veritabanına ulaşılamazsa kullanılan yedek içeriktir.
+ * src/data/*.ts dosyaları yalnızca ilk aktarımın (src/db/sync-content.ts) kaynağıdır.
  *
  * Görsel alanları: "/images/..." (sitedeki hazır görsel) ya da Vercel Blob'a yüklenmiş
  * görselin tam URL'si. Sıralanabilir listelerde sort_order küçükten büyüğe gösterilir.
@@ -103,6 +102,13 @@ export const siteSettings = pgTable("site_settings", {
   key: text("key").primaryKey(),
   value: jsonb("value").notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+/** Admin girişinde deneme-yanılmayı sınırlamak için IP başına hatalı deneme sayacı (bkz. api/admin/login). */
+export const adminLoginAttempts = pgTable("admin_login_attempts", {
+  ip: text("ip").primaryKey(),
+  failures: integer("failures").default(0).notNull(),
+  windowStart: timestamp("window_start", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const contactMessages = pgTable("contact_messages", {

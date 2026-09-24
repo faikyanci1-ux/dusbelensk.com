@@ -37,8 +37,8 @@ function toRow(v: Record<string, string>) {
     photo: orNull(v.photo),
     quote: orNull(v.quote),
     bio: orNull(v.bio),
-    values: lines(v.values).slice(0, 10),
-    mottos: lines(v.mottos).slice(0, 10),
+    values: lines(v.values).slice(0, 10).map((l) => l.slice(0, 60)),
+    mottos: lines(v.mottos).slice(0, 10).map((l) => l.slice(0, 80)),
   };
 }
 
@@ -61,6 +61,7 @@ export async function createBoardMember(_prev: FormState, formData: FormData): P
 
 export async function updateBoardMember(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
+  if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };

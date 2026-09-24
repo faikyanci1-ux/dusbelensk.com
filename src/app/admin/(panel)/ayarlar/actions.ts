@@ -38,6 +38,9 @@ export async function saveSettings(_prev: FormState, formData: FormData): Promis
   const fieldErrors = validate(v, RULES);
 
   if (v.phone && v.phone.replace(/\D/g, "").length < 10) fieldErrors.phone = "Geçerli bir telefon numarası girin.";
+  if (v.instagramHandle && !/^@?[A-Za-z0-9._]{1,30}$/.test(v.instagramHandle)) {
+    fieldErrors.instagramHandle = "Yalnızca harf, rakam, nokta ve alt çizgi kullanılabilir (ör. dusbelensk).";
+  }
   if (v.whatsappNumber && v.whatsappNumber.replace(/\D/g, "").length < 10) {
     fieldErrors.whatsappNumber = "Geçerli bir WhatsApp numarası girin.";
   }

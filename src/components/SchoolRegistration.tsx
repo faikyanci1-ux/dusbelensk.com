@@ -71,7 +71,7 @@ export async function SchoolQrCode({ size = 200, className = "" }: { size?: numb
         className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg bg-white p-1"
         style={{ width: logoSize + 8, height: logoSize + 8 }}
       >
-        <Image src="/images/logo.png" alt="" width={logoSize} height={logoSize} />
+        <Image src="/images/logo.png" alt="" width={logoSize} height={logoSize} style={{ width: logoSize, height: logoSize }} />
       </span>
     </a>
   );

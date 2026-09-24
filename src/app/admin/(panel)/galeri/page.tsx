@@ -4,7 +4,7 @@ import { asc } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { galleryItems } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
-import { AdminPageHeader, EmptyState, StatusBanner } from "@/components/admin/ui";
+import { AdminPageHeader, EditLink, EmptyState, StatusBanner } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/adminSession";
 import { deleteGalleryItem, moveGalleryItem } from "./actions";
 
@@ -48,6 +48,10 @@ export default async function AdminGalleryPage({ searchParams }: { searchParams:
                   {item.size ? ` · ${SIZE_LABELS[item.size]}` : ""}
                 </p>
               </div>
+              {/* Mobilde yer yok: fotoğraf ve açıklama da düzenlemeye götürür. */}
+              <span className="hidden sm:block">
+                <EditLink href={`/admin/galeri/${item.id}`} />
+              </span>
               <DeleteButton action={deleteGalleryItem} id={item.id} compact
                 confirmText={`“${item.alt}” fotoğrafını galeriden kaldırmak istediğinize emin misiniz?`} />
             </li>

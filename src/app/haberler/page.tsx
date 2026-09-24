@@ -65,8 +65,12 @@ export default async function NewsPage() {
                   <CalendarDays size={14} />
                   {item.date}
                 </div>
-                <h3 className="mt-2 font-semibold text-ink">{item.title}</h3>
-                <p className="mt-2 text-sm text-ink-muted">{item.summary}</p>
+                <h3 className="mt-2 font-semibold text-ink">
+                  <Link href={`/haberler/${item.id}`} className="hover:text-accent">
+                    {item.title}
+                  </Link>
+                </h3>
+                <p className="mt-2 line-clamp-4 text-sm text-ink-muted">{item.summary}</p>
                 <Link
                   href={`/haberler/${item.id}`}
                   className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent underline underline-offset-2"

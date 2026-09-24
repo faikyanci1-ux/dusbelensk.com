@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Fotoğraf yükleme henüz yapılandırılmadı." }, { status: 503 });
   }
 
-  const body = (await request.json()) as HandleUploadBody;
   try {
+    const body = (await request.json()) as HandleUploadBody;
     const result = await handleUpload({
       body,
       request,

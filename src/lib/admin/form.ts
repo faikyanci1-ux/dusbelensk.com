@@ -71,8 +71,8 @@ export function validate(values: Record<string, string>, rules: Record<string, R
       case "int": {
         const n = Number(value);
         if (!Number.isInteger(n)) errors[name] = `${rule.label} bir tam sayı olmalı.`;
-        else if (rule.min !== undefined && n < rule.min) errors[name] = `${rule.label} en az ${rule.min} olabilir.`;
-        else if (rule.maxValue !== undefined && n > rule.maxValue) errors[name] = `${rule.label} en fazla ${rule.maxValue} olabilir.`;
+        else if (rule.min !== undefined && n < rule.min) errors[name] = `${rule.label} en az ${rule.min} olmalı.`;
+        else if (rule.maxValue !== undefined && n > rule.maxValue) errors[name] = `${rule.label} en fazla ${rule.maxValue} olmalı.`;
         break;
       }
       case "url":
@@ -114,9 +114,11 @@ export function orNull(value: string | undefined): string | null {
 /** Admin'de yapılan her değişiklik sitenin birçok sayfasını etkiliyor (anasayfa, footer, sitemap…) — hepsini yenile. */
 export function revalidateSite() {
   revalidatePath("/", "layout");
+  // Metadata route'ları (sitemap) layout ağacının parçası olmayabilir; ayrıca yenile.
+  revalidatePath("/sitemap.xml");
 }
 
-export function parseId(value: FormDataEntryValue | null | undefined): number | null {
+export function parseId(value: unknown): number | null {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
 }

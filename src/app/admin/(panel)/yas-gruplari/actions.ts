@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { programGroups } from "@/db/schema";
@@ -15,6 +15,17 @@ const RULES = {
   days: { label: "Antrenman günleri", required: true, max: 60 },
 };
 
+/** Grup kodları sitede anahtar olarak kullanılıyor; aynı kod iki kez girilemez (büyük/küçük harf fark etmez). */
+async function codeTaken(code: string, exceptId?: number): Promise<boolean> {
+  const sameCode = sql`lower(${programGroups.code}) = lower(${code})`;
+  const [row] = await getDb()
+    .select({ id: programGroups.id })
+    .from(programGroups)
+    .where(exceptId ? and(sameCode, ne(programGroups.id, exceptId)) : sameCode)
+    .limit(1);
+  return Boolean(row);
+}
+
 function toRow(v: Record<string, string>) {
   return { code: v.code, range: v.range, title: v.title, description: v.description, days: v.days };
 }
@@ -23,6 +34,7 @@ export async function createProgramGroup(_prev: FormState, formData: FormData): 
   await requireAdmin();
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
+  if (!fieldErrors.code && (await codeTaken(values.code))) fieldErrors.code = "Bu grup kodu zaten var.";
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
   try {
     const sortOrder = await nextSortOrder(programGroups, programGroups.sortOrder);
@@ -37,8 +49,10 @@ export async function createProgramGroup(_prev: FormState, formData: FormData): 
 
 export async function updateProgramGroup(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
+  if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
+  if (!fieldErrors.code && (await codeTaken(values.code, id))) fieldErrors.code = "Bu grup kodu zaten var.";
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
   try {
     const updated = await getDb()

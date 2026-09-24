@@ -57,7 +57,7 @@ export function BoardForm({
         <Field label="Ad soyad" htmlFor="name" error={e.name}>
           <input id="name" name="name" maxLength={80} defaultValue={v.name} aria-invalid={!!e.name} className={inputClass} />
         </Field>
-        <Field label="Görev" htmlFor="role" error={e.role}>
+        <Field label="Görev" htmlFor="role" error={e.role} hint="Kurulu değiştirirseniz görevi de güncellemeyi unutmayın.">
           <input id="role" name="role" list="board-roles" maxLength={80} defaultValue={v.role} aria-invalid={!!e.role} className={inputClass} />
           <datalist id="board-roles">
             {["Kulüp Başkanı", "Başkan Yardımcısı", "Yönetim Kurulu Üyesi", "Denetleme Kurulu Başkanı", "Denetleme Kurulu Üyesi"].map((r) => (
@@ -72,8 +72,9 @@ export function BoardForm({
           Tanıtım kartı <span className="font-normal text-white/50">(isteğe bağlı — başkan gibi öne çıkan üyeler için)</span>
         </summary>
         <p className="mt-2 text-xs text-white/50">
-          Fotoğraf eklenen yönetim kurulu üyesi, Yönetim sayfasında büyük kartla gösterilir. Fotoğraf ve söz birlikte
-          doluysa anasayfadaki “Yönetim ve Teknik Kadro” slaytında da yer alır.
+          Yalnızca <strong>Yönetim Kurulu</strong> üyeleri için: fotoğraf eklenirse üye Yönetim sayfasında büyük kartla
+          (söz, biyografi, değerler ve sloganlarla) gösterilir; fotoğraf yoksa bu alanlar görünmez. Fotoğraf ve söz
+          birlikte doluysa üye anasayfadaki “Yönetim ve Teknik Kadro” slaytında da yer alır.
         </p>
         <div className="mt-5 space-y-6">
           <ImageField name="photo" label="Fotoğraf" initialValue={initialValues.photo} options={imageOptions}

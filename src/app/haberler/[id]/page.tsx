@@ -8,6 +8,7 @@ import { buildMetadata } from "@/lib/metadata";
 import { siteUrl } from "@/lib/site";
 import { club } from "@/data/club";
 import { toIsoDate } from "@/lib/formatDate";
+import { jsonLdHtml } from "@/lib/jsonLd";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -79,11 +80,11 @@ export default async function NewsDetailPage({ params }: Params) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(articleJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }}
       />
       <PageHero eyebrow={item.tag ?? "Haber"} title={item.title} image={item.image} />
       <div className="bg-cream py-16 text-ink">
@@ -98,7 +99,14 @@ export default async function NewsDetailPage({ params }: Params) {
             <time dateTime={isoDate}>{item.date}</time>
           </div>
 
-          <p className="mt-8 text-lg leading-relaxed text-ink-muted">{item.summary}</p>
+          {/* Admin panelde boş satırla ayrılan paragraflar ayrı gösterilir; tek satır sonları korunur. */}
+          <div className="mt-8 space-y-5">
+            {item.summary.split(/\r?\n\s*\r?\n/).map((paragraph, i) => (
+              <p key={i} className="whitespace-pre-line text-lg leading-relaxed text-ink-muted">
+                {paragraph.trim()}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </>

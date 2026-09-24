@@ -61,6 +61,9 @@ export function GalleryForm({
       {isNew && (
         <fieldset>
           <legend className="mb-2 block text-xs font-medium text-white/70">Galerideki yeri</legend>
+          <p className="mb-2 text-xs text-white/45">
+            Galerinin ilk 6 fotoğrafı anasayfa slaytında da görünür; başa eklenen fotoğraf slayta girer.
+          </p>
           <div className="flex flex-wrap gap-4 text-sm">
             <label className="flex items-center gap-2">
               <input type="radio" name="position" value="start" defaultChecked={v.position !== "end"} className="accent-[var(--color-accent-bright)]" />

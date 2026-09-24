@@ -36,7 +36,7 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Pr
                 <>
                   <EditLink href={`/admin/haberler/${item.id}`} />
                   <DeleteButton action={deleteNews} id={item.id}
-                    confirmText={`“${item.title}” haberini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`} />
+                    confirmText={`“${item.title}” haberini silmek istediğinize emin misiniz?`} />
                 </>
               }
             >

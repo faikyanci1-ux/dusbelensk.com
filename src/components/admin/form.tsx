@@ -93,7 +93,7 @@ export function DeleteButton({
     <form
       action={action}
       onSubmit={(event) => {
-        if (!window.confirm(confirmText)) event.preventDefault();
+        if (!window.confirm(`${confirmText}\n\nBu işlem geri alınamaz.`)) event.preventDefault();
       }}
     >
       <input type="hidden" name="id" value={id} />

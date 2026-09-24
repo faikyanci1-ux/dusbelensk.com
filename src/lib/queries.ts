@@ -2,9 +2,8 @@
  * Tek giriş noktası: sayfalar veriyi yalnızca buradan alır.
  *
  * Admin panelden yönetilen içerik (site ayarları, haberler, etkinlikler, galeri, teknik kadro,
- * yönetim, SSS, yaş grupları) Postgres'ten okunur. Veritabanına ulaşılamazsa site çökmesin diye
- * src/data/*.ts içindeki statik içeriğe düşülür (haberler ve etkinlikler için boş liste) ve hata
- * sunucu loguna yazılır. Videolar, veli bilgileri ve değerler hâlâ statik dosyalardan gelir.
+ * yönetim, SSS, yaş grupları) Postgres'ten okunur (hata davranışı için bkz. dbQuery).
+ * Videolar, veli bilgileri ve değerler hâlâ statik dosyalardan gelir.
  *
  * getSiteSettings React cache() ile sarıldığı için aynı istek içinde birden çok bileşen
  * getClubInfo() çağırsa da veritabanına tek sorgu gider.
@@ -24,7 +23,6 @@ import {
 } from "@/db/schema";
 import { formatTurkishDate } from "@/lib/formatDate";
 import {
-  defaultClubSettings,
   mergeClubSettings,
   normalizeClubSettings,
   todayInTurkey,
@@ -32,42 +30,42 @@ import {
   type ClubSettings,
 } from "@/lib/siteSettings";
 import { players, type Player } from "@/data/players";
-import { staff as staticStaff, type StaffMember } from "@/data/staff";
-import {
-  managementBoard as staticManagementBoard,
-  managementBoardNote,
-  auditBoard as staticAuditBoard,
-  auditBoardNote,
-  type BoardMember,
-} from "@/data/board";
+import type { StaffMember } from "@/data/staff";
+import { managementBoardNote, auditBoardNote, type BoardMember } from "@/data/board";
 import { lineup, lineupNote, type LineupSlot } from "@/data/lineup";
-import { gallery as staticGallery, type GalleryItem } from "@/data/gallery";
+import type { GalleryItem } from "@/data/gallery";
 import type { NewsItem } from "@/data/news";
 import { statsBlurb, values, parentInfo, type ValueItem } from "@/data/club";
 import { videos, type VideoItem } from "@/data/videos";
-import { faq as staticFaq, type FaqItem } from "@/data/faq";
+import type { FaqItem } from "@/data/faq";
 import type { EventItem } from "@/data/events";
-import { program as staticProgram, type ProgramGroup } from "@/data/program";
+import type { ProgramGroup } from "@/data/program";
 
-async function withFallback<T>(label: string, query: () => Promise<T>, fallback: T): Promise<T> {
+/**
+ * Veritabanı sorgusu; hata olursa loglayıp yeniden fırlatır. Bilerek yedek içerik döndürmüyoruz:
+ * sayfalar statik üretilip önbelleğe alınıyor ve yedek/boş içerik başarılı sayılıp kalıcı olarak
+ * önbelleğe girerdi. Hata fırlatılınca Next.js son başarılı sayfayı sunmaya devam eder ve bir sonraki
+ * istekte yeniden dener (bkz. docs/01-app/02-guides/incremental-static-regeneration.md); derleme
+ * sırasında veritabanına ulaşılamazsa da yayın eski içerikle çıkmak yerine başarısız olur.
+ */
+async function dbQuery<T>(label: string, query: () => Promise<T>): Promise<T> {
   try {
     return await query();
   } catch (error) {
-    console.error(`[${label}] veritabanından okunamadı, yedek içerik kullanılıyor:`, error);
-    return fallback;
+    console.error(`[${label}] veritabanından okunamadı:`, error);
+    throw error;
   }
 }
 
 // ---------- Site ayarları ----------
 
 export const getSiteSettings = cache(async (): Promise<ClubSettings> =>
-  withFallback(
+  dbQuery(
     "getSiteSettings",
     async () => {
       const [row] = await getDb().select().from(siteSettings).where(eq(siteSettings.key, "club"));
       return normalizeClubSettings(row?.value);
-    },
-    defaultClubSettings
+    }
   )
 );
 
@@ -104,7 +102,7 @@ export async function getPlayers(): Promise<Player[]> {
 // ---------- Teknik kadro & yönetim ----------
 
 export const getStaff = cache(async (): Promise<StaffMember[]> =>
-  withFallback(
+  dbQuery(
     "getStaff",
     async () => {
       const rows = await getDb().select().from(staffTable).orderBy(asc(staffTable.sortOrder), asc(staffTable.id));
@@ -116,13 +114,12 @@ export const getStaff = cache(async (): Promise<StaffMember[]> =>
         photo: r.photo,
         quote: r.quote ?? undefined,
       }));
-    },
-    staticStaff
+    }
   )
 );
 
 const getBoardMembers = cache(async (): Promise<{ management: BoardMember[]; audit: BoardMember[] }> =>
-  withFallback(
+  dbQuery(
     "getBoardMembers",
     async () => {
       const rows = await getDb()
@@ -142,8 +139,7 @@ const getBoardMembers = cache(async (): Promise<{ management: BoardMember[]; aud
         management: rows.filter((r) => r.boardType === "management").map(toMember),
         audit: rows.filter((r) => r.boardType === "audit").map(toMember),
       };
-    },
-    { management: staticManagementBoard, audit: staticAuditBoard }
+    }
   )
 );
 
@@ -162,7 +158,7 @@ export async function getLineup(): Promise<{ slots: LineupSlot[]; note: string }
 // ---------- Galeri ----------
 
 export const getGallery = cache(async (): Promise<GalleryItem[]> =>
-  withFallback(
+  dbQuery(
     "getGallery",
     async () => {
       const rows = await getDb().select().from(galleryItems).orderBy(asc(galleryItems.sortOrder), asc(galleryItems.id));
@@ -172,16 +168,15 @@ export const getGallery = cache(async (): Promise<GalleryItem[]> =>
         alt: r.alt,
         size: r.size === "large" || r.size === "wide" ? r.size : undefined,
       }));
-    },
-    staticGallery
+    }
   )
 );
 
 // ---------- Haberler ----------
 
-/** Haberler (yeniden eskiye). Veritabanına ulaşılamazsa boş liste — anasayfadaki haber bölümü gizlenir. */
+/** Haberler (yeniden eskiye). */
 export const getNews = cache(async (): Promise<NewsItem[]> =>
-  withFallback(
+  dbQuery(
     "getNews",
     async () => {
       const rows = await getDb().select().from(newsItems).orderBy(desc(newsItems.date), desc(newsItems.id));
@@ -193,8 +188,7 @@ export const getNews = cache(async (): Promise<NewsItem[]> =>
         image: row.image ?? undefined,
         tag: row.tag ?? undefined,
       }));
-    },
-    []
+    }
   )
 );
 
@@ -205,13 +199,12 @@ export async function getVideos(): Promise<VideoItem[]> {
 // ---------- SSS ----------
 
 export const getFaq = cache(async (): Promise<FaqItem[]> =>
-  withFallback(
+  dbQuery(
     "getFaq",
     async () => {
       const rows = await getDb().select().from(faqItems).orderBy(asc(faqItems.sortOrder), asc(faqItems.id));
       return rows.map((r) => ({ question: r.question, answer: r.answer }));
-    },
-    [...staticFaq]
+    }
   )
 );
 
@@ -219,7 +212,7 @@ export const getFaq = cache(async (): Promise<FaqItem[]> =>
 
 /** Bugün ve sonrasındaki etkinlikler (yakından uzağa). Tarihi geçenler otomatik gizlenir. */
 export const getUpcomingEvents = cache(async (): Promise<EventItem[]> =>
-  withFallback(
+  dbQuery(
     "getUpcomingEvents",
     async () => {
       const rows = await getDb()
@@ -234,15 +227,14 @@ export const getUpcomingEvents = cache(async (): Promise<EventItem[]> =>
         detail: r.time ? `${r.time} · ${r.location}` : r.location,
         tag: r.tag,
       }));
-    },
-    []
+    }
   )
 );
 
 // ---------- Yaş grupları ----------
 
 export const getProgram = cache(async (): Promise<ProgramGroup[]> =>
-  withFallback(
+  dbQuery(
     "getProgram",
     async () => {
       const rows = await getDb().select().from(programGroups).orderBy(asc(programGroups.sortOrder), asc(programGroups.id));
@@ -254,8 +246,7 @@ export const getProgram = cache(async (): Promise<ProgramGroup[]> =>
         days: r.days,
         accent: i % 2 === 0 ? ("accent" as const) : ("accent-2" as const),
       }));
-    },
-    [...staticProgram]
+    }
   )
 );
 

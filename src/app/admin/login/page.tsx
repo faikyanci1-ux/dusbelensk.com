@@ -8,6 +8,7 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("Şifre hatalı. Tekrar deneyin.");
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -21,6 +22,8 @@ export default function AdminLoginPage() {
       router.push("/admin");
       router.refresh();
     } else {
+      const data = await res.json().catch(() => null);
+      setErrorMessage(res.status === 429 && data?.error ? data.error : "Şifre hatalı. Tekrar deneyin.");
       setStatus("error");
     }
   }
@@ -60,7 +63,7 @@ export default function AdminLoginPage() {
 
         {status === "error" && (
           <p className="mt-3 text-sm text-red-400" role="alert">
-            Şifre hatalı. Tekrar deneyin.
+            {errorMessage}
           </p>
         )}
 

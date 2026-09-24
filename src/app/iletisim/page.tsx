@@ -8,6 +8,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { buildMetadata } from "@/lib/metadata";
 import { siteUrl } from "@/lib/site";
+import { jsonLdHtml } from "@/lib/jsonLd";
 
 function ContactInfoRow({
   icon: Icon,
@@ -81,7 +82,7 @@ export default async function ContactPage() {
     <>
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdHtml(localBusinessJsonLd) }}
     />
     <PageHero
       eyebrow="İletişim"

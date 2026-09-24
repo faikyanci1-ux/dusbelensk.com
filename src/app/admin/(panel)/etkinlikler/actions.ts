@@ -36,6 +36,7 @@ export async function createEvent(_prev: FormState, formData: FormData): Promise
 
 export async function updateEvent(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
+  if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };

@@ -30,6 +30,7 @@ export async function createFaq(_prev: FormState, formData: FormData): Promise<F
 
 export async function updateFaq(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
+  if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };

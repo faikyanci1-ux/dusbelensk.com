@@ -53,7 +53,7 @@ export function NewsForm({
         </Field>
       </div>
 
-      <Field label="Haber metni" htmlFor="summary" error={e.summary} hint="Anasayfadaki kartta ilk birkaç satırı, haber sayfasında tamamı görünür.">
+      <Field label="Haber metni" htmlFor="summary" error={e.summary} hint="Paragrafları boş bir satırla ayırın. Anasayfadaki kartta ilk birkaç satırı, haber sayfasında tamamı görünür.">
         <textarea id="summary" name="summary" rows={7} maxLength={3000} defaultValue={v.summary} aria-invalid={!!e.summary}
           className={`${inputClass} resize-y leading-relaxed`} />
       </Field>

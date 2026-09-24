@@ -13,8 +13,9 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function BoardsPage() {
   const [management, audit] = await Promise.all([getManagementBoard(), getAuditBoard()]);
-  const president = management.members.find((member) => member.photo);
-  const otherManagementMembers = management.members.filter((member) => member !== president);
+  // Fotoğrafı olan her yönetim kurulu üyesi (panelde "Tanıtım kartı") büyük kartla, diğerleri listede.
+  const featuredMembers = management.members.filter((member) => member.photo);
+  const otherManagementMembers = management.members.filter((member) => !member.photo);
 
   return (
     <>
@@ -26,8 +27,8 @@ export default async function BoardsPage() {
     />
     <div className="bg-cream py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-      {president && (
-        <div className="mt-12 grid overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm sm:grid-cols-[260px_1fr]">
+      {featuredMembers.map((president, index) => (
+        <div key={`${president.name}-${index}`} className="mt-12 grid overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm sm:grid-cols-[260px_1fr]">
           <div className="relative aspect-[2/3] w-full">
             <Image
               src={president.photo!}
@@ -75,16 +76,16 @@ export default async function BoardsPage() {
             )}
           </div>
         </div>
-      )}
+      ))}
 
       <div className="mt-12 grid gap-8 md:grid-cols-2">
         <div className="rounded-b-2xl border border-t-4 border-black/10 border-t-accent-bright bg-white p-8 shadow-sm">
           <h3 className="text-lg font-bold text-ink">Yönetim Kurulu</h3>
           <span className="mt-2 block h-0.5 w-10 rounded-full bg-accent-bright" />
           <ul className="mt-6 space-y-4">
-            {otherManagementMembers.map((member) => (
+            {otherManagementMembers.map((member, i) => (
               <li
-                key={member.name}
+                key={`${member.name}-${i}`}
                 className="flex items-center justify-between rounded-lg border border-black/10 bg-black/[0.02] px-4 py-3 transition hover:border-accent/40"
               >
                 <span className="font-medium text-ink">{member.name}</span>
@@ -99,9 +100,9 @@ export default async function BoardsPage() {
           <h3 className="text-lg font-bold text-ink">Denetleme Kurulu</h3>
           <span className="mt-2 block h-0.5 w-10 rounded-full bg-accent-2" />
           <ul className="mt-6 space-y-4">
-            {audit.members.map((member) => (
+            {audit.members.map((member, i) => (
               <li
-                key={member.name}
+                key={`${member.name}-${i}`}
                 className="flex items-center justify-between rounded-lg border border-black/10 bg-black/[0.02] px-4 py-3 transition hover:border-accent-2/40"
               >
                 <span className="font-medium text-ink">{member.name}</span>

@@ -4,6 +4,14 @@ import { useActionState } from "react";
 import { Field, FormError, SaveButton, inputClass } from "@/components/admin/form";
 import type { FormState } from "@/lib/admin/form";
 
+/** Sunucu doğrulamasıyla aynı sınırlar (ayarlar/actions.ts RULES). */
+const MAX_LENGTH: Record<string, number> = {
+  phone: 20, whatsappNumber: 20, instagramHandle: 31, address: 160, athleteCount: 30, athleteStat: 8,
+  foundedYear: 4, officialMatchCount: 8, ageRange: 12, schoolBirthYearFrom: 4, schoolBirthYearTo: 4,
+  schoolRegistrationUrl: 300, nextMatchOpponent: 60, nextMatchLocation: 80, nextMatchTag: 40,
+  aboutDescription: 2000, aboutMission: 400, aboutHighlights: 800, aboutQuote: 300, aboutCoachNote: 800,
+};
+
 function Section({ id, title, description, children }: { id?: string; title: string; description?: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-24 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
@@ -27,10 +35,11 @@ export function SettingsForm({
   const v = state.values ? { ...initialValues, nextMatchEnabled: "", ...state.values } : initialValues;
 
   const input = (name: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
-    <input id={name} name={name} defaultValue={v[name]} aria-invalid={!!e[name]} className={inputClass} {...props} />
+    <input id={name} name={name} defaultValue={v[name]} aria-invalid={!!e[name]} maxLength={MAX_LENGTH[name]}
+      className={inputClass} {...props} />
   );
   const textarea = (name: string, rows: number) => (
-    <textarea id={name} name={name} rows={rows} defaultValue={v[name]} aria-invalid={!!e[name]}
+    <textarea id={name} name={name} rows={rows} defaultValue={v[name]} aria-invalid={!!e[name]} maxLength={MAX_LENGTH[name]}
       className={`${inputClass} resize-y leading-relaxed`} />
   );
 

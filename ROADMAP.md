@@ -61,13 +61,25 @@ mevcut verileri aktaracak script `src/db/seed.ts`.
    sitenin menü/footer'ı gizli (`PublicOnly`).
 5. ~~`getNews()` Drizzle sorgusuna çevrildi~~ ✅ — `src/data/news.ts` artık sitede kullanılmıyor
    (yalnızca ilk aktarım kaynağı).
-5b. **(Sıradaki)** Haber görseli yükleme: Vercel Blob store açılınca (`BLOB_READ_WRITE_TOKEN`)
-   panelden fotoğraf yükleme eklenecek. `next.config.ts` remotePatterns hazır.
-6. Sırayla diğer modüller: Galeri → Teknik Kadro → Yönetim Kurulu → (ileride) Sporcularımız
-   (gerçek kadro verisi/foto politikası netleşince)
-7. Görsel yükleme kararı: yeni haber/galeri fotoğrafı admin panelden nasıl yüklenecek
-   (Vercel Blob mu, yoksa dosya sisteminden manuel mi)
-8. Her modül bitince: commit → push → Vercel otomatik deploy (bu akış zaten kurulu ve çalışıyor)
+6. ~~Tüm modüller~~ ✅ (yerelde tamamlandı, **henüz yayında değil**) — `/admin` altında 8 modül:
+   Site Ayarları (iletişim, sayılar, futbol okulu doğum yılları + kayıt linki, Sıradaki Maç,
+   Hakkımızda metinleri), Haberler, Etkinlikler, Galeri, Teknik Kadro, Yönetim Kurulu, SSS,
+   Yaş Grupları. Ekle/düzenle/sil + yukarı-aşağı sıralama; kayıttan sonra site anında yenilenir.
+   - Veri: migration `0002_admin_modules`, içerik `src/db/sync-content.ts` ile aktarıldı.
+     `src/lib/queries.ts` her şeyi DB'den okur; DB'ye ulaşılamazsa `src/data/*.ts` yedek içeriğine düşer.
+   - QR kod kayıt linkinden her render'da üretilir (`src/components/SchoolRegistration.tsx`).
+   - Sıradaki Maç ve etkinlikler tarihi geçince sitede otomatik gizlenir.
+   - Kod yapısı: modüller `src/app/admin/(panel)/<modül>/` (page, yeni, [id], actions, Form);
+     ortak parçalar `src/components/admin/*`, `src/lib/admin/*`.
+7. **Fotoğraf yükleme**: kod hazır (`ImageField` + `/api/admin/upload`, tarayıcıda 1920px'e küçültme).
+   Etkinleşmesi için Vercel → Storage → Blob store (**Public**) oluşturup projeye bağlamak ve
+   `BLOB_READ_WRITE_TOKEN`'ı yerele almak gerekiyor. **Dikkat:** `vercel env pull .env.local`
+   dosyayı baştan yazar ve (yalnızca Production/Preview'da tanımlı olan) `DATABASE_URL`'i siler —
+   bunun yerine `vercel env pull .env.vercel` ile ayrı dosyaya çekip token satırını `.env.local`'e kopyalayın.
+   O zamana kadar panelde "Sitedeki fotoğraflardan seç" kullanılır.
+8. Yayına alma: tüm admin paneli testlerden geçince tek seferde push → Vercel otomatik deploy.
+   Not: yerel `.env.local` ile canlı site **aynı veritabanını** kullanıyor.
+9. İleride: Sporcularımız modülü (fotoğraf politikası netleşince), videolar.
 
 ## Faz 3 — Yayına alma
 

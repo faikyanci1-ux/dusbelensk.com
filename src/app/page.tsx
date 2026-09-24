@@ -368,19 +368,19 @@ export default async function HomePage() {
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {program.map((group, i) => (
               <div
-                key={group.code}
+                key={`${group.code}-${i}`}
                 className={`group relative overflow-hidden rounded-b-2xl border border-t-4 border-white/10 bg-black/20 p-5 transition duration-300 hover:-translate-y-1 hover:bg-black/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${PROGRAM_ACCENT_CLASSES[group.accent]}`}
               >
                 <span
                   aria-hidden="true"
                   className="pointer-events-none absolute -right-2 -top-3 font-display text-6xl text-white/[0.06] transition duration-300 group-hover:text-white/10"
                 >
-                  0{i + 1}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="relative">
                   <div className="font-display text-3xl text-white">{group.code}</div>
                   <div className="mt-1 text-xs font-semibold uppercase tracking-wide text-accent-light">
-                    {group.range}
+                    {group.range} · {group.title}
                   </div>
                   <p className="mt-3 text-sm text-text-muted">{group.description}</p>
                   {group.days && (
