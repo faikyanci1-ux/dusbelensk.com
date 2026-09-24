@@ -34,8 +34,8 @@ export const faq = [
       "Velilerimiz teknik kadromuzla belirli saatlerde birebir görüşme talep edebilir; oyuncunun gelişimi ve ihtiyaçları hakkında düzenli geri bildirim alır.",
   },
   {
-    question: "Kulüp ne zaman kuruldu, kaç lisanslı oyuncunuz var?",
-    answer: `Düşbelen SK ${club.foundedYear} yılında kuruldu ve şu anda ${club.licensedPlayerCount} lisanslı oyuncumuz bulunuyor.`,
+    question: "Kulüp ne zaman kuruldu, kaç sporcunuz var?",
+    answer: `Düşbelen SK ${club.foundedYear} yılında kuruldu ve şu anda ${club.athleteCount} sporcumuz bulunuyor.`,
   },
   {
     question: "Maç ve etkinlik duyurularını nereden takip edebilirim?",

@@ -6,7 +6,7 @@ export const club = {
   motto: "Daha Güçlü, Daha İleri Düşbelen!",
   foundedYear: 2022,
   ageRange: "11-17",
-  licensedPlayerCount: 48,
+  athleteCount: "100'e yakın",
   officialMatchCount: "+50",
   address: "Yangı Mahallesi Merkez Yangı Sokak No:3 Köyceğiz/Muğla",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=D%C3%BC%C5%9Fbelen+Spor+Kul%C3%BCb%C3%BC+Okalipt%C3%BCs+Tesisleri",
@@ -61,7 +61,7 @@ export const club = {
 } as const;
 
 export const stats = [
-  { number: String(club.licensedPlayerCount), label: "Lisanslı Oyuncu" },
+  { number: "~100", label: "Sporcu" },
   { number: "6", label: "Yaş Grubu" },
   { number: String(club.foundedYear), label: "Kuruluş Yılı" },
   { number: club.officialMatchCount, label: "Resmi / Özel Maç" },

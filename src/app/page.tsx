@@ -220,7 +220,7 @@ export default async function HomePage() {
                   {club.foundedYear}&apos;den beri sahada
                 </span>
                 <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
-                  {club.licensedPlayerCount} lisanslı sporcu
+                  {club.athleteCount} sporcu
                 </span>
                 <span className="rounded-full border border-accent-2/30 bg-accent-2-soft px-3 py-1 text-xs font-semibold text-accent-2">
                   Altyapı odaklı kulüp
