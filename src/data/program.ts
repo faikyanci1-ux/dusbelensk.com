@@ -49,4 +49,12 @@ export const program = [
   },
 ] as const;
 
-export type ProgramGroup = (typeof program)[number];
+export type ProgramGroup = {
+  code: string;
+  range: string;
+  title: string;
+  description: string;
+  days: string;
+  /** Kart üst çizgisi rengi; sırayla dönüşümlü verilir. */
+  accent: "accent" | "accent-2";
+};

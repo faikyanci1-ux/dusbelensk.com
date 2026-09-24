@@ -1,7 +1,8 @@
-import { club } from "@/data/club";
+import { getClubInfo } from "@/lib/queries";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 
-export function WhatsAppButton() {
+export async function WhatsAppButton() {
+  const club = await getClubInfo();
   const message = encodeURIComponent("Merhaba, Düşbelen SK hakkında bilgi almak istiyorum.");
 
   return (

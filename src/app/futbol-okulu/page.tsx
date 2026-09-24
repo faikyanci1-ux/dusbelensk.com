@@ -3,15 +3,17 @@ import { CheckCircle2, ClipboardList, QrCode, PhoneCall } from "lucide-react";
 import { getClubInfo } from "@/lib/queries";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
-import { SchoolQrBlock, SchoolRegisterButton, schoolBirthYears } from "@/components/SchoolRegistration";
+import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { buildMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Futbol Okulu — Online Ön Kayıt",
-  description:
-    "Düşbelen Spor Futbol Okulu: 2015–2020 doğumlu çocuklar için Köyceğiz'de lisanslı antrenörler eşliğinde futbol eğitimi. 100'e yakın sporcumuza katılın — QR kod ile hemen online ön kayıt olun.",
-  path: "/futbol-okulu",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const { footballSchool } = await getClubInfo();
+  return buildMetadata({
+    title: "Futbol Okulu — Online Ön Kayıt",
+    description: `${footballSchool.name}: ${footballSchool.birthYears} doğumlu çocuklar için Köyceğiz'de lisanslı antrenörler eşliğinde futbol eğitimi. ${footballSchool.athleteCount} sporcumuza katılın — QR kod ile hemen online ön kayıt olun.`,
+    path: "/futbol-okulu",
+  });
+}
 
 const STEPS = [
   {
@@ -41,6 +43,7 @@ const SCHOOL_BENEFITS = [
 export default async function FootballSchoolPage() {
   const club = await getClubInfo();
   const { footballSchool } = club;
+  const schoolBirthYears = footballSchool.birthYears;
   const birthYears = Array.from(
     { length: footballSchool.birthYearTo - footballSchool.birthYearFrom + 1 },
     (_, i) => footballSchool.birthYearFrom + i

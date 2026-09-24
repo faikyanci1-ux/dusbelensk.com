@@ -33,7 +33,7 @@ import { HeroSlider, type HeroSlide } from "@/components/HeroSlider";
 import { NewsCarousel } from "@/components/NewsCarousel";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-import { SchoolQrBlock, SchoolRegisterButton, schoolBirthYears } from "@/components/SchoolRegistration";
+import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 
@@ -83,18 +83,18 @@ export default async function HomePage() {
   )}`;
   const facilityVideo = videos.find((v) => v.caption.includes("Havadan")) ?? videos[1];
 
-  const heroSlides: HeroSlide[] = [
-    { type: "video", src: videos[0].src, poster: videos[0].poster, caption: videos[0].caption },
-    { type: "image", src: gallery[0].src, caption: gallery[0].alt },
-    { type: "image", src: gallery[2].src, caption: gallery[2].alt },
-    { type: "video", src: videos[1].src, poster: videos[1].poster, caption: videos[1].caption },
-    { type: "image", src: gallery[1].src, caption: gallery[1].alt },
-    { type: "image", src: gallery[4].src, caption: gallery[4].alt },
-    { type: "video", src: videos[2].src, poster: videos[2].poster, caption: videos[2].caption },
-    { type: "image", src: gallery[3].src, caption: gallery[3].alt },
-    { type: "image", src: gallery[5].src, caption: gallery[5].alt },
-    { type: "video", src: videos[3].src, poster: videos[3].poster, caption: videos[3].caption },
-  ];
+  // Galeri admin panelden değişebilir: slayt için ilk 6 fotoğraf (daha azı varsa olanlar) videoların arasına serpiştirilir.
+  const videoSlides: HeroSlide[] = videos.map((v) => ({ type: "video", src: v.src, poster: v.poster, caption: v.caption }));
+  const imageSlides: HeroSlide[] = [0, 2, 1, 4, 3, 5]
+    .map((i) => gallery[i])
+    .filter((g): g is GalleryItem => Boolean(g))
+    .map((g) => ({ type: "image", src: g.src, caption: g.alt }));
+  const heroSlides: HeroSlide[] = [];
+  for (let v = 0, i = 0; v < videoSlides.length || i < imageSlides.length; v++) {
+    if (videoSlides[v]) heroSlides.push(videoSlides[v]);
+    heroSlides.push(...imageSlides.slice(i, i + 2));
+    i += 2;
+  }
 
   return (
     <>
@@ -123,7 +123,7 @@ export default async function HomePage() {
               Yetiştiriyoruz.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-text-muted">
-              Futbol okulunda {schoolBirthYears} doğumlulara, altyapıda {club.ageRange} yaş arası gençlere
+              Futbol okulunda {club.footballSchool.birthYears} doğumlulara, altyapıda {club.ageRange} yaş arası gençlere
               lisanslı antrenörler eşliğinde futbol eğitimi.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
@@ -150,6 +150,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {club.nextMatch.show && (
       <div className="relative z-20 mx-auto -mt-10 max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col gap-5 rounded-2xl border border-border-soft bg-bg-raised/90 p-5 shadow-2xl backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-center gap-4">
@@ -168,7 +169,8 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm">
             <span className="text-white">
-              {club.nextMatch.date} • {club.nextMatch.time}
+              {club.nextMatch.date}
+              {club.nextMatch.time ? ` • ${club.nextMatch.time}` : ""}
             </span>
             <span className="text-text-muted">· {club.nextMatch.location}</span>
             <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent-bright">
@@ -184,6 +186,7 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+      )}
 
       <div className="relative z-10 mt-10">
         <Marquee />
@@ -380,6 +383,9 @@ export default async function HomePage() {
                     {group.range}
                   </div>
                   <p className="mt-3 text-sm text-text-muted">{group.description}</p>
+                  {group.days && (
+                    <p className="mt-3 text-xs font-medium uppercase tracking-wide text-white/60">{group.days}</p>
+                  )}
                 </div>
               </div>
             ))}

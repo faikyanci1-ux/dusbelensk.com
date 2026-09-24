@@ -1,36 +1,88 @@
 /**
- * Tek giriş noktası. Admin panelden yönetilen modüller (şimdilik: Haberler) Postgres'ten,
- * diğerleri hâlâ /src/data içindeki statik dosyalardan okunuyor. Modüller sırayla
- * veritabanına taşındıkça sadece bu dosyanın gövdesi değişir; sayfalar (page.tsx) değişmez.
+ * Tek giriş noktası: sayfalar veriyi yalnızca buradan alır.
+ *
+ * Admin panelden yönetilen içerik (site ayarları, haberler, etkinlikler, galeri, teknik kadro,
+ * yönetim, SSS, yaş grupları) Postgres'ten okunur. Veritabanına ulaşılamazsa site çökmesin diye
+ * src/data/*.ts içindeki statik içeriğe düşülür (haberler ve etkinlikler için boş liste) ve hata
+ * sunucu loguna yazılır. Videolar, veli bilgileri ve değerler hâlâ statik dosyalardan gelir.
+ *
+ * getSiteSettings React cache() ile sarıldığı için aynı istek içinde birden çok bileşen
+ * getClubInfo() çağırsa da veritabanına tek sorgu gider.
  */
-import { desc } from "drizzle-orm";
+import { cache } from "react";
+import { asc, desc, eq, gte } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { newsItems } from "@/db/schema";
-import { formatTurkishDate } from "@/lib/formatDate";
-import { players, type Player } from "@/data/players";
-import { staff, type StaffMember } from "@/data/staff";
 import {
-  managementBoard,
+  boardMembers,
+  events as eventsTable,
+  faqItems,
+  galleryItems,
+  newsItems,
+  programGroups,
+  siteSettings,
+  staff as staffTable,
+} from "@/db/schema";
+import { formatTurkishDate } from "@/lib/formatDate";
+import {
+  defaultClubSettings,
+  mergeClubSettings,
+  normalizeClubSettings,
+  todayInTurkey,
+  type ClubInfo,
+  type ClubSettings,
+} from "@/lib/siteSettings";
+import { players, type Player } from "@/data/players";
+import { staff as staticStaff, type StaffMember } from "@/data/staff";
+import {
+  managementBoard as staticManagementBoard,
   managementBoardNote,
-  auditBoard,
+  auditBoard as staticAuditBoard,
   auditBoardNote,
   type BoardMember,
 } from "@/data/board";
 import { lineup, lineupNote, type LineupSlot } from "@/data/lineup";
-import { gallery, type GalleryItem } from "@/data/gallery";
+import { gallery as staticGallery, type GalleryItem } from "@/data/gallery";
 import type { NewsItem } from "@/data/news";
-import { club, stats, statsBlurb, values, parentInfo, type ValueItem } from "@/data/club";
+import { statsBlurb, values, parentInfo, type ValueItem } from "@/data/club";
 import { videos, type VideoItem } from "@/data/videos";
-import { faq, type FaqItem } from "@/data/faq";
-import { events, type EventItem } from "@/data/events";
-import { program, type ProgramGroup } from "@/data/program";
+import { faq as staticFaq, type FaqItem } from "@/data/faq";
+import type { EventItem } from "@/data/events";
+import { program as staticProgram, type ProgramGroup } from "@/data/program";
 
-export async function getClubInfo() {
-  return club;
+async function withFallback<T>(label: string, query: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await query();
+  } catch (error) {
+    console.error(`[${label}] veritabanından okunamadı, yedek içerik kullanılıyor:`, error);
+    return fallback;
+  }
 }
 
-export async function getStats() {
-  return stats;
+// ---------- Site ayarları ----------
+
+export const getSiteSettings = cache(async (): Promise<ClubSettings> =>
+  withFallback(
+    "getSiteSettings",
+    async () => {
+      const [row] = await getDb().select().from(siteSettings).where(eq(siteSettings.key, "club"));
+      return normalizeClubSettings(row?.value);
+    },
+    defaultClubSettings
+  )
+);
+
+export async function getClubInfo(): Promise<ClubInfo> {
+  return mergeClubSettings(await getSiteSettings(), formatTurkishDate);
+}
+
+export async function getStats(): Promise<{ number: string; label: string }[]> {
+  const [club, program] = await Promise.all([getClubInfo(), getProgram()]);
+  return [
+    { number: club.athleteStat, label: "Sporcu" },
+    { number: String(program.length), label: "Yaş Grubu" },
+    { number: String(club.foundedYear), label: "Kuruluş Yılı" },
+    { number: club.officialMatchCount, label: "Resmi / Özel Maç" },
+  ];
 }
 
 export async function getStatsBlurb() {
@@ -49,65 +101,165 @@ export async function getPlayers(): Promise<Player[]> {
   return players;
 }
 
-export async function getStaff(): Promise<StaffMember[]> {
-  return staff;
-}
+// ---------- Teknik kadro & yönetim ----------
+
+export const getStaff = cache(async (): Promise<StaffMember[]> =>
+  withFallback(
+    "getStaff",
+    async () => {
+      const rows = await getDb().select().from(staffTable).orderBy(asc(staffTable.sortOrder), asc(staffTable.id));
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        role: r.role,
+        description: r.description,
+        photo: r.photo,
+        quote: r.quote ?? undefined,
+      }));
+    },
+    staticStaff
+  )
+);
+
+const getBoardMembers = cache(async (): Promise<{ management: BoardMember[]; audit: BoardMember[] }> =>
+  withFallback(
+    "getBoardMembers",
+    async () => {
+      const rows = await getDb()
+        .select()
+        .from(boardMembers)
+        .orderBy(asc(boardMembers.sortOrder), asc(boardMembers.id));
+      const toMember = (r: (typeof rows)[number]): BoardMember => ({
+        name: r.name,
+        role: r.role,
+        photo: r.photo ?? undefined,
+        quote: r.quote ?? undefined,
+        bio: r.bio ?? undefined,
+        values: r.values.length ? r.values : undefined,
+        mottos: r.mottos.length ? r.mottos : undefined,
+      });
+      return {
+        management: rows.filter((r) => r.boardType === "management").map(toMember),
+        audit: rows.filter((r) => r.boardType === "audit").map(toMember),
+      };
+    },
+    { management: staticManagementBoard, audit: staticAuditBoard }
+  )
+);
 
 export async function getManagementBoard(): Promise<{ members: BoardMember[]; note: string }> {
-  return { members: managementBoard, note: managementBoardNote };
+  return { members: (await getBoardMembers()).management, note: managementBoardNote };
 }
 
 export async function getAuditBoard(): Promise<{ members: BoardMember[]; note: string }> {
-  return { members: auditBoard, note: auditBoardNote };
+  return { members: (await getBoardMembers()).audit, note: auditBoardNote };
 }
 
 export async function getLineup(): Promise<{ slots: LineupSlot[]; note: string }> {
   return { slots: lineup, note: lineupNote };
 }
 
-export async function getGallery(): Promise<GalleryItem[]> {
-  return gallery;
-}
+// ---------- Galeri ----------
 
-/**
- * Haberler (yeniden eskiye). Veritabanına ulaşılamazsa site çökmesin diye boş liste döner —
- * anasayfadaki haber bölümü bu durumda gizlenir, hata sunucu loguna düşer.
- */
-export async function getNews(): Promise<NewsItem[]> {
-  try {
-    const rows = await getDb()
-      .select()
-      .from(newsItems)
-      .orderBy(desc(newsItems.date), desc(newsItems.id));
-    return rows.map((row) => ({
-      id: row.id,
-      title: row.title,
-      date: formatTurkishDate(row.date),
-      summary: row.summary,
-      image: row.image ?? undefined,
-      tag: row.tag ?? undefined,
-    }));
-  } catch (error) {
-    console.error("[getNews] Haberler veritabanından okunamadı:", error);
-    return [];
-  }
-}
+export const getGallery = cache(async (): Promise<GalleryItem[]> =>
+  withFallback(
+    "getGallery",
+    async () => {
+      const rows = await getDb().select().from(galleryItems).orderBy(asc(galleryItems.sortOrder), asc(galleryItems.id));
+      return rows.map((r) => ({
+        id: r.id,
+        src: r.src,
+        alt: r.alt,
+        size: r.size === "large" || r.size === "wide" ? r.size : undefined,
+      }));
+    },
+    staticGallery
+  )
+);
+
+// ---------- Haberler ----------
+
+/** Haberler (yeniden eskiye). Veritabanına ulaşılamazsa boş liste — anasayfadaki haber bölümü gizlenir. */
+export const getNews = cache(async (): Promise<NewsItem[]> =>
+  withFallback(
+    "getNews",
+    async () => {
+      const rows = await getDb().select().from(newsItems).orderBy(desc(newsItems.date), desc(newsItems.id));
+      return rows.map((row) => ({
+        id: row.id,
+        title: row.title,
+        date: formatTurkishDate(row.date),
+        summary: row.summary,
+        image: row.image ?? undefined,
+        tag: row.tag ?? undefined,
+      }));
+    },
+    []
+  )
+);
 
 export async function getVideos(): Promise<VideoItem[]> {
   return videos;
 }
 
-export async function getFaq(): Promise<FaqItem[]> {
-  return [...faq];
-}
+// ---------- SSS ----------
 
-export async function getUpcomingEvents(): Promise<EventItem[]> {
-  return events;
-}
+export const getFaq = cache(async (): Promise<FaqItem[]> =>
+  withFallback(
+    "getFaq",
+    async () => {
+      const rows = await getDb().select().from(faqItems).orderBy(asc(faqItems.sortOrder), asc(faqItems.id));
+      return rows.map((r) => ({ question: r.question, answer: r.answer }));
+    },
+    [...staticFaq]
+  )
+);
 
-export async function getProgram(): Promise<ProgramGroup[]> {
-  return [...program];
-}
+// ---------- Etkinlikler ----------
+
+/** Bugün ve sonrasındaki etkinlikler (yakından uzağa). Tarihi geçenler otomatik gizlenir. */
+export const getUpcomingEvents = cache(async (): Promise<EventItem[]> =>
+  withFallback(
+    "getUpcomingEvents",
+    async () => {
+      const rows = await getDb()
+        .select()
+        .from(eventsTable)
+        .where(gte(eventsTable.date, todayInTurkey()))
+        .orderBy(asc(eventsTable.date), asc(eventsTable.id));
+      return rows.map((r) => ({
+        id: r.id,
+        title: r.title,
+        date: formatTurkishDate(r.date),
+        detail: r.time ? `${r.time} · ${r.location}` : r.location,
+        tag: r.tag,
+      }));
+    },
+    []
+  )
+);
+
+// ---------- Yaş grupları ----------
+
+export const getProgram = cache(async (): Promise<ProgramGroup[]> =>
+  withFallback(
+    "getProgram",
+    async () => {
+      const rows = await getDb().select().from(programGroups).orderBy(asc(programGroups.sortOrder), asc(programGroups.id));
+      return rows.map((r, i) => ({
+        code: r.code,
+        range: r.range,
+        title: r.title,
+        description: r.description,
+        days: r.days,
+        accent: i % 2 === 0 ? ("accent" as const) : ("accent-2" as const),
+      }));
+    },
+    [...staticProgram]
+  )
+);
+
+// ---------- Anasayfa "Yönetim ve Teknik Kadro" slider'ı ----------
 
 export type LeadershipHighlight = {
   name: string;
@@ -117,9 +269,11 @@ export type LeadershipHighlight = {
   href: string;
 };
 
-/** Yönetim/teknik kadrodan, posterli tanıtım görseli olan isimler — anasayfa slider'ı için. */
+/** Yönetim/teknik kadrodan, fotoğrafı ve sözü olan isimler — anasayfa slider'ı için. */
 export async function getLeadershipHighlights(): Promise<LeadershipHighlight[]> {
-  const boardHighlights: LeadershipHighlight[] = managementBoard
+  const [{ members: management }, staff] = await Promise.all([getManagementBoard(), getStaff()]);
+
+  const boardHighlights: LeadershipHighlight[] = management
     .filter((member): member is BoardMember & { photo: string; quote: string } =>
       Boolean(member.photo && member.quote)
     )

@@ -5,6 +5,8 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { PublicOnly } from "@/components/PublicOnly";
 import { club } from "@/data/club";
+import { getClubInfo } from "@/lib/queries";
+import type { ClubInfo } from "@/lib/siteSettings";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -68,7 +70,8 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
+function buildJsonLd(club: ClubInfo) {
+  return {
   "@context": "https://schema.org",
   "@type": "SportsOrganization",
   name: club.name,
@@ -85,9 +88,11 @@ const jsonLd = {
     addressCountry: "TR",
   },
   sameAs: [club.instagramUrl],
-};
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const jsonLd = buildJsonLd(await getClubInfo());
   return (
     <html lang="tr" className={`${inter.variable} ${anton.variable} ${caveat.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">

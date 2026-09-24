@@ -43,15 +43,14 @@ export const club = {
     text: "Düşbelen SK'da her bir çocuğumuzun sahada ve hayatta güçlü durması için çalışıyoruz. Disiplin, karakter, saygı ve mücadele bizim için futbolun önüne geçen değerlerdir. Bu kulüp, sadece futbol oynanan bir yer değil; bir ailedir.",
     signature: "— Teknik Direktör",
   },
-  // Futbol okulu online ön kayıt — QR kod (public/images/futbol-okulu-qr.svg) bu adrese gider.
-  // Adres değişirse QR da yeniden üretilmeli.
+  // Futbol okulu online ön kayıt. Canlı değerler admin panelden (Site Ayarları) gelir;
+  // QR kod kayıt linkinden her render'da üretilir (src/components/SchoolRegistration.tsx).
   footballSchool: {
     name: "Düşbelen Spor Futbol Okulu",
     athleteCount: "100'e yakın",
     birthYearFrom: 2015,
     birthYearTo: 2020,
     registrationUrl: "https://dusbelensk.sporokullari.org/kayit",
-    qrImage: "/images/futbol-okulu-qr.svg",
   },
   nextMatch: {
     opponent: "Rakip Takım",

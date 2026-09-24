@@ -1,13 +1,26 @@
+import { cache } from "react";
 import Image from "next/image";
+import QRCode from "qrcode";
 import { ArrowUpRight, QrCode } from "lucide-react";
-import { club } from "@/data/club";
+import { getClubInfo } from "@/lib/queries";
 
-const { footballSchool } = club;
-
-export const schoolBirthYears = `${footballSchool.birthYearFrom}–${footballSchool.birthYearTo}`;
+/**
+ * Futbol okulu ön kayıt parçaları. Kayıt linki ve doğum yılları admin panelden (Site Ayarları)
+ * gelir; QR kod bu linkten her render'da üretilir (link değişince QR da kendiliğinden değişir).
+ * "H" hata toleransı sayesinde ortadaki logo QR'ın okunmasını engellemez.
+ */
+const getQrSvg = cache((url: string) =>
+  QRCode.toString(url, {
+    type: "svg",
+    errorCorrectionLevel: "H",
+    margin: 1,
+    color: { dark: "#020617", light: "#ffffff" },
+  })
+);
 
 /** "2015–2020 doğumlu sporcular katılabilir" etiketi — her QR'ın üstünde gösterilir. */
-export function SchoolEligibilityBadge({ tone = "dark" }: { tone?: "dark" | "light" }) {
+export async function SchoolEligibilityBadge({ tone = "dark" }: { tone?: "dark" | "light" }) {
+  const { footballSchool } = await getClubInfo();
   const toneClass =
     tone === "light"
       ? "border-accent/30 bg-accent-soft text-accent-deep"
@@ -15,7 +28,7 @@ export function SchoolEligibilityBadge({ tone = "dark" }: { tone?: "dark" | "lig
 
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium ${toneClass}`}>
-      <span className="font-bold tabular-nums">{schoolBirthYears}</span>
+      <span className="font-bold tabular-nums">{footballSchool.birthYears}</span>
       doğumlu sporcular katılabilir
     </span>
   );
@@ -32,8 +45,10 @@ export function SchoolQrBlock({ size = 200 }: { size?: number }) {
   );
 }
 
-/** QR kod + ortasında kulüp logosu. QR "H" hata toleransıyla üretildi, ortadaki logo okumayı bozmaz. */
-export function SchoolQrCode({ size = 200, className = "" }: { size?: number; className?: string }) {
+/** QR kod + ortasında kulüp logosu. */
+export async function SchoolQrCode({ size = 200, className = "" }: { size?: number; className?: string }) {
+  const { footballSchool } = await getClubInfo();
+  const svg = await getQrSvg(footballSchool.registrationUrl);
   const logoSize = Math.round(size * 0.22);
 
   return (
@@ -45,12 +60,12 @@ export function SchoolQrCode({ size = 200, className = "" }: { size?: number; cl
       className={`relative block shrink-0 rounded-2xl bg-white p-3 shadow-lg ${className}`}
       style={{ width: size + 24 }}
     >
-      <Image
-        src={footballSchool.qrImage}
-        alt={`${footballSchool.name} ön kayıt QR kodu`}
-        width={size}
-        height={size}
-        className="h-auto w-full"
+      <span
+        role="img"
+        aria-label={`${footballSchool.name} ön kayıt QR kodu`}
+        className="block [&>svg]:h-auto [&>svg]:w-full"
+        style={{ width: size }}
+        dangerouslySetInnerHTML={{ __html: svg }}
       />
       <span
         className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg bg-white p-1"
@@ -62,13 +77,14 @@ export function SchoolQrCode({ size = 200, className = "" }: { size?: number; cl
   );
 }
 
-export function SchoolRegisterButton({
+export async function SchoolRegisterButton({
   label = "Hemen Ön Kayıt Ol",
   className = "",
 }: {
   label?: string;
   className?: string;
 }) {
+  const { footballSchool } = await getClubInfo();
   return (
     <a
       href={footballSchool.registrationUrl}
@@ -83,7 +99,8 @@ export function SchoolRegisterButton({
 }
 
 /** Kart: doğum yılı etiketi + QR + açıklama + buton. Açık (cream) zeminler için. */
-export function SchoolRegistrationCard({ title = "Online Ön Kayıt" }: { title?: string }) {
+export async function SchoolRegistrationCard({ title = "Online Ön Kayıt" }: { title?: string }) {
+  const { footballSchool } = await getClubInfo();
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
       <div className="text-center sm:text-left">

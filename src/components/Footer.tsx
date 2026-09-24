@@ -4,8 +4,8 @@ import type { LucideIcon } from "lucide-react";
 import { MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-import { SchoolQrCode, schoolBirthYears } from "@/components/SchoolRegistration";
-import { club } from "@/data/club";
+import { SchoolQrCode } from "@/components/SchoolRegistration";
+import { getClubInfo } from "@/lib/queries";
 import { navLinks } from "@/lib/nav";
 
 function FooterHeading({ children }: { children: React.ReactNode }) {
@@ -50,7 +50,8 @@ function ContactRow({
   );
 }
 
-export function Footer() {
+export async function Footer() {
+  const club = await getClubInfo();
   return (
     <footer className="border-t border-border-soft/60 bg-black/40">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
@@ -71,7 +72,7 @@ export function Footer() {
               <span className="block text-[10px] font-semibold uppercase tracking-wider text-text-muted/70">
                 Futbol Okulu
               </span>
-              <span className="block text-xs text-accent-bright">{schoolBirthYears} doğumlular</span>
+              <span className="block text-xs text-accent-bright">{club.footballSchool.birthYears} doğumlular</span>
               <a
                 href={club.footballSchool.registrationUrl}
                 target="_blank"
@@ -105,7 +106,7 @@ export function Footer() {
             <ContactRow
               icon={WhatsAppIcon}
               label="WhatsApp"
-              value={club.phone}
+              value={club.whatsappDisplay}
               href={`https://wa.me/${club.whatsappNumber}`}
             />
             <ContactRow

@@ -1,11 +1,12 @@
-import { pgTable, serial, integer, text, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 
 /**
- * Faz 2 (admin panel) şeması. Şu an sorgulanmıyor — src/lib/queries.ts hâlâ
- * /src/data dosyalarını okuyor. Vercel Postgres bağlanınca:
- *   1) npm run db:generate && npm run db:migrate
- *   2) npm run db:seed   (mevcut /src/data içeriğini DB'ye aktarır)
- *   3) src/lib/queries.ts içindeki fonksiyonları bu tablolara sorgu atacak şekilde güncelle
+ * Admin panelden yönetilen içerik. Site bu tabloları src/lib/queries.ts üzerinden okur;
+ * src/data/*.ts dosyaları yalnızca ilk aktarımın (src/db/sync-content.ts) kaynağı ve
+ * veritabanına ulaşılamazsa kullanılan yedek içeriktir.
+ *
+ * Görsel alanları: "/images/..." (sitedeki hazır görsel) ya da Vercel Blob'a yüklenmiş
+ * görselin tam URL'si. Sıralanabilir listelerde sort_order küçükten büyüğe gösterilir.
  */
 
 export const players = pgTable("players", {
@@ -23,6 +24,9 @@ export const staff = pgTable("staff", {
   role: text("role").notNull(),
   description: text("description").notNull(),
   photo: text("photo").notNull(),
+  /** Doluysa kişi anasayfadaki "Yönetim ve Teknik Kadro" slider'ında da görünür. */
+  quote: text("quote"),
+  sortOrder: integer("sort_order").default(0).notNull(),
 });
 
 export const boardMembers = pgTable("board_members", {
@@ -30,7 +34,13 @@ export const boardMembers = pgTable("board_members", {
   boardType: text("board_type").notNull(), // "management" | "audit"
   name: text("name").notNull(),
   role: text("role").notNull(),
-  sortOrder: integer("sort_order").default(0),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  /** Fotoğrafı olan yönetim kurulu üyesi /yonetim sayfasında büyük kartla (başkan kartı) gösterilir. */
+  photo: text("photo"),
+  quote: text("quote"),
+  bio: text("bio"),
+  values: jsonb("values").$type<string[]>().default([]).notNull(),
+  mottos: jsonb("mottos").$type<string[]>().default([]).notNull(),
 });
 
 export const lineupSlots = pgTable("lineup_slots", {
@@ -46,7 +56,8 @@ export const galleryItems = pgTable("gallery_items", {
   id: serial("id").primaryKey(),
   src: text("src").notNull(),
   alt: text("alt").notNull(),
-  size: text("size"),
+  size: text("size"), // null | "large" | "wide"
+  sortOrder: integer("sort_order").default(0).notNull(),
 });
 
 export const newsItems = pgTable("news_items", {
@@ -55,10 +66,43 @@ export const newsItems = pgTable("news_items", {
   /** Yayın tarihi, ISO "YYYY-MM-DD" (metin olarak sıralanabilir). Sitede "19 Eylül 2026" diye gösterilir. */
   date: text("date").notNull(),
   summary: text("summary").notNull(),
-  /** "/images/..." (sitedeki hazır görsel) ya da Vercel Blob'a yüklenmiş görselin tam URL'si. */
   image: text("image"),
   tag: text("tag"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  /** ISO "YYYY-MM-DD". Tarihi geçen etkinlikler sitede otomatik gizlenir. */
+  date: text("date").notNull(),
+  time: text("time"),
+  location: text("location").notNull(),
+  tag: text("tag").notNull(),
+});
+
+export const faqItems = pgTable("faq_items", {
+  id: serial("id").primaryKey(),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
+});
+
+export const programGroups = pgTable("program_groups", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull(),
+  range: text("range").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  days: text("days").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
+});
+
+/** Tek satırlık ayar kayıtları (şimdilik yalnızca key = "club"). value şekli: src/lib/siteSettings.ts */
+export const siteSettings = pgTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: jsonb("value").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const contactMessages = pgTable("contact_messages", {

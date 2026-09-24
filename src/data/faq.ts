@@ -43,4 +43,4 @@ export const faq = [
   },
 ] as const;
 
-export type FaqItem = (typeof faq)[number];
+export type FaqItem = { question: string; answer: string };

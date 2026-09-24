@@ -15,6 +15,13 @@
       "when": 1790259090415,
       "tag": "0001_news_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790276059489,
+      "tag": "0002_admin_modules",
+      "breakpoints": true
     }
   ]
 }

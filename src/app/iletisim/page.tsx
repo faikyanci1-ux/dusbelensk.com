@@ -107,7 +107,7 @@ export default async function ContactPage() {
               <ContactInfoRow
                 icon={WhatsAppIcon}
                 label="WhatsApp"
-                value={club.phone}
+                value={club.whatsappDisplay}
                 href={`https://wa.me/${club.whatsappNumber}`}
               />
               <ContactInfoRow
