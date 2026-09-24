@@ -33,9 +33,11 @@ export default async function PrivacyPolicyPage() {
       title: "Topladığımız Bilgiler",
       body: (
         <p>
-          Sitemizi ziyaret etmek için herhangi bir bilgi paylaşmanız gerekmez. Yalnızca İletişim / Kayıt
-          sayfamızdaki formu doldurup gönderdiğinizde; ad-soyad, telefon ve/veya e-posta, varsa çocuğunuzun adı
-          ve yaş grubu bilgisi ile eklediğiniz not tarafımıza ulaşır.
+          Sitemizi ziyaret etmek için herhangi bir bilgi paylaşmanız gerekmez ve sitemizde kişisel veri toplayan
+          bir form bulunmaz. Futbol okulu ön kaydı, sitemizdeki QR kod ve &quot;Ön Kayıt&quot; butonlarının
+          yönlendirdiği sporokullari.org platformundaki online form üzerinden yapılır; bu formda paylaştığınız
+          bilgiler kulübümüze ulaşır. Bize telefon veya WhatsApp üzerinden ulaştığınızda da paylaştığınız
+          iletişim bilgileri tarafımıza ulaşır.
         </p>
       ),
     },
@@ -54,7 +56,8 @@ export default async function PrivacyPolicyPage() {
       title: "Harici Bağlantılar ve Gömülü İçerik",
       body: (
         <p>
-          Sitemizde Instagram ve WhatsApp&apos;a yönlendiren bağlantılar, İletişim sayfamızda ise Google
+          Sitemizde Instagram, WhatsApp ve online ön kayıt formunun bulunduğu sporokullari.org platformuna
+          yönlendiren bağlantılar, İletişim sayfamızda ise Google
           Haritalar üzerinden gömülü bir harita bulunur. Google Haritalar içeriği yüklendiğinde, sayfa
           Google&apos;ın sunucularından veri çeker ve Google kendi gizlilik politikası kapsamında çerez
           kullanabilir. Bu harici platformların kendi gizlilik politikaları geçerlidir; bu platformların veri
@@ -66,8 +69,8 @@ export default async function PrivacyPolicyPage() {
       title: "Veri Güvenliği",
       body: (
         <p>
-          Form aracılığıyla ilettiğiniz bilgilerin yalnızca kulüp yönetimine ulaşmasını sağlayacak makul
-          teknik ve idari tedbirleri alırız. İnternet üzerinden hiçbir iletimin %100 güvenli olamayacağını
+          Bize ulaşan bilgilerinizin yalnızca kulüp yönetimi tarafından ve yalnızca kayıt ve iletişim
+          amacıyla kullanılmasını sağlayacak makul teknik ve idari tedbirleri alırız. İnternet üzerinden hiçbir iletimin %100 güvenli olamayacağını
           hatırlatmak isteriz.
         </p>
       ),

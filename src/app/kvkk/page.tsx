@@ -31,17 +31,23 @@ export default async function KvkkPage() {
       body: (
         <>
           <p>
-            Web sitemizdeki İletişim / Kayıt formunu doldurduğunuzda aşağıdaki kişisel verileriniz işlenir:
+            Web sitemizde kişisel veri toplayan bir form bulunmaz; siteyi ziyaret etmek için sizden herhangi
+            bir bilgi talep edilmez. Kişisel verileriniz yalnızca aşağıdaki durumlarda tarafımıza ulaşır:
           </p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>Kimlik verisi: Ad-soyad (veli olarak sizin, deneme antrenmanı talebinde ayrıca çocuğunuzun)</li>
-            <li>İletişim verisi: Telefon numarası ve/veya e-posta adresi</li>
-            <li>Talep içeriği: Formda paylaştığınız yaş grubu bilgisi ve varsa eklediğiniz not/mesaj</li>
+            <li>
+              Futbol okulu online ön kayıt formunu doldurduğunuzda: formda istenen sporcu bilgileri (ör. ad-soyad,
+              doğum yılı) ile veli kimlik ve iletişim bilgileri
+            </li>
+            <li>
+              Bize telefon veya WhatsApp üzerinden ulaştığınızda: ad-soyad, telefon numarası ve mesajınızın
+              içeriği
+            </li>
           </ul>
           <p className="mt-2">
-            Sitemiz; T.C. kimlik numarası, finansal bilgi (kart/hesap bilgisi), biyometrik veri veya özel
-            nitelikli kişisel veri toplamaz. Formu doldurmadığınız sürece sizden herhangi bir bilgi talep
-            edilmez.
+            Online ön kayıt formu, kulübümüzün kullandığı{" "}
+            <strong className="font-semibold text-ink">sporokullari.org</strong> platformu üzerinde yer alır;
+            web sitemizdeki QR kod ve &quot;Ön Kayıt&quot; butonları sizi bu forma yönlendirir.
           </p>
         </>
       ),
@@ -50,10 +56,10 @@ export default async function KvkkPage() {
       title: "Toplama Yöntemi ve Hukuki Sebep",
       body: (
         <p>
-          Kişisel verileriniz, yalnızca web sitemizdeki İletişim / Kayıt formunu doldurup göndermeniz yoluyla,
-          elektronik ortamda toplanır. Bu veriler; KVKK&apos;nın 5. maddesinde yer alan &quot;ilgili kişinin
+          Kişisel verileriniz; online ön kayıt formunu doldurmanız ya da bize telefon veya WhatsApp üzerinden
+          ulaşmanız yoluyla, elektronik ortamda toplanır. Bu veriler; KVKK&apos;nın 5. maddesinde yer alan &quot;ilgili kişinin
           talebi üzerine bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması&quot; hukuki
-          sebebine ve formu gönderirken verdiğiniz açık rızaya dayanılarak işlenir.
+          sebebine ve bilgilerinizi paylaşırken verdiğiniz açık rızaya dayanılarak işlenir.
         </p>
       ),
     },
@@ -62,7 +68,7 @@ export default async function KvkkPage() {
       body: (
         <>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Deneme antrenmanı ve kayıt taleplerinizin değerlendirilmesi,</li>
+            <li>Futbol okulu ön kayıt ve deneme antrenmanı taleplerinizin değerlendirilmesi,</li>
             <li>Tarafınızla iletişime geçilmesi ve sorularınızın yanıtlanması,</li>
             <li>Kulüp faaliyetleri ve süreçleriyle ilgili bilgilendirme yapılması.</li>
           </ul>
@@ -77,12 +83,13 @@ export default async function KvkkPage() {
       title: "Kişisel Verileriniz Kimlerle Paylaşılır?",
       body: (
         <p>
-          Form aracılığıyla ilettiğiniz bilgiler, tarafınıza dönüş yapılabilmesi amacıyla e-posta yoluyla
-          kulüp yönetimine iletilir. Bu iletim, e-posta altyapı hizmeti sağlayıcımız Resend (resend.com)
-          üzerinden gerçekleşir; bu kapsamda verileriniz teknik olarak yurt dışında bulunan sunucular
-          üzerinden geçebilir. Resend, yalnızca e-postanın iletilmesi amacıyla teknik altyapı sağlayan bir
-          hizmet sağlayıcıdır. Verileriniz bunun dışında hiçbir üçüncü kişi, kurum veya reklam
-          verenle paylaşılmaz, satılmaz veya pazarlama amacıyla kullanılmaz.
+          Ön kayıt formunda paylaştığınız bilgiler, formun barındırıldığı sporokullari.org platformu
+          aracılığıyla kulüp yönetimine ulaşır; bu platform yalnızca kayıt sürecinin yürütülmesi için teknik
+          altyapı sağlar ve kendi gizlilik koşulları da geçerlidir. WhatsApp üzerinden yazdığınız mesajlar
+          WhatsApp (Meta) altyapısı üzerinden iletilir. Verileriniz bunların dışında hiçbir üçüncü kişi, kurum
+          veya reklam verenle paylaşılmaz, satılmaz veya pazarlama amacıyla kullanılmaz. Lisans ve resmi
+          müsabaka süreçlerinde mevzuat gereği yetkili kurumlara (ör. ilgili spor federasyonu) iletilmesi
+          gereken bilgiler bu kapsamın dışındadır.
         </p>
       ),
     },
@@ -90,7 +97,7 @@ export default async function KvkkPage() {
       title: "Çocuklara Ait Veriler",
       body: (
         <p>
-          Deneme antrenmanı / kayıt formu aracılığıyla bir çocuğun adı ve yaş grubu bilgisini paylaşıyorsanız,
+          Ön kayıt formu, telefon veya WhatsApp aracılığıyla bir çocuğun kişisel bilgilerini paylaşıyorsanız,
           bu bilgiyi veli veya yasal vasi sıfatıyla, çocuğunuz adına rıza vererek ilettiğinizi kabul edersiniz.
         </p>
       ),

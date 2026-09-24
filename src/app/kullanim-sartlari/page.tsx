@@ -43,11 +43,12 @@ export default async function TermsPage() {
       ),
     },
     {
-      title: "Form Aracılığıyla Gönderilen Bilgiler",
+      title: "Ön Kayıt Formunda Paylaşılan Bilgiler",
       body: (
         <p>
-          İletişim veya kayıt/deneme antrenmanı formunu doldururken paylaştığınız bilgilerin doğru ve güncel
-          olmasından siz sorumlusunuz. Kişisel verilerin işlenmesi hakkında{" "}
+          Futbol okulu online ön kayıt formunu doldururken ya da bize telefon veya WhatsApp üzerinden ulaşırken
+          paylaştığınız bilgilerin doğru ve güncel olmasından siz sorumlusunuz. Ön kayıt formu sporokullari.org
+          platformunda yer alır ve bu platformun kendi kullanım koşulları da geçerlidir. Kişisel verilerin işlenmesi hakkında{" "}
           <Link href="/kvkk" className="text-accent-deep underline underline-offset-2">
             KVKK Aydınlatma Metni
           </Link>

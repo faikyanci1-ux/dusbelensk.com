@@ -23,16 +23,16 @@ export const news: NewsItem[] = [
     title: "Yeni Web Sitemiz Yayında!",
     date: "18 Eylül 2026",
     summary:
-      "Düşbelen SK'nın yenilenen web sitesi yayında. Artık deneme antrenmanı ve kayıt başvurunuzu doğrudan siteden yapabilir, sık sorulan soruları ve WhatsApp hattımızı da buradan bulabilirsiniz.",
+      "Düşbelen SK'nın yenilenen web sitesi yayında. Futbol okulu ön kaydını sitemizdeki QR kod veya online ön kayıt formuyla yapabilir, sık sorulan sorulara ve WhatsApp hattımıza da buradan ulaşabilirsiniz.",
     image: "/images/hero-bg.jpg",
     tag: "Duyuru",
   },
   {
     id: 2,
-    title: "Deneme Antrenmanı ve Kayıt Başvuruları Web Sitemizden Alınıyor",
+    title: "Futbol Okulu Ön Kayıtları Online Alınıyor",
     date: "18 Eylül 2026",
     summary:
-      "Kulübümüze katılmak isteyen veliler, İletişim sayfamızdaki formu doldurarak veya WhatsApp üzerinden doğrudan bize ulaşarak deneme antrenmanı talebinde bulunabilir.",
+      "Düşbelen Spor Futbol Okulu'na 2015–2020 doğumlu sporcular katılabilir. Veliler ön kaydı, sitemizdeki QR kodu okutarak veya “Ön Kayıt” butonuna dokunarak online form üzerinden birkaç dakikada yapabilir. Ücret, antrenman saatleri ve deneme antrenmanıyla ilgili sorularınız için telefon veya WhatsApp üzerinden bize ulaşabilirsiniz.",
     image: "/images/gallery/training-1.jpg",
     tag: "Kayıt",
   },
