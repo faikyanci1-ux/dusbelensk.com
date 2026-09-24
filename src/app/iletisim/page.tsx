@@ -45,7 +45,7 @@ function ContactInfoRow({
 export const metadata: Metadata = buildMetadata({
   title: "İletişim",
   description:
-    "Düşbelen SK'ya ulaşın: deneme antrenmanı ve kayıt başvurusu yapın; telefon, WhatsApp, Instagram ve adres bilgileri.",
+    "Düşbelen SK'ya ulaşın: sorularınız için telefon, WhatsApp, Instagram ve adres bilgileri. Futbol okulu kaydı online ön kayıt formundan yapılır.",
   path: "/iletisim",
 });
 
@@ -84,9 +84,9 @@ export default async function ContactPage() {
       dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
     />
     <PageHero
-      eyebrow="Kulübe Katıl"
+      eyebrow="İletişim"
       title="Bize Ulaşın"
-      description="Deneme antrenmanı, kayıt veya genel sorularınız için WhatsApp'tan doğrudan bize ulaşın."
+      description="Ücret, antrenman saatleri, yaş grupları veya kayıt süreciyle ilgili tüm sorularınız için WhatsApp'tan ya da telefonla bize ulaşın."
       image="/images/facility-1.jpg"
     />
     <div className="bg-cream py-16 text-ink">
@@ -96,7 +96,7 @@ export default async function ContactPage() {
             <SectionHeading
               eyebrow="İletişim Bilgilerimiz"
               title="Bize ulaşın."
-              description="Deneme antrenmanı, kayıt veya genel sorularınız için aşağıdaki kanallardan bize kolayca ulaşabilirsiniz."
+              description="Merak ettiklerinizi aşağıdaki kanallardan bize kolayca sorabilirsiniz."
               tone="light"
               align="left"
             />
@@ -127,8 +127,21 @@ export default async function ContactPage() {
               className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-5 text-base font-semibold text-white shadow-lg shadow-black/10 transition hover:brightness-110"
             >
               <WhatsAppIcon size={22} />
-              WhatsApp&apos;tan Yaz
+              WhatsApp&apos;tan Sorun
             </a>
+
+            <p className="text-center text-sm text-ink-muted">
+              Futbol okulu kaydı için{" "}
+              <a
+                href={club.footballSchool.registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-accent underline-offset-2 hover:underline"
+              >
+                online ön kayıt formunu
+              </a>{" "}
+              doldurun.
+            </p>
           </div>
 
           <div className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">

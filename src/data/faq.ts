@@ -10,9 +10,9 @@ export const faq = [
     answer: `${club.footballSchool.name} kayıtlarını online alıyoruz: Futbol Okulu sayfamızdaki QR kodu telefonunuzla okutun ya da "Hemen Ön Kayıt Ol" butonuna dokunarak ön kayıt formunu doldurun (${club.footballSchool.registrationUrl}). Formunuz bize ulaştıktan sonra sizi arıyoruz.`,
   },
   {
-    question: "Nasıl kayıt olabilirim veya deneme antrenmanına nasıl katılabilirim?",
+    question: "Kayıt öncesi sorularım için kime ulaşabilirim?",
     answer:
-      "İletişim sayfamızdaki formu doldurarak ya da telefon/WhatsApp üzerinden bize ulaşarak kayıt ve deneme antrenmanı süreci hakkında bilgi alabilirsiniz.",
+      "Ücret, antrenman saatleri, yaş grupları veya deneme antrenmanı hakkındaki tüm sorularınızı telefon ya da WhatsApp üzerinden bize sorabilirsiniz. Kayıt ise online ön kayıt formu üzerinden yapılır.",
   },
   {
     question: "Antrenman günleri ve saatleri nasıl öğrenilir?",

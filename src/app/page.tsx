@@ -79,7 +79,7 @@ export default async function HomePage() {
       getProgram(),
     ]);
   const whatsappHref = `https://wa.me/${club.whatsappNumber}?text=${encodeURIComponent(
-    "Merhaba, ücretsiz deneme antrenmanı hakkında bilgi almak istiyorum."
+    "Merhaba, futbol okulu hakkında bilgi almak istiyorum."
   )}`;
   const facilityVideo = videos.find((v) => v.caption.includes("Havadan")) ?? videos[1];
 
@@ -106,7 +106,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-bg-main/70 via-bg-main/20 to-transparent sm:from-bg-main/50 sm:via-transparent sm:to-transparent" />
         </div>
 
-        <div className="mx-auto flex h-full max-w-6xl flex-col justify-center px-4 pt-20 pb-8 sm:px-6 sm:pt-0 sm:pb-0">
+        <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-center px-4 pt-20 pb-8 sm:px-6 sm:pt-0 sm:pb-0">
           <div className="max-w-2xl">
             <span className="font-script mb-5 block -rotate-2 text-3xl leading-none text-accent-bright sm:text-4xl">
               {club.motto}
@@ -127,27 +127,15 @@ export default async function HomePage() {
               antrenörler eşliğinde futbol eğitimi.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="/iletisim"
-                className="rounded-full bg-accent px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:brightness-110"
-              >
-                Ücretsiz Deneme Kaydı
-              </Link>
-              <a
-                href={club.footballSchool.registrationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-bg-main transition hover:brightness-95"
-              >
-                Futbol Okulu Kaydı
-              </a>
+              <SchoolRegisterButton label="Futbol Okulu Ön Kayıt" />
               <a
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white"
               >
-                WhatsApp İle Bilgi Al
+                <WhatsAppIcon size={18} />
+                WhatsApp&apos;tan Soru Sor
               </a>
             </div>
           </div>
@@ -585,8 +573,10 @@ export default async function HomePage() {
                 <span className="text-accent-bright">Oyunu Başlasın.</span>
               </h2>
               <p className="mt-4 max-w-md text-white/80">
-                Ücretsiz deneme antrenmanı için formu doldurun. Sizi arayalım, birlikte en uygun grubu bulalım.
+                Kaydınızı online ön kayıt formundan birkaç dakikada yapın. Formunuz bize ulaşınca sizi arayalım,
+                birlikte en uygun grubu bulalım.
               </p>
+              <SchoolRegisterButton className="mt-6" />
               <div className="mt-6 space-y-3">
                 {JOIN_BENEFITS.map((benefit) => (
                   <div key={benefit} className="flex items-center gap-2.5">
@@ -600,14 +590,15 @@ export default async function HomePage() {
                 className="mt-8 flex items-center gap-3 border-t border-white/15 pt-6 text-sm text-white/80 hover:text-white"
               >
                 <Phone size={16} className="text-accent-bright" />
-                Acil sorularınız için: {club.phone}
+                Sorularınız için arayın: {club.phone}
               </a>
             </div>
 
             <div className="rounded-2xl bg-cream p-6 shadow-2xl sm:p-8">
-              <h3 className="font-display text-xl uppercase tracking-tight text-ink">Ücretsiz Deneme Kaydı</h3>
+              <h3 className="font-display text-xl uppercase tracking-tight text-ink">Sorunuz mu Var?</h3>
               <p className="mt-2 text-sm text-ink-muted">
-                Form doldurmanıza gerek yok — WhatsApp&apos;tan yazın, size hemen dönelim.
+                Ücret, antrenman saatleri, yaş grupları veya kayıt süreci hakkında merak ettiklerinizi
+                WhatsApp&apos;tan sorun, size hemen dönelim.
               </p>
               <a
                 href={whatsappHref}
@@ -616,7 +607,7 @@ export default async function HomePage() {
                 className="mt-6 flex items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-base font-semibold text-white shadow-lg shadow-black/10 transition hover:brightness-110"
               >
                 <WhatsAppIcon size={22} />
-                WhatsApp&apos;tan Yaz
+                WhatsApp&apos;tan Sorun
               </a>
               <a
                 href={club.phoneHref}
