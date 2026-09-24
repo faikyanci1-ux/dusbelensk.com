@@ -1,8 +1,12 @@
 /**
- * Tek giriş noktası: bugün /src/data içindeki statik dosyalardan okuyor.
- * Admin panel + Postgres devreye girdiğinde sadece bu dosyanın gövdesi
- * db sorgularına çevrilecek; sayfalar (page.tsx) hiç değişmeyecek.
+ * Tek giriş noktası. Admin panelden yönetilen modüller (şimdilik: Haberler) Postgres'ten,
+ * diğerleri hâlâ /src/data içindeki statik dosyalardan okunuyor. Modüller sırayla
+ * veritabanına taşındıkça sadece bu dosyanın gövdesi değişir; sayfalar (page.tsx) değişmez.
  */
+import { desc } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { newsItems } from "@/db/schema";
+import { formatTurkishDate } from "@/lib/formatDate";
 import { players, type Player } from "@/data/players";
 import { staff, type StaffMember } from "@/data/staff";
 import {
@@ -14,7 +18,7 @@ import {
 } from "@/data/board";
 import { lineup, lineupNote, type LineupSlot } from "@/data/lineup";
 import { gallery, type GalleryItem } from "@/data/gallery";
-import { news, type NewsItem } from "@/data/news";
+import type { NewsItem } from "@/data/news";
 import { club, stats, statsBlurb, values, parentInfo, type ValueItem } from "@/data/club";
 import { videos, type VideoItem } from "@/data/videos";
 import { faq, type FaqItem } from "@/data/faq";
@@ -65,8 +69,28 @@ export async function getGallery(): Promise<GalleryItem[]> {
   return gallery;
 }
 
+/**
+ * Haberler (yeniden eskiye). Veritabanına ulaşılamazsa site çökmesin diye boş liste döner —
+ * anasayfadaki haber bölümü bu durumda gizlenir, hata sunucu loguna düşer.
+ */
 export async function getNews(): Promise<NewsItem[]> {
-  return news;
+  try {
+    const rows = await getDb()
+      .select()
+      .from(newsItems)
+      .orderBy(desc(newsItems.date), desc(newsItems.id));
+    return rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      date: formatTurkishDate(row.date),
+      summary: row.summary,
+      image: row.image ?? undefined,
+      tag: row.tag ?? undefined,
+    }));
+  } catch (error) {
+    console.error("[getNews] Haberler veritabanından okunamadı:", error);
+    return [];
+  }
 }
 
 export async function getVideos(): Promise<VideoItem[]> {

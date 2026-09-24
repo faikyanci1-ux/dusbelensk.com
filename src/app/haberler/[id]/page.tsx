@@ -54,7 +54,8 @@ export default async function NewsDetailPage({ params }: Params) {
     description: item.summary,
     datePublished: isoDate,
     dateModified: isoDate,
-    image: item.image ? [`${siteUrl}${item.image}`] : undefined,
+    // Blob'a yüklenen görseller zaten tam URL; sitedeki hazır görseller "/images/..." ile başlar.
+    image: item.image ? [item.image.startsWith("http") ? item.image : `${siteUrl}${item.image}`] : undefined,
     author: { "@type": "Organization", name: club.name, url: siteUrl },
     publisher: {
       "@type": "Organization",

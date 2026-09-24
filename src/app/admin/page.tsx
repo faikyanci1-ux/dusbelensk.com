@@ -3,7 +3,7 @@ import { Newspaper, Images, Users, Shield, UserSquare2 } from "lucide-react";
 import { LogoutButton } from "./LogoutButton";
 
 const MODULES = [
-  { title: "Haberler", href: "/admin/haberler", icon: Newspaper, available: false },
+  { title: "Haberler", href: "/admin/haberler", icon: Newspaper, available: true },
   { title: "Galeri", href: "/admin/galeri", icon: Images, available: false },
   { title: "Teknik Kadro", href: "/admin/teknik-kadro", icon: Users, available: false },
   { title: "Yönetim Kurulu", href: "/admin/yonetim", icon: Shield, available: false },

@@ -8,6 +8,13 @@
       "when": 1790177460287,
       "tag": "0000_jazzy_iron_lad",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790259090415,
+      "tag": "0001_news_admin",
+      "breakpoints": true
     }
   ]
 }

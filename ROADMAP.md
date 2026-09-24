@@ -54,9 +54,15 @@ mevcut verileri aktaracak script `src/db/seed.ts`.
    oturumu). Şifre: `.env.local` / Vercel `ADMIN_PASSWORD`. Canlıda test edildi.
    **Not:** Next.js 16'da `middleware.ts` kaldırılıp `src/proxy.ts` (+ `proxy` adında export)
    oldu — bu proje o yeni convention'ı kullanıyor.
-4. **(Sıradaki)** İlk CRUD modülü: **Haberler** — listele / ekle / düzenle / sil
-5. `src/lib/queries.ts` içindeki `getNews()`'ü Drizzle sorgusuna çevir — `page.tsx` dosyaları
-   hiç değişmez, veri kaynağı arkada değişir
+4. ~~İlk CRUD modülü: **Haberler**~~ ✅ — `/admin/haberler`: listele / ekle / düzenle / sil,
+   etiket, tarih, sitedeki fotoğraflardan görsel seçimi. Kayıt sonrası `revalidatePath("/", "layout")`
+   ile site anında güncellenir. Migration `0001_news_admin` (image, tag, created_at);
+   mevcut 4 haber `src/db/sync-news.ts` ile id'leri korunarak aktarıldı. Admin sayfalarında
+   sitenin menü/footer'ı gizli (`PublicOnly`).
+5. ~~`getNews()` Drizzle sorgusuna çevrildi~~ ✅ — `src/data/news.ts` artık sitede kullanılmıyor
+   (yalnızca ilk aktarım kaynağı).
+5b. **(Sıradaki)** Haber görseli yükleme: Vercel Blob store açılınca (`BLOB_READ_WRITE_TOKEN`)
+   panelden fotoğraf yükleme eklenecek. `next.config.ts` remotePatterns hazır.
 6. Sırayla diğer modüller: Galeri → Teknik Kadro → Yönetim Kurulu → (ileride) Sporcularımız
    (gerçek kadro verisi/foto politikası netleşince)
 7. Görsel yükleme kararı: yeni haber/galeri fotoğrafı admin panelden nasıl yüklenecek

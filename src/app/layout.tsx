@@ -3,6 +3,7 @@ import { Inter, Anton, Caveat } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { PublicOnly } from "@/components/PublicOnly";
 import { club } from "@/data/club";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -100,12 +101,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Ana içeriğe geç
         </a>
-        <Header />
+        <PublicOnly>
+          <Header />
+        </PublicOnly>
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <Footer />
-        <WhatsAppButton />
+        <PublicOnly>
+          <Footer />
+          <WhatsAppButton />
+        </PublicOnly>
       </body>
     </html>
   );

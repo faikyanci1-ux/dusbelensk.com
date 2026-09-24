@@ -8,7 +8,6 @@ import { staff } from "../data/staff";
 import { managementBoard, auditBoard } from "../data/board";
 import { lineup } from "../data/lineup";
 import { gallery } from "../data/gallery";
-import { news } from "../data/news";
 
 async function seed() {
   const db = getDb();
@@ -39,10 +38,7 @@ async function seed() {
   console.log("Seeding gallery...");
   await db.insert(schema.galleryItems).values(gallery.map(({ id: _id, ...rest }) => rest));
 
-  if (news.length > 0) {
-    console.log("Seeding news...");
-    await db.insert(schema.newsItems).values(news.map(({ id: _id, ...rest }) => rest));
-  }
+  // Haberler burada değil, src/db/sync-news.ts ile aktarılır (id'leri ve ISO tarihleri korur).
 
   console.log("Seed tamamlandı.");
 }

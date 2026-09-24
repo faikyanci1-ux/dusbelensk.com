@@ -7,7 +7,11 @@ export type NewsItem = {
   tag?: string;
 };
 
-/** Haberler modülü admin panelle birlikte aktif olarak kullanılacak; şimdilik kulüp/site duyurularıyla başlıyor. */
+/**
+ * ARTIK SİTEDE KULLANILMIYOR: haberler Postgres'teki news_items tablosundan okunur ve
+ * admin panelden (/admin/haberler) yönetilir. Bu liste yalnızca ilk aktarımın
+ * (src/db/sync-news.ts) kaynağı ve NewsItem tipinin tanımı olarak duruyor.
+ */
 export const news: NewsItem[] = [
   {
     id: 4,

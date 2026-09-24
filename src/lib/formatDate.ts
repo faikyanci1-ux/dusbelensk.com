@@ -44,3 +44,13 @@ export function toIsoDate(dateText: string): string | undefined {
   if (!day || !month || !year) return undefined;
   return `${year}-${month}-${day.padStart(2, "0")}`;
 }
+
+const TURKISH_MONTH_NAMES = Object.keys(TURKISH_MONTH_NUMBER);
+
+/** "2026-09-19" -> "19 Eylül 2026". Ayrıştırılamazsa metni olduğu gibi döner. */
+export function formatTurkishDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-");
+  const monthName = TURKISH_MONTH_NAMES[Number(month) - 1];
+  if (!year || !monthName || !day) return isoDate;
+  return `${Number(day)} ${monthName} ${year}`;
+}

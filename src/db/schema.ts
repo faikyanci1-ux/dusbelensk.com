@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, boolean } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, boolean, timestamp } from "drizzle-orm/pg-core";
 
 /**
  * Faz 2 (admin panel) şeması. Şu an sorgulanmıyor — src/lib/queries.ts hâlâ
@@ -52,8 +52,13 @@ export const galleryItems = pgTable("gallery_items", {
 export const newsItems = pgTable("news_items", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  /** Yayın tarihi, ISO "YYYY-MM-DD" (metin olarak sıralanabilir). Sitede "19 Eylül 2026" diye gösterilir. */
   date: text("date").notNull(),
   summary: text("summary").notNull(),
+  /** "/images/..." (sitedeki hazır görsel) ya da Vercel Blob'a yüklenmiş görselin tam URL'si. */
+  image: text("image"),
+  tag: text("tag"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const contactMessages = pgTable("contact_messages", {
