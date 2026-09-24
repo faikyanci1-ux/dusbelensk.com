@@ -33,6 +33,7 @@ import { HeroSlider, type HeroSlide } from "@/components/HeroSlider";
 import { NewsCarousel } from "@/components/NewsCarousel";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { SchoolQrCode, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 
@@ -132,6 +133,14 @@ export default async function HomePage() {
               >
                 Ücretsiz Deneme Kaydı
               </Link>
+              <a
+                href={club.footballSchool.registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-bg-main transition hover:brightness-95"
+              >
+                Futbol Okulu Kaydı
+              </a>
               <a
                 href={whatsappHref}
                 target="_blank"
@@ -263,6 +272,52 @@ export default async function HomePage() {
                   her hafta onlarca genç sporcu antrenman sahasında ter döküyor.
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FUTBOL OKULU — ONLINE ÖN KAYIT */}
+      <section className="relative overflow-hidden bg-bg-main py-20">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/gallery/kadro-toplu-foto.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-bg-main via-bg-main/90 to-bg-main/60" />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <span className="text-sm font-semibold uppercase tracking-wider text-accent-light">
+                {club.footballSchool.name}
+              </span>
+              <h2 className="mt-3 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
+                {club.footballSchool.athleteCount}
+                <br />
+                <span className="text-accent-bright">Sporcumuzla Birlikte.</span>
+              </h2>
+              <p className="mt-4 max-w-lg text-white/80">
+                Futbol okulumuz için kayıtlarımızı artık buradan alıyoruz. QR kodu telefonunuzla okutun ya da butona
+                dokunun, ön kayıt formunu birkaç dakikada doldurun.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <SchoolRegisterButton />
+                <Link
+                  href="/futbol-okulu"
+                  className="group inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition hover:text-white"
+                >
+                  Futbol Okulu Hakkında
+                  <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <SchoolQrCode size={200} />
+              <span className="text-xs uppercase tracking-wider text-text-muted">Telefonunuzla okutun</span>
             </div>
           </div>
         </div>

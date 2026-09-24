@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getParentInfo } from "@/lib/queries";
 import { PageHero } from "@/components/PageHero";
+import { SchoolRegistrationCard } from "@/components/SchoolRegistration";
 import { buildMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = buildMetadata({
@@ -54,6 +55,7 @@ export default async function ParentsPage() {
           </div>
 
           <div className="space-y-6">
+            <SchoolRegistrationCard title="Futbol Okulu Ön Kayıt" />
             {info.cards.map((card) => (
               <article
                 key={card.title}

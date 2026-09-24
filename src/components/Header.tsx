@@ -22,18 +22,18 @@ export function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
           <Image src="/images/logo.png" alt="Düşbelen SK Logo" width={40} height={40} className="h-10 w-10" />
-          <span className="flex flex-col leading-tight">
+          <span className="flex flex-col whitespace-nowrap leading-tight lg:hidden xl:flex">
             <span className="text-sm font-bold tracking-wide text-white sm:text-base">DÜŞBELEN SK</span>
-            <span className="text-[11px] uppercase tracking-wide text-text-muted sm:text-xs">{club.tagline}</span>
+            <span className="text-[11px] uppercase tracking-wide text-text-muted sm:text-xs lg:hidden">{club.tagline}</span>
           </span>
         </Link>
 
-        <nav aria-label="Ana menü" className="hidden items-center gap-7 lg:flex">
+        <nav aria-label="Ana menü" className="hidden items-center gap-5 lg:flex xl:gap-7">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-xs font-semibold uppercase tracking-wider text-text-muted transition hover:text-accent-bright"
+              className="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-text-muted transition hover:text-accent-bright"
             >
               {link.label}
             </Link>
@@ -42,10 +42,10 @@ export function Header() {
 
         <div className="hidden lg:block">
           <Link
-            href="/iletisim"
-            className="rounded-full bg-accent px-5 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:brightness-110"
+            href="/futbol-okulu"
+            className="whitespace-nowrap rounded-full bg-accent px-5 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:brightness-110"
           >
-            Kulübe Katıl
+            Ön Kayıt
           </Link>
         </div>
 
@@ -77,11 +77,11 @@ export function Header() {
             ))}
             <li className="pt-2">
               <Link
-                href="/iletisim"
+                href="/futbol-okulu"
                 onClick={() => setOpen(false)}
                 className="block rounded-full bg-accent px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-wider text-white"
               >
-                Kulübe Katıl
+                Ön Kayıt
               </Link>
             </li>
           </ul>

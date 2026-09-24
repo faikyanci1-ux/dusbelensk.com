@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
+import { SchoolQrCode } from "@/components/SchoolRegistration";
 import { club } from "@/data/club";
 import { navLinks } from "@/lib/nav";
 
@@ -64,6 +65,22 @@ export function Footer() {
           <p className="mt-4 text-sm text-text-muted">
             Genç yetenekler, güçlü takım ruhu ve aile sıcaklığı ile Düşbelen&apos;in gururu.
           </p>
+          <div className="mt-6 flex items-center gap-4">
+            <SchoolQrCode size={84} className="rounded-xl p-2" />
+            <div>
+              <span className="block text-[10px] font-semibold uppercase tracking-wider text-text-muted/70">
+                Futbol Okulu
+              </span>
+              <a
+                href={club.footballSchool.registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-white transition hover:text-accent-bright"
+              >
+                Online Ön Kayıt →
+              </a>
+            </div>
+          </div>
         </div>
 
         <div>
