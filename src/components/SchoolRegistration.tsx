@@ -82,7 +82,7 @@ export function SchoolRegisterButton({
   );
 }
 
-/** Kart: QR + "telefonunuzla okutun" notu + buton. Açık (cream) zeminler için. */
+/** Kart: doğum yılı etiketi + QR + açıklama + buton. Açık (cream) zeminler için. */
 export function SchoolRegistrationCard({ title = "Online Ön Kayıt" }: { title?: string }) {
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
@@ -90,18 +90,18 @@ export function SchoolRegistrationCard({ title = "Online Ön Kayıt" }: { title?
         <SchoolEligibilityBadge tone="light" />
       </div>
       <div className="mt-5 flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
-      <SchoolQrCode size={140} className="border border-black/10 shadow-none" />
-      <div>
-        <h3 className="font-display text-xl uppercase tracking-tight text-ink">{title}</h3>
-        <p className="mt-2 text-sm text-ink-muted">
-          {footballSchool.name} kaydı için QR kodu telefonunuzun kamerasıyla okutun ya da butona dokunun.
-        </p>
-        <p className="mt-1 flex items-center justify-center gap-1.5 text-xs text-ink-muted sm:justify-start">
-          <QrCode size={14} className="text-accent" />
-          Kayıt formu birkaç dakika sürer.
-        </p>
-        <SchoolRegisterButton className="mt-4" />
-      </div>
+        <SchoolQrCode size={140} className="border border-black/10 shadow-none" />
+        <div>
+          <h3 className="font-display text-xl uppercase tracking-tight text-ink">{title}</h3>
+          <p className="mt-2 text-sm text-ink-muted">
+            {footballSchool.name} kaydı için QR kodu telefonunuzun kamerasıyla okutun ya da butona dokunun.
+          </p>
+          <p className="mt-1 flex items-center justify-center gap-1.5 text-xs text-ink-muted sm:justify-start">
+            <QrCode size={14} className="text-accent" />
+            Kayıt formu birkaç dakika sürer.
+          </p>
+          <SchoolRegisterButton className="mt-4" />
+        </div>
       </div>
     </div>
   );

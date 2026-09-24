@@ -12,7 +12,7 @@ export function PageHero({
   image?: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-bg-main py-16 sm:py-24">
+    <section className="relative isolate overflow-hidden bg-bg-main py-16 sm:py-24">
       {image && (
         <div className="absolute inset-0 -z-10">
           <Image src={image} alt="" fill sizes="100vw" preload className="object-cover opacity-35" />
