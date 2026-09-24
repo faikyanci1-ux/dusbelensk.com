@@ -8,7 +8,7 @@ export const club = {
   ageRange: "11-17",
   athleteCount: "100'e yakın",
   officialMatchCount: "+50",
-  address: "Yangı Mahallesi Merkez Yangı Sokak No:3 Köyceğiz/Muğla",
+  address: "Döğüşbelen Mahallesi Merkez 2. Sokak Köyceğiz/Muğla",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=D%C3%BC%C5%9Fbelen+Spor+Kul%C3%BCb%C3%BC+Okalipt%C3%BCs+Tesisleri",
   mapsEmbedSrc:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3187.0655462208592!2d28.583721279345706!3d36.984368599999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bf81002340344d%3A0xbe732e9caffd573c!2zRMO8xZ9iZWxlbiBTcG9yIEt1bMO8YsO8IE9rYWxpcHTDvHMgVGVzaXNsZXJp!5e0!3m2!1str!2str!4v1789826608910!5m2!1str!2str",
