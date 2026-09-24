@@ -4,6 +4,34 @@ import { club } from "@/data/club";
 
 const { footballSchool } = club;
 
+export const schoolBirthYears = `${footballSchool.birthYearFrom}–${footballSchool.birthYearTo}`;
+
+/** "2015–2020 doğumlu sporcular katılabilir" etiketi — her QR'ın üstünde gösterilir. */
+export function SchoolEligibilityBadge({ tone = "dark" }: { tone?: "dark" | "light" }) {
+  const toneClass =
+    tone === "light"
+      ? "border-accent/30 bg-accent-soft text-accent-deep"
+      : "border-accent-bright/40 bg-accent-bright/10 text-white";
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium ${toneClass}`}>
+      <span className="font-bold tabular-nums">{schoolBirthYears}</span>
+      doğumlu sporcular katılabilir
+    </span>
+  );
+}
+
+/** Etiket + QR + "telefonunuzla okutun" notu — koyu zeminli bölümler için. */
+export function SchoolQrBlock({ size = 200 }: { size?: number }) {
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <SchoolEligibilityBadge />
+      <SchoolQrCode size={size} />
+      <span className="text-xs uppercase tracking-wider text-text-muted">Telefonunuzla okutun</span>
+    </div>
+  );
+}
+
 /** QR kod + ortasında kulüp logosu. QR "H" hata toleransıyla üretildi, ortadaki logo okumayı bozmaz. */
 export function SchoolQrCode({ size = 200, className = "" }: { size?: number; className?: string }) {
   const logoSize = Math.round(size * 0.22);
@@ -57,7 +85,11 @@ export function SchoolRegisterButton({
 /** Kart: QR + "telefonunuzla okutun" notu + buton. Açık (cream) zeminler için. */
 export function SchoolRegistrationCard({ title = "Online Ön Kayıt" }: { title?: string }) {
   return (
-    <div className="flex flex-col items-center gap-6 rounded-2xl border border-black/10 bg-white p-6 text-center shadow-sm sm:flex-row sm:text-left">
+    <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
+      <div className="text-center sm:text-left">
+        <SchoolEligibilityBadge tone="light" />
+      </div>
+      <div className="mt-5 flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
       <SchoolQrCode size={140} className="border border-black/10 shadow-none" />
       <div>
         <h3 className="font-display text-xl uppercase tracking-tight text-ink">{title}</h3>
@@ -69,6 +101,7 @@ export function SchoolRegistrationCard({ title = "Online Ön Kayıt" }: { title?
           Kayıt formu birkaç dakika sürer.
         </p>
         <SchoolRegisterButton className="mt-4" />
+      </div>
       </div>
     </div>
   );

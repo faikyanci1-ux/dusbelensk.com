@@ -3,11 +3,11 @@ import { club } from "./club";
 export const faq = [
   {
     question: "Hangi yaş gruplarına eğitim veriyorsunuz?",
-    answer: `Kulübümüzde ${club.ageRange} yaş aralığındaki çocuklara altyapı futbolu eğitimi veriyoruz.`,
+    answer: `Kulübümüzde ${club.ageRange} yaş aralığındaki çocuklara altyapı futbolu eğitimi veriyoruz. Futbol okulumuza ise ${club.footballSchool.birthYearFrom}–${club.footballSchool.birthYearTo} doğumlu sporcular katılabilir.`,
   },
   {
     question: "Futbol okuluna nasıl kayıt olurum?",
-    answer: `${club.footballSchool.name} kayıtlarını online alıyoruz: Futbol Okulu sayfamızdaki QR kodu telefonunuzla okutun ya da "Hemen Ön Kayıt Ol" butonuna dokunarak ön kayıt formunu doldurun (${club.footballSchool.registrationUrl}). Formunuz bize ulaştıktan sonra sizi arıyoruz.`,
+    answer: `${club.footballSchool.name}na ${club.footballSchool.birthYearFrom}–${club.footballSchool.birthYearTo} doğumlu sporcular katılabilir. Kayıtları online alıyoruz: Futbol Okulu sayfamızdaki QR kodu telefonunuzla okutun ya da "Hemen Ön Kayıt Ol" butonuna dokunarak ön kayıt formunu doldurun (${club.footballSchool.registrationUrl}). Formunuz bize ulaştıktan sonra sizi arıyoruz.`,
   },
   {
     question: "Kayıt öncesi sorularım için kime ulaşabilirim?",

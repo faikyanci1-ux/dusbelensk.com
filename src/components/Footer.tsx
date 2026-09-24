@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-import { SchoolQrCode } from "@/components/SchoolRegistration";
+import { SchoolQrCode, schoolBirthYears } from "@/components/SchoolRegistration";
 import { club } from "@/data/club";
 import { navLinks } from "@/lib/nav";
 
@@ -71,6 +71,7 @@ export function Footer() {
               <span className="block text-[10px] font-semibold uppercase tracking-wider text-text-muted/70">
                 Futbol Okulu
               </span>
+              <span className="block text-xs text-accent-bright">{schoolBirthYears} doğumlular</span>
               <a
                 href={club.footballSchool.registrationUrl}
                 target="_blank"

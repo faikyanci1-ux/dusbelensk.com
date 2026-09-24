@@ -33,7 +33,7 @@ import { HeroSlider, type HeroSlide } from "@/components/HeroSlider";
 import { NewsCarousel } from "@/components/NewsCarousel";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
-import { SchoolQrCode, SchoolRegisterButton } from "@/components/SchoolRegistration";
+import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 
@@ -303,10 +303,7 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-3">
-              <SchoolQrCode size={200} />
-              <span className="text-xs uppercase tracking-wider text-text-muted">Telefonunuzla okutun</span>
-            </div>
+            <SchoolQrBlock size={200} />
           </div>
         </div>
       </section>

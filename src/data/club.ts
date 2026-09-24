@@ -48,6 +48,8 @@ export const club = {
   footballSchool: {
     name: "Düşbelen Spor Futbol Okulu",
     athleteCount: "100'e yakın",
+    birthYearFrom: 2015,
+    birthYearTo: 2020,
     registrationUrl: "https://dusbelensk.sporokullari.org/kayit",
     qrImage: "/images/futbol-okulu-qr.svg",
   },

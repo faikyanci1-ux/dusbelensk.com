@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { CheckCircle2, ClipboardList, QrCode, PhoneCall } from "lucide-react";
-import { getClubInfo, getProgram } from "@/lib/queries";
+import { getClubInfo } from "@/lib/queries";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
-import { SchoolQrCode, SchoolRegisterButton } from "@/components/SchoolRegistration";
+import { SchoolQrBlock, SchoolRegisterButton, schoolBirthYears } from "@/components/SchoolRegistration";
 import { buildMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = buildMetadata({
   title: "Futbol Okulu — Online Ön Kayıt",
   description:
-    "Düşbelen Spor Futbol Okulu: 100'e yakın sporcumuzla Köyceğiz'de lisanslı antrenörler eşliğinde futbol eğitimi. QR kod ile hemen online ön kayıt olun.",
+    "Düşbelen Spor Futbol Okulu: 2015–2020 doğumlu çocuklar için Köyceğiz'de lisanslı antrenörler eşliğinde futbol eğitimi. 100'e yakın sporcumuza katılın — QR kod ile hemen online ön kayıt olun.",
   path: "/futbol-okulu",
 });
 
@@ -39,15 +39,19 @@ const SCHOOL_BENEFITS = [
 ];
 
 export default async function FootballSchoolPage() {
-  const [club, program] = await Promise.all([getClubInfo(), getProgram()]);
+  const club = await getClubInfo();
   const { footballSchool } = club;
+  const birthYears = Array.from(
+    { length: footballSchool.birthYearTo - footballSchool.birthYearFrom + 1 },
+    (_, i) => footballSchool.birthYearFrom + i
+  );
 
   return (
     <>
       <PageHero
         eyebrow="Futbol Okulu"
         title={footballSchool.name}
-        description={`${footballSchool.athleteCount} sporcumuzla birlikte Köyceğiz'de futbolu sevdiriyor, geleceğin sporcularını yetiştiriyoruz.`}
+        description={`${schoolBirthYears} doğumlu çocuklar için; ${footballSchool.athleteCount} sporcumuzla birlikte Köyceğiz'de futbolu sevdiriyor, geleceğin sporcularını yetiştiriyoruz.`}
         image="/images/gallery/kadro-toplu-foto.jpg"
       />
 
@@ -77,10 +81,7 @@ export default async function FootballSchoolPage() {
               <SchoolRegisterButton className="mt-8" />
             </div>
 
-            <div className="flex flex-col items-center gap-3">
-              <SchoolQrCode size={220} />
-              <span className="text-xs uppercase tracking-wider text-text-muted">Telefonunuzla okutun</span>
-            </div>
+            <SchoolQrBlock size={220} />
           </div>
         </div>
       </section>
@@ -120,25 +121,22 @@ export default async function FootballSchoolPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <SectionHeading
             eyebrow="Kimler Katılabilir?"
-            title="Yaş Grupları"
-            description={`${club.ageRange} yaş arası çocuk ve gençler, yaşına ve seviyesine uygun gruplarda antrenman yapar.`}
+            title={`${schoolBirthYears} Doğumlular`}
+            description={`Futbol okulumuza ${schoolBirthYears} yılları arasında doğmuş sporcular katılabilir. Gruplar yaşa ve seviyeye göre oluşturulur.`}
           />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {program.map((group) => (
-              <div key={group.code} className="rounded-2xl border border-white/10 bg-black/20 p-5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-display text-2xl text-white">{group.code}</span>
-                  <span className="text-xs font-semibold uppercase tracking-wide text-accent-light">
-                    {group.range}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-text-muted">{group.description}</p>
-                <p className="mt-3 text-xs uppercase tracking-wide text-white/70">{group.days}</p>
-              </div>
+          <ul className="mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-4 sm:grid-cols-6">
+            {birthYears.map((year) => (
+              <li
+                key={year}
+                className="rounded-2xl border border-white/10 bg-black/20 py-5 text-center"
+              >
+                <span className="font-display text-2xl text-white sm:text-3xl">{year}</span>
+                <span className="mt-1 block text-[10px] uppercase tracking-wider text-accent-light">doğumlu</span>
+              </li>
             ))}
-          </div>
+          </ul>
           <div className="mt-12 flex flex-col items-center gap-3 text-center">
-            <p className="text-white/80">Çocuğunuzun yeri hazır — ön kaydını şimdi yapın.</p>
+            <p className="text-white/80">Çocuğunuz {schoolBirthYears} doğumluysa yeri hazır — ön kaydını şimdi yapın.</p>
             <SchoolRegisterButton />
             <a href={club.phoneHref} className="text-sm text-text-muted hover:text-white">
               Sorularınız için: {club.phone}
