@@ -53,11 +53,4 @@ export const staff: StaffMember[] = [
     photo: "/images/staff/ozan-ozturk.jpg",
     quote: "İyi kaleciler daha güçlü takımlar yaratır.",
   },
-  {
-    id: 4,
-    name: "Gökhan Karabıyık",
-    role: "Saha ve Ekipman Koordinatörü",
-    description: "Saha içindeki düzen, ekipman ve maç günü hazırlıklarının görünmeyen mimarıdır.",
-    photo: "/images/staff/fizik-performans.jpg",
-  },
 ];
