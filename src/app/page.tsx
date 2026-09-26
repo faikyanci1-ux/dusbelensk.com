@@ -103,27 +103,30 @@ export default async function HomePage() {
       <section className="relative h-[92vh] min-h-[680px]">
         <div className="absolute inset-0 overflow-hidden">
           <HeroSlider slides={heroSlides} />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg-main/8 to-bg-main" />
-          <div className="absolute inset-0 bg-gradient-to-r from-bg-main/70 via-bg-main/20 to-transparent sm:from-bg-main/50 sm:via-transparent sm:to-transparent" />
+          {/* Okunabilirlik: üstte menü, altta içerik geçişi; solda metnin arkası koyu, sağda fotoğraf canlı kalır.
+              Mobilde metin tüm genişliği kapladığı için karartma tüm fotoğrafa yayılır. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-bg-main/60 via-transparent via-25% to-bg-main" />
+          <div className="absolute inset-0 bg-bg-main/55 sm:hidden" />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-bg-main/90 via-bg-main/60 via-40% to-transparent to-75% sm:block" />
         </div>
 
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-center px-4 pt-20 pb-8 sm:px-6 sm:pt-0 sm:pb-0">
           <div className="max-w-2xl">
-            <span className="font-script mb-5 block -rotate-2 text-3xl leading-none text-accent-bright sm:text-4xl">
+            <span className="font-script mb-5 block -rotate-2 text-3xl leading-none text-accent-bright drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] sm:text-4xl">
               {club.motto}
             </span>
-            <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent-bright">
+            <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent-bright drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
               <span className="h-px w-6 bg-accent-bright" />
               Köyceğiz&apos;in genç futbolcuları için
             </span>
-            <h1 className="mt-5 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="mt-5 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)] sm:text-6xl lg:text-7xl">
               Geleceğin
               <br />
               <span className="text-accent-bright">Sporcularını</span>
               <br />
               Yetiştiriyoruz.
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-text-muted">
+            <p className="mt-6 max-w-xl text-lg text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
               Futbol okulunda {club.footballSchool.birthYears} doğumlulara, altyapıda {club.ageRange} yaş arası gençlere
               lisanslı antrenörler eşliğinde futbol eğitimi.
             </p>
@@ -133,7 +136,7 @@ export default async function HomePage() {
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white"
+                className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-bg-main/40 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white backdrop-blur-sm transition hover:border-white"
               >
                 <WhatsAppIcon size={18} />
                 WhatsApp&apos;tan Soru Sor
