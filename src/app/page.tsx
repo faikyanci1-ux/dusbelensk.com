@@ -36,7 +36,7 @@ import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
-import { heroExtraSlides } from "@/data/heroSlides";
+import { heroImageSlides } from "@/data/heroSlides";
 import { StandingsTable } from "@/components/StandingsTable";
 import { getU17GroupCStandings, STANDINGS_SOURCE_URL } from "@/lib/standings";
 
@@ -87,21 +87,14 @@ export default async function HomePage() {
   )}`;
   const facilityVideo = videos.find((v) => v.caption.includes("Havadan")) ?? videos[1];
 
-  // Galeri admin panelden değişebilir: slayt için ilk 6 fotoğraf (daha azı varsa olanlar) videoların arasına serpiştirilir.
+  // Slayt fotoğrafları en yeniden eskiye (src/data/heroSlides.ts); her iki fotoğraftan sonra bir video gelir,
+  // böylece en son eklenen kareler slider'ın en başında görünür.
   const videoSlides: HeroSlide[] = videos.map((v) => ({ type: "video", src: v.src, poster: v.poster, caption: v.caption }));
-  const imageSlides: HeroSlide[] = [0, 2, 1, 4, 3, 5]
-    .map((i) => gallery[i])
-    .filter((g): g is GalleryItem => Boolean(g))
-    .map((g) => ({ type: "image", src: g.src, caption: g.alt }));
-  // Slayta özel seçilmiş ek kareler (galeride de var; zaten ilk 6'daysa tekrar eklenmez).
-  for (const s of heroExtraSlides) {
-    if (!imageSlides.some((x) => x.src === s.src)) imageSlides.push({ type: "image", ...s });
-  }
+  const imageSlides: HeroSlide[] = heroImageSlides.map((s) => ({ type: "image", ...s }));
   const heroSlides: HeroSlide[] = [];
-  for (let v = 0, i = 0; v < videoSlides.length || i < imageSlides.length; v++) {
-    if (videoSlides[v]) heroSlides.push(videoSlides[v]);
+  for (let i = 0, v = 0; i < imageSlides.length || v < videoSlides.length; i += 2, v++) {
     heroSlides.push(...imageSlides.slice(i, i + 2));
-    i += 2;
+    if (videoSlides[v]) heroSlides.push(videoSlides[v]);
   }
 
   return (
