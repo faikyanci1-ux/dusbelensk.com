@@ -6,7 +6,7 @@ export type GalleryItem = {
 };
 
 export const gallery: GalleryItem[] = [
-  { id: 1, src: "/images/gallery/efsaneler-maci-sponsor.jpeg", alt: "Efsaneler maçı, sponsor formalı takım fotoğrafı", size: "wide" },
+  { id: 1, src: "/images/gallery/efsaneler-maci-sponsor-2.jpeg", alt: "Efsaneler maçı, sponsor formalı takım fotoğrafı", size: "wide" },
   { id: 2, src: "/images/gallery/teknik-ekip-saha-kenari.jpeg", alt: "Teknik ekip antrenman sahasında" },
   { id: 3, src: "/images/gallery/efsaneler-maci-toplu.jpg", alt: "Efsaneler maçı, iki takım ve hakemler toplu fotoğrafta", size: "wide" },
   { id: 4, src: "/images/gallery/kulup-ailesi-toplu.jpeg", alt: "Sporcular, veliler ve kulüp ailesi toplu fotoğrafta", size: "wide" },

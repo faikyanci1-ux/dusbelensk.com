@@ -137,6 +137,20 @@ export async function Footer() {
           </div>
         </div>
       </div>
+
+      <div className="border-t border-border-soft/40 py-4">
+        <p className="mx-auto max-w-6xl px-4 text-center text-xs text-text-muted sm:px-6">
+          © {new Date().getFullYear()} · All Rights Reserved · Powered by{" "}
+          <a
+            href="https://www.btmbilisim.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-white/80 transition hover:text-white"
+          >
+            BTM Bilişim
+          </a>
+        </p>
+      </div>
     </footer>
   );
 }

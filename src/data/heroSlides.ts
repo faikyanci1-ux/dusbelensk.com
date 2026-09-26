@@ -5,7 +5,7 @@
 /** focus: geniş ekranda kırpılırken kişilerin (kafaların) kadrajda kalması için odak noktası (CSS object-position). */
 export const heroImageSlides: { src: string; caption: string; focus?: string }[] = [
   // 26 Eylül 2026'da eklenenler
-  { src: "/images/gallery/efsaneler-maci-sponsor.jpeg", caption: "Efsaneler Maçı · Takım Fotoğrafı", focus: "50% 0%" },
+  { src: "/images/gallery/efsaneler-maci-sponsor-2.jpeg", caption: "Efsaneler Maçı · Takım Fotoğrafı", focus: "50% 25%" },
   { src: "/images/gallery/takim-otobusu.jpeg", caption: "Takımımız · Düşbelen SK Otobüsü", focus: "50% 65%" },
   { src: "/images/gallery/odul-toreni.jpeg", caption: "Turnuva · Ödül Töreni", focus: "50% 70%" },
   { src: "/images/gallery/takim-ve-teknik-ekip.jpeg", caption: "Takım ve Teknik Ekip", focus: "50% 45%" },
