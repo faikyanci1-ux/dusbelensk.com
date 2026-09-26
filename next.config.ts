@@ -14,7 +14,11 @@ const nextConfig: NextConfig = {
     // AVIF öncelikli, desteklemeyen tarayıcılarda WebP'ye düşer (next/image varsayılanı sadece webp'dir).
     formats: ["image/avif", "image/webp"],
     // Admin panelden yüklenen haber/galeri görselleri Vercel Blob'da tutulur.
-    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+    // muglaaskf.com: puan durumundaki takım logoları.
+    remotePatterns: [
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      { protocol: "https", hostname: "muglaaskf.com", pathname: "/images/**" },
+    ],
   },
   async headers() {
     return [

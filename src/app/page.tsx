@@ -37,6 +37,8 @@ import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistra
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 import { heroExtraSlides } from "@/data/heroSlides";
+import { StandingsTable } from "@/components/StandingsTable";
+import { getU17GroupCStandings, STANDINGS_SOURCE_URL } from "@/lib/standings";
 
 const STAT_ICONS = [Users, GraduationCap, CalendarDays, Trophy];
 
@@ -66,7 +68,7 @@ const PROGRAM_ACCENT_CLASSES: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const [club, stats, values, videos, gallery, leadership, news, upcomingEvents, faq, program] =
+  const [club, stats, values, videos, gallery, leadership, news, upcomingEvents, faq, program, standings] =
     await Promise.all([
       getClubInfo(),
       getStats(),
@@ -78,6 +80,7 @@ export default async function HomePage() {
       getUpcomingEvents(),
       getFaq(),
       getProgram(),
+      getU17GroupCStandings(),
     ]);
   const whatsappHref = `https://wa.me/${club.whatsappNumber}?text=${encodeURIComponent(
     "Merhaba, futbol okulu hakkında bilgi almak istiyorum."
@@ -507,6 +510,36 @@ export default async function HomePage() {
                 Tüm Haberler
                 <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PUAN DURUMU — U17 C GRUBU (Muğla ASKF) */}
+      {standings && (
+        <section className="border-t border-border-soft/40 py-20">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+            <SectionHeading
+              eyebrow={`Muğla ASKF · ${standings.title}`}
+              title="U17 C Grubu Puan Durumu"
+              description={`Güncel lig tablosu${standings.week ? ` (${standings.week})` : ""}. Veriler Muğla Amatör Spor Kulüpleri Federasyonu'ndan saatlik olarak alınır.`}
+            />
+            <div className="mt-12">
+              <StandingsTable rows={standings.rows} caption={`${standings.title} U17 C Grubu puan durumu`} />
+            </div>
+            <p className="mt-4 text-center text-xs text-text-muted">
+              O: Oynanan · G: Galibiyet · B: Beraberlik · M: Mağlubiyet · A: Attığı · Y: Yediği · AV: Averaj · P: Puan
+            </p>
+            <div className="mt-6 text-center">
+              <a
+                href={STANDINGS_SOURCE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Muğla ASKF&apos;de Görüntüle
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
             </div>
           </div>
         </section>
