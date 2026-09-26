@@ -1,12 +1,27 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { clientIp, hitRateLimit } from "@/lib/rateLimit";
 
 const MAX_FIELD_LENGTH = 200;
 const MAX_MESSAGE_LENGTH = 2000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Aynı IP'den bu süre içinde en fazla bu kadar mesaj (e-posta kotası ve spam için). */
+const MAX_MESSAGES = 5;
+const WINDOW_MINUTES = 60;
+
+const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+
 export async function POST(request: Request) {
-  const { name, email, phone, message, childName, ageGroup, requestType, website } = await request.json();
+  const body: unknown = await request.json().catch(() => null);
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
+  }
+  // Yalnızca metin alanlar kabul edilir (nesne/sayı gönderilirse boş sayılır).
+  const fields = body as Record<string, unknown>;
+  const [name, email, phone, message, childName, ageGroup, requestType, website] = (
+    ["name", "email", "phone", "message", "childName", "ageGroup", "requestType", "website"] as const
+  ).map((k) => str(fields[k]));
 
   // Honeypot: gerçek kullanıcılar bu alanı görmez/doldurmaz, botlar doldurur.
   if (website) {
@@ -53,6 +68,19 @@ export async function POST(request: Request) {
     );
   }
 
+  // Sınır sayacına (veritabanı) ulaşılamazsa form yine çalışır: mesajı kaybetmek, sınırı bir süre
+  // uygulayamamaktan daha kötü.
+  const allowed = await hitRateLimit(`contact:${clientIp(request)}`, MAX_MESSAGES, WINDOW_MINUTES).catch((error) => {
+    console.error("[contact] istek sınırı kontrol edilemedi:", error);
+    return true;
+  });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Çok fazla mesaj gönderildi. Lütfen daha sonra tekrar deneyin veya telefonla ulaşın." },
+      { status: 429 }
+    );
+  }
+
   const resend = new Resend(apiKey);
 
   const subject = isTrial
@@ -62,8 +90,8 @@ export async function POST(request: Request) {
   const bodyLines = [
     `Talep Türü: ${isTrial ? "Deneme Antrenmanı / Kayıt Başvurusu" : "Genel Mesaj"}`,
     `Veli Ad Soyad: ${name}`,
-    `Telefon: ${phone ?? "-"}`,
-    `E-posta: ${email ?? "-"}`,
+    `Telefon: ${phone || "-"}`,
+    `E-posta: ${email || "-"}`,
   ];
 
   if (isTrial) {

@@ -13,7 +13,7 @@ function toHex(buffer: ArrayBuffer): string {
     .join("");
 }
 
-/** Sabit zamanlı string karşılaştırma (zamanlama saldırılarına karşı). */
+/** Sabit zamanlı karşılaştırma. Yalnızca eşit uzunluklu özetler (hex) için kullanılır. */
 function timingSafeStringEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -23,12 +23,20 @@ function timingSafeStringEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
+async function sha256(value: string): Promise<string> {
+  return toHex(await crypto.subtle.digest("SHA-256", encoder.encode(value)));
+}
+
+/**
+ * İmza anahtarı ADMIN_SESSION_SECRET + ADMIN_PASSWORD'dan türetilir: şifre değişince
+ * mevcut tüm oturumlar da geçersiz olur.
+ */
 async function sign(payload: string): Promise<string> {
   const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) throw new Error("ADMIN_SESSION_SECRET tanımlı değil.");
   const key = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(secret),
+    encoder.encode(`${secret}\u0000${process.env.ADMIN_PASSWORD ?? ""}`),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
@@ -37,27 +45,41 @@ async function sign(payload: string): Promise<string> {
   return toHex(signature);
 }
 
-/** Girilen şifreyi ADMIN_PASSWORD ile sabit zamanlı şekilde karşılaştırır. */
-export function verifyPassword(input: string): boolean {
+/**
+ * Girilen şifreyi ADMIN_PASSWORD ile karşılaştırır. İkisinin de SHA-256 özeti karşılaştırılır;
+ * özetler sabit uzunlukta olduğu için yanıt süresi şifrenin uzunluğunu da sızdırmaz.
+ */
+export async function verifyPassword(input: string): Promise<boolean> {
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) return false;
-  return timingSafeStringEqual(input, expected);
+  const [a, b] = await Promise.all([sha256(input), sha256(expected)]);
+  return timingSafeStringEqual(a, b);
 }
 
-/** İmzalı, süresi dolan bir oturum token'ı üretir: "<expiryMs>.<hmac>" */
+/** İmzalı, süresi dolan bir oturum token'ı üretir: "<issuedAtMs>.<expiryMs>.<hmac>" */
 export async function createSessionToken(): Promise<string> {
-  const expiry = Date.now() + SESSION_TTL_MS;
-  const payload = String(expiry);
+  const issuedAt = Date.now();
+  const payload = `${issuedAt}.${issuedAt + SESSION_TTL_MS}`;
   return `${payload}.${await sign(payload)}`;
 }
 
+/** İmzası ve süresi geçerliyse token'ın oluşturulma zamanını, değilse null döner. */
+export async function readSessionToken(token: string | undefined): Promise<{ issuedAt: number } | null> {
+  if (!token) return null;
+  const [issued, expires, signature] = token.split(".");
+  if (!issued || !expires || !signature) return null;
+  const expected = await sign(`${issued}.${expires}`);
+  if (!timingSafeStringEqual(signature, expected)) return null;
+  const issuedAt = Number(issued);
+  const expiry = Number(expires);
+  if (!Number.isFinite(issuedAt) || !Number.isFinite(expiry) || expiry < Date.now()) return null;
+  return { issuedAt };
+}
+
+/**
+ * Yalnızca imza ve süre kontrolü (Edge'de, proxy'de kullanılır). Çıkış yapılınca iptal edilen
+ * oturumları da eleyen tam kontrol için sunucuda adminSession.ts'deki isAdminSession kullanılır.
+ */
 export async function verifySessionToken(token: string | undefined): Promise<boolean> {
-  if (!token) return false;
-  const [payload, signature] = token.split(".");
-  if (!payload || !signature) return false;
-  const expected = await sign(payload);
-  if (!timingSafeStringEqual(signature, expected)) return false;
-  const expiry = Number(payload);
-  if (!Number.isFinite(expiry) || expiry < Date.now()) return false;
-  return true;
+  return (await readSessionToken(token)) !== null;
 }

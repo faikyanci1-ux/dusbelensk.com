@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
-import { ADMIN_SESSION_COOKIE, verifySessionToken } from "@/lib/adminAuth";
+import { ADMIN_SESSION_COOKIE } from "@/lib/adminAuth";
+import { isAdminSession } from "@/lib/adminSession";
 
 /**
  * Admin panelden tarayıcı üzerinden doğrudan Vercel Blob'a fotoğraf yükleme için kısa ömürlü
@@ -9,7 +10,7 @@ import { ADMIN_SESSION_COOKIE, verifySessionToken } from "@/lib/adminAuth";
  * BLOB_READ_WRITE_TOKEN tanımlı değilse yükleme kapalıdır (ImageField yükle butonunu göstermez).
  */
 export async function POST(request: NextRequest) {
-  if (!(await verifySessionToken(request.cookies.get(ADMIN_SESSION_COOKIE)?.value))) {
+  if (!(await isAdminSession(request.cookies.get(ADMIN_SESSION_COOKIE)?.value))) {
     return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
   }
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -32,6 +33,8 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message }, { status: 400 });
+    // Ayrıntı yalnızca sunucu logunda; istemciye sabit mesaj.
+    console.error("[upload]", error);
+    return NextResponse.json({ error: "Fotoğraf yüklenemedi. Lütfen tekrar deneyin." }, { status: 400 });
   }
 }

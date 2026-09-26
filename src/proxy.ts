@@ -9,15 +9,12 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
 
-  // Giriş API'si her zaman erişilebilir olmalı.
-  if (pathname === "/api/admin/login") return NextResponse.next();
+  // Giriş API'si ve giriş sayfası her zaman erişilebilir olmalı. Oturumu açık olanı panele
+  // yönlendirme işi giriş sayfasında yapılır (iptal edilmiş oturumları da görebildiği için).
+  if (pathname === "/api/admin/login" || pathname === "/admin/login") return NextResponse.next();
 
+  // Burada yalnızca imza/süre kontrolü (Edge); çıkışla iptal kontrolü sayfa/action/route'larda yapılır.
   const authenticated = await verifySessionToken(token);
-
-  // Giriş sayfası: oturum zaten açıksa panele gönder.
-  if (pathname === "/admin/login") {
-    return authenticated ? NextResponse.redirect(new URL("/admin", request.url)) : NextResponse.next();
-  }
 
   if (!authenticated) {
     if (pathname.startsWith("/api/")) {
