@@ -36,6 +36,7 @@ import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
+import { heroExtraSlides } from "@/data/heroSlides";
 
 const STAT_ICONS = [Users, GraduationCap, CalendarDays, Trophy];
 
@@ -89,6 +90,10 @@ export default async function HomePage() {
     .map((i) => gallery[i])
     .filter((g): g is GalleryItem => Boolean(g))
     .map((g) => ({ type: "image", src: g.src, caption: g.alt }));
+  // Slayta özel seçilmiş ek kareler (galeride de var; zaten ilk 6'daysa tekrar eklenmez).
+  for (const s of heroExtraSlides) {
+    if (!imageSlides.some((x) => x.src === s.src)) imageSlides.push({ type: "image", ...s });
+  }
   const heroSlides: HeroSlide[] = [];
   for (let v = 0, i = 0; v < videoSlides.length || i < imageSlides.length; v++) {
     if (videoSlides[v]) heroSlides.push(videoSlides[v]);
