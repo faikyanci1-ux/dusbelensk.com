@@ -119,10 +119,19 @@ export async function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-border-soft/40 py-6">
+      {/* Mobilde sabit WhatsApp butonu en alt satırı kapatmasın diye altta ek boşluk. */}
+      <div className="border-t border-border-soft/40 pt-6 pb-24 sm:pb-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 text-center text-xs text-text-muted sm:flex-row sm:justify-between sm:px-6 sm:text-left">
           <span>
-            © {new Date().getFullYear()} {club.name}. Tüm hakları saklıdır.
+            © {new Date().getFullYear()} · All Rights Reserved · Powered by{" "}
+            <a
+              href="https://www.btmbilisim.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-white/80 transition hover:text-white"
+            >
+              BTM Bilişim
+            </a>
           </span>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
             <Link href="/gizlilik-politikasi" className="hover:text-white">
@@ -136,20 +145,6 @@ export async function Footer() {
             </Link>
           </div>
         </div>
-      </div>
-
-      <div className="border-t border-border-soft/40 py-4">
-        <p className="mx-auto max-w-6xl px-4 text-center text-xs text-text-muted sm:px-6">
-          © {new Date().getFullYear()} · All Rights Reserved · Powered by{" "}
-          <a
-            href="https://www.btmbilisim.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-white/80 transition hover:text-white"
-          >
-            BTM Bilişim
-          </a>
-        </p>
       </div>
     </footer>
   );
