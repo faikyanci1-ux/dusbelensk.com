@@ -51,7 +51,6 @@ export const gallery: GalleryItem[] = [
   { id: 43, src: "/images/gallery/saha-havadan-1.jpg", alt: "Tesis ve saha havadan görünüm" },
   { id: 44, src: "/images/gallery/tesis-havadan-cati.jpg", alt: "Düşbelen SK tesis binası havadan görünüm" },
   { id: 45, src: "/images/gallery/teknik-ekip-antrenman.jpg", alt: "Teknik ekip antrenman başında" },
-  { id: 46, src: "/images/gallery/efsaneler-maci.jpg", alt: "Kulüp efsaneler maçı", size: "wide" },
   { id: 47, src: "/images/gallery/match-1.jpg", alt: "Maç Günü", size: "large" },
   { id: 48, src: "/images/gallery/training-1.jpg", alt: "Kupa Töreni" },
   { id: 49, src: "/images/gallery/team-1.jpg", alt: "Takım Fotoğrafı" },
