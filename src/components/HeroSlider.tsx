@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useIsDesktop } from "@/lib/useIsDesktop";
 
 export type HeroSlide =
   | { type: "video"; src: string; poster: string; caption: string }
-  | { type: "image"; src: string; caption: string };
+  /** focus: kırpılırken korunacak nokta (CSS object-position, ör. "50% 0%"); Ken Burns zoom'u da buradan başlar. */
+  | { type: "image"; src: string; caption: string; focus?: string };
 
 const INTERVAL_MS = 6000;
 
@@ -80,6 +81,11 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         <Image
           key={slide.type === "video" ? slide.poster : slide.src}
           src={slide.type === "video" ? slide.poster : slide.src}
+          style={
+            slide.type === "image" && slide.focus
+              ? { objectPosition: slide.focus, transformOrigin: slide.focus }
+              : undefined
+          }
           alt=""
           fill
           sizes="100vw"
@@ -99,7 +105,29 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         role="group"
         aria-label="Slayt gösterisi kontrolleri"
       >
-        <div className="pointer-events-auto flex gap-3">
+        {/* Mobil: slayt çok olunca noktalar ekrana sığmıyor; önceki/sonraki + sayaç gösterilir. */}
+        <div className="pointer-events-auto flex items-center gap-1 sm:hidden">
+          <button
+            type="button"
+            aria-label="Önceki görsel"
+            onClick={() => goTo((index - 1 + slides.length) % slides.length)}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <span className="min-w-12 text-center text-xs font-semibold tabular-nums text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]">
+            {index + 1} / {slides.length}
+          </span>
+          <button
+            type="button"
+            aria-label="Sonraki görsel"
+            onClick={() => goTo((index + 1) % slides.length)}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+        <div className="pointer-events-auto hidden gap-3 sm:flex">
           {slides.map((_, i) => (
             <button
               key={i}
