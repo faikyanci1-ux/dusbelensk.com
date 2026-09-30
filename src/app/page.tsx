@@ -38,7 +38,7 @@ import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 import { heroImageSlides } from "@/data/heroSlides";
 import { StandingsTable } from "@/components/StandingsTable";
-import { getU17GroupCStandings, STANDINGS_SOURCE_URL } from "@/lib/standings";
+import { getStandings, STANDINGS_SOURCE_URL } from "@/lib/standings";
 
 const STAT_ICONS = [Users, GraduationCap, CalendarDays, Trophy];
 
@@ -80,7 +80,7 @@ export default async function HomePage() {
       getUpcomingEvents(),
       getFaq(),
       getProgram(),
-      getU17GroupCStandings(),
+      getStandings(),
     ]);
   const whatsappHref = `https://wa.me/${club.whatsappNumber}?text=${encodeURIComponent(
     "Merhaba, futbol okulu hakkında bilgi almak istiyorum."
@@ -511,17 +511,25 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* PUAN DURUMU — U17 C GRUBU (Muğla ASKF) */}
-      {standings && (
+      {/* PUAN DURUMU — U17 C, U14 E, U12 F GRUPLARI (Muğla ASKF) */}
+      {standings.length > 0 && (
         <section className="border-t border-border-soft/40 py-20">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <SectionHeading
-              eyebrow={`Muğla ASKF · ${standings.title}`}
-              title="U17 C Grubu Puan Durumu"
-              description={`Güncel lig tablosu${standings.week ? ` (${standings.week})` : ""}. Veriler Muğla Amatör Spor Kulüpleri Federasyonu'ndan saatlik olarak alınır.`}
+              eyebrow={`Muğla ASKF · ${standings[0].title.replace(/^\S+ /, "")}`}
+              title="Puan Durumu"
+              description="Güncel lig tabloları. Veriler Muğla Amatör Spor Kulüpleri Federasyonu'ndan saatlik olarak alınır."
             />
-            <div className="mt-12">
-              <StandingsTable rows={standings.rows} caption={`${standings.title} U17 C Grubu puan durumu`} />
+            <div className="mt-12 space-y-12">
+              {standings.map((s) => (
+                <div key={s.league}>
+                  <h3 className="mb-4 flex items-baseline justify-between gap-4 font-display text-xl uppercase text-white">
+                    {s.league} {s.group} Grubu
+                    {s.week && <span className="font-sans text-xs font-semibold normal-case text-text-muted">{s.week}</span>}
+                  </h3>
+                  <StandingsTable rows={s.rows} caption={`${s.title} ${s.league} ${s.group} Grubu puan durumu`} />
+                </div>
+              ))}
             </div>
             <p className="mt-4 text-center text-xs text-text-muted">
               O: Oynanan · G: Galibiyet · B: Beraberlik · M: Mağlubiyet · A: Attığı · Y: Yediği · AV: Averaj · P: Puan

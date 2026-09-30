@@ -1,16 +1,22 @@
 /**
- * Muğla ASKF U17 C Grubu puan durumu (https://muglaaskf.com/puan-durumu).
+ * Muğla ASKF puan durumları (https://muglaaskf.com/puan-durumu): U17 C, U14 E ve U12 F grupları.
  *
  * Site ASP.NET WebForms; API yok. Lig ve grup seçimi "postback" ile yapılır: sayfa alınır,
- * gizli form alanları (__VIEWSTATE vb.) ile U17'ye, sonra C grubuna geçilir ve tablo ayrıştırılır.
- * Sonuç saatte bir yenilenir; kaynak siteye ulaşılamazsa null döner ve bölüm gizlenir.
+ * gizli form alanları (__VIEWSTATE vb.) ile lige, sonra gruba geçilir ve tablo ayrıştırılır.
+ * Sonuç saatte bir yenilenir; kaynak siteye ulaşılamazsa ya da grubun tablosu henüz
+ * yayınlanmamışsa o grup null döner ve sitede gizlenir.
  */
 import { unstable_cache } from "next/cache";
 
 export const STANDINGS_SOURCE_URL = "https://muglaaskf.com/puan-durumu";
 const ORIGIN = "https://muglaaskf.com";
-const LEAGUE_U17 = "ctl00$ContentPlaceHolder1$rptAnaLiglerMenu$ctl03$lbl1DevreSec";
-const GROUP_C = "ctl00$ContentPlaceHolder1$rptLigler$ctl00$rptGruplar$ctl03$lblGruplar";
+
+/** Sitede gösterilen gruplar; `menu` kaynak sitedeki sol lig menüsündeki sırasıdır (ctl00 = Süper Amatör). */
+const GROUPS = [
+  { league: "U17", menu: "ctl03", group: "C" },
+  { league: "U14", menu: "ctl04", group: "E" },
+  { league: "U12", menu: "ctl05", group: "F" },
+] as const;
 
 export type StandingRow = {
   rank: number;
@@ -27,7 +33,7 @@ export type StandingRow = {
   isUs: boolean;
 };
 
-export type Standings = { title: string; week: string | null; rows: StandingRow[] };
+export type Standings = { league: string; group: string; title: string; week: string | null; rows: StandingRow[] };
 
 function decode(s: string) {
   return s
@@ -76,9 +82,9 @@ async function load(prev?: { html: string; cookie: string }, target?: string) {
 const text = (s: string) => decode(s.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
 const num = (s: string | undefined) => Number.parseInt(s ?? "", 10) || 0;
 
-export function parseStandings(html: string): Standings | null {
+export function parseStandings(html: string, league: string, group: string): Standings | null {
   const rows: StandingRow[] = [];
-  for (const [li] of html.matchAll(/<li id="[^"]*PDSatir_\d+">[\s\S]*?<\/li>/g)) {
+  for (const [li] of html.matchAll(/<li id="[^"]*PDSatir_\d+"[^>]*>[\s\S]*?<\/li>/g)) {
     const team = text(li.match(/<h6>([\s\S]*?)<\/h6>/)?.[1] ?? "");
     const cells = [...li.matchAll(/<p>([\s\S]*?)<\/p>/g)].map((m) => text(m[1]));
     if (!team || cells.length < 9) continue;
@@ -102,23 +108,45 @@ export function parseStandings(html: string): Standings | null {
   }
   if (rows.length === 0) return null;
   const page = text(html);
-  const title = page.match(/U17 \d{4}\/\d{4} SEZONU/i)?.[0] ?? "U17";
+  const title = page.match(new RegExp(`${league} \\d{4}/\\d{4} SEZONU`, "i"))?.[0] ?? league;
   const week = page.match(/(\d+)\. HAFTA Takım/i)?.[1] ?? null;
-  return { title, week: week ? `${week}. Hafta` : null, rows };
+  return { league, group, title, week: week ? `${week}. Hafta` : null, rows };
 }
 
-async function fetchStandings(): Promise<Standings | null> {
+async function fetchGroup(
+  first: Awaited<ReturnType<typeof load>>,
+  { league, menu, group }: (typeof GROUPS)[number]
+): Promise<Standings | null> {
   try {
-    const first = await load();
-    const u17 = await load(first, LEAGUE_U17);
-    const groupC = await load(u17, GROUP_C);
-    const standings = parseStandings(groupC.html);
-    if (!standings) console.error("[standings] puan durumu tablosu ayrıştırılamadı");
-    return standings;
+    const leaguePage = await load(first, `ctl00$ContentPlaceHolder1$rptAnaLiglerMenu$${menu}$lbl1DevreSec`);
+    // Grup düğmelerinin sırası ligden lige değişebilir; doğru düğme harfinden bulunur.
+    const groupCtl = [...leaguePage.html.matchAll(/rptGruplar\$(ctl\d+)\$lblGruplar[^>]*>\s*([A-Z])\s*</g)].find(
+      (m) => m[2] === group
+    )?.[1];
+    if (!groupCtl) throw new Error(`${league} ${group} grubu bulunamadı`);
+    const groupPage = await load(leaguePage, `ctl00$ContentPlaceHolder1$rptLigler$ctl00$rptGruplar$${groupCtl}$lblGruplar`);
+    // Tablo yayınlanmamışsa (sezon başı, yalnız fikstür) null döner; bu hata değildir.
+    return parseStandings(groupPage.html, league, group);
   } catch (error) {
-    console.error("[standings] muglaaskf.com'dan okunamadı:", error);
+    console.error(`[standings] ${league} ${group} grubu okunamadı:`, error);
     return null;
   }
 }
 
-export const getU17GroupCStandings = unstable_cache(fetchStandings, ["u17-c-standings"], { revalidate: 3600 });
+async function fetchStandings(): Promise<Standings[]> {
+  try {
+    const first = await load();
+    const results: Standings[] = [];
+    // Aynı oturumla sırayla gidilir; kaynak siteye aynı anda çok istek atılmaz.
+    for (const g of GROUPS) {
+      const standings = await fetchGroup(first, g);
+      if (standings) results.push(standings);
+    }
+    return results;
+  } catch (error) {
+    console.error("[standings] muglaaskf.com'dan okunamadı:", error);
+    return [];
+  }
+}
+
+export const getStandings = unstable_cache(fetchStandings, ["askf-standings"], { revalidate: 3600 });
