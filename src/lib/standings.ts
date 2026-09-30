@@ -3,8 +3,8 @@
  *
  * Site ASP.NET WebForms; API yok. Lig ve grup seçimi "postback" ile yapılır: sayfa alınır,
  * gizli form alanları (__VIEWSTATE vb.) ile lige, sonra gruba geçilir ve tablo ayrıştırılır.
- * Sonuç saatte bir yenilenir; kaynak siteye ulaşılamazsa ya da grubun tablosu henüz
- * yayınlanmamışsa o grup null döner ve sitede gizlenir.
+ * Sonuç saatte bir yenilenir. Grubun tablosu henüz yayınlanmamışsa haftanın fikstürü döner;
+ * kaynak siteye ulaşılamazsa o grup null döner ve sitede gizlenir.
  */
 import { unstable_cache } from "next/cache";
 
@@ -33,7 +33,29 @@ export type StandingRow = {
   isUs: boolean;
 };
 
-export type Standings = { league: string; group: string; title: string; week: string | null; rows: StandingRow[] };
+export type Fixture = {
+  date: string;
+  day: string;
+  time: string;
+  home: string;
+  away: string;
+  score: string | null;
+  venue: string;
+  isUs: boolean;
+};
+
+/** `rows` boşsa federasyon tabloyu henüz yayınlamamıştır; o zaman haftanın fikstürü (`fixtures`) gösterilir. */
+export type Standings = {
+  league: string;
+  group: string;
+  title: string;
+  week: string | null;
+  rows: StandingRow[];
+  fixtureWeek: string | null;
+  fixtures: Fixture[];
+};
+
+const IS_US = /D[ÜU][ŞS]BELEN/i;
 
 function decode(s: string) {
   return s
@@ -103,14 +125,48 @@ export function parseStandings(html: string, league: string, group: string): Sta
       goalsAgainst,
       goalDiff,
       points,
-      isUs: /D[ÜU][ŞS]BELEN/i.test(team),
+      isUs: IS_US.test(team),
     });
   }
-  if (rows.length === 0) return null;
+  const fixtures = parseFixtures(html);
+  if (rows.length === 0 && fixtures.length === 0) return null;
   const page = text(html);
   const title = page.match(new RegExp(`${league} \\d{4}/\\d{4} SEZONU`, "i"))?.[0] ?? league;
   const week = page.match(/(\d+)\. HAFTA Takım/i)?.[1] ?? null;
-  return { league, group, title, week: week ? `${week}. Hafta` : null, rows };
+  const fixtureWeek = html.match(/lblFikstureHaftaBilgisi_\d+">\s*(\d+)\. HAFTA/i)?.[1] ?? null;
+  return {
+    league,
+    group,
+    title,
+    week: week ? `${week}. Hafta` : null,
+    rows,
+    fixtureWeek: fixtureWeek ? `${fixtureWeek}. Hafta` : null,
+    fixtures,
+  };
+}
+
+/** Seçili haftanın maçları ("rptfikstur"; "Sonraki Hafta" listesi tarihsiz olduğu için alınmaz). */
+function parseFixtures(html: string): Fixture[] {
+  const fixtures: Fixture[] = [];
+  for (const [li] of html.matchAll(/<li id="[^"]*rptfikstur_\d+_musabaka_\d+"[^>]*>[\s\S]*?<\/li>/g)) {
+    const cell = (name: string) =>
+      text(li.match(new RegExp(`class="fixture-match-${name}[^"]*">([\\s\\S]*?)</div>`))?.[1] ?? "");
+    const home = cell("home");
+    const away = cell("away");
+    if (!home || !away) continue;
+    const score = cell("score");
+    fixtures.push({
+      date: cell("date"),
+      day: cell("day"),
+      time: cell("time"),
+      home,
+      away,
+      score: score && score !== "-" ? score : null,
+      venue: cell("stad"),
+      isUs: IS_US.test(home) || IS_US.test(away),
+    });
+  }
+  return fixtures;
 }
 
 async function fetchGroup(
@@ -125,7 +181,7 @@ async function fetchGroup(
     )?.[1];
     if (!groupCtl) throw new Error(`${league} ${group} grubu bulunamadı`);
     const groupPage = await load(leaguePage, `ctl00$ContentPlaceHolder1$rptLigler$ctl00$rptGruplar$${groupCtl}$lblGruplar`);
-    // Tablo yayınlanmamışsa (sezon başı, yalnız fikstür) null döner; bu hata değildir.
+    // Tablo yayınlanmamışsa (sezon başı) yalnız fikstürle döner.
     return parseStandings(groupPage.html, league, group);
   } catch (error) {
     console.error(`[standings] ${league} ${group} grubu okunamadı:`, error);
@@ -149,4 +205,4 @@ async function fetchStandings(): Promise<Standings[]> {
   }
 }
 
-export const getStandings = unstable_cache(fetchStandings, ["askf-standings"], { revalidate: 3600 });
+export const getStandings = unstable_cache(fetchStandings, ["askf-standings-v2"], { revalidate: 3600 });

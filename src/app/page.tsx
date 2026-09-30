@@ -37,6 +37,7 @@ import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistra
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
 import { heroImageSlides } from "@/data/heroSlides";
+import { FixtureList } from "@/components/FixtureList";
 import { StandingsTable } from "@/components/StandingsTable";
 import { getStandings, STANDINGS_SOURCE_URL } from "@/lib/standings";
 
@@ -525,9 +526,22 @@ export default async function HomePage() {
                 <div key={s.league}>
                   <h3 className="mb-4 flex items-baseline justify-between gap-4 font-display text-xl uppercase text-white">
                     {s.league} {s.group} Grubu
-                    {s.week && <span className="font-sans text-xs font-semibold normal-case text-text-muted">{s.week}</span>}
+                    {s.rows.length > 0 ? (
+                      s.week && <span className="font-sans text-xs font-semibold normal-case text-text-muted">{s.week}</span>
+                    ) : (
+                      <span className="font-sans text-xs font-semibold normal-case text-text-muted">
+                        {s.fixtureWeek ? `${s.fixtureWeek} Fikstürü` : "Fikstür"}
+                      </span>
+                    )}
                   </h3>
-                  <StandingsTable rows={s.rows} caption={`${s.title} ${s.league} ${s.group} Grubu puan durumu`} />
+                  {s.rows.length > 0 ? (
+                    <StandingsTable rows={s.rows} caption={`${s.title} ${s.league} ${s.group} Grubu puan durumu`} />
+                  ) : (
+                    <>
+                      <FixtureList fixtures={s.fixtures} label={`${s.league} ${s.group} Grubu ${s.fixtureWeek ?? ""} fikstürü`} />
+                      <p className="mt-3 text-xs text-text-muted">Puan tablosu federasyon tarafından yayınlandığında burada gösterilecek.</p>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
