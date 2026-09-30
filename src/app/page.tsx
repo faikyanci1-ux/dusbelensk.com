@@ -39,7 +39,7 @@ import type { GalleryItem } from "@/data/gallery";
 import { heroImageSlides } from "@/data/heroSlides";
 import { FixtureList } from "@/components/FixtureList";
 import { StandingsTable } from "@/components/StandingsTable";
-import { getStandings, STANDINGS_SOURCE_URL } from "@/lib/standings";
+import { askfGroupHref, getStandings } from "@/lib/standings";
 
 const STAT_ICONS = [Users, GraduationCap, CalendarDays, Trophy];
 
@@ -542,23 +542,23 @@ export default async function HomePage() {
                       <p className="mt-3 text-xs text-text-muted">Puan tablosu federasyon tarafından yayınlandığında burada gösterilecek.</p>
                     </>
                   )}
+                  <div className="mt-4 text-center">
+                    <a
+                      href={askfGroupHref(s)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                    >
+                      {s.league} {s.group} Grubunu Muğla ASKF&apos;de Görüntüle
+                      <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-center text-xs text-text-muted">
+            <p className="mt-10 text-center text-xs text-text-muted">
               O: Oynanan · G: Galibiyet · B: Beraberlik · M: Mağlubiyet · A: Attığı · Y: Yediği · AV: Averaj · P: Puan
             </p>
-            <div className="mt-6 text-center">
-              <a
-                href={STANDINGS_SOURCE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Muğla ASKF&apos;de Görüntüle
-                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
-              </a>
-            </div>
           </div>
         </section>
       )}

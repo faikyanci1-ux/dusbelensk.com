@@ -18,6 +18,13 @@ const GROUPS = [
   { league: "U12", menu: "ctl05", group: "F" },
 ] as const;
 
+type Group = (typeof GROUPS)[number];
+
+const slugOf = (g: { league: string; group: string }) => `${g.league}-${g.group}`.toLowerCase();
+
+/** Grubun kaynak sitedeki sayfasına götüren kendi adresimiz (bkz. app/askf/[grup]/route.ts). */
+export const askfGroupHref = (g: { league: string; group: string }) => `/askf/${slugOf(g)}`;
+
 export type StandingRow = {
   rank: number;
   team: string;
@@ -169,22 +176,25 @@ function parseFixtures(html: string): Fixture[] {
   return fixtures;
 }
 
-async function fetchGroup(
-  first: Awaited<ReturnType<typeof load>>,
-  { league, menu, group }: (typeof GROUPS)[number]
-): Promise<Standings | null> {
+/** Lig sayfasını açar ve grubun postback hedefini bulur. */
+async function openGroup(first: Awaited<ReturnType<typeof load>>, { league, menu, group }: Group) {
+  const leaguePage = await load(first, `ctl00$ContentPlaceHolder1$rptAnaLiglerMenu$${menu}$lbl1DevreSec`);
+  // Grup düğmelerinin sırası ligden lige değişebilir; doğru düğme harfinden bulunur.
+  const groupCtl = [...leaguePage.html.matchAll(/rptGruplar\$(ctl\d+)\$lblGruplar[^>]*>\s*([A-Z])\s*</g)].find(
+    (m) => m[2] === group
+  )?.[1];
+  if (!groupCtl) throw new Error(`${league} ${group} grubu bulunamadı`);
+  return { leaguePage, target: `ctl00$ContentPlaceHolder1$rptLigler$ctl00$rptGruplar$${groupCtl}$lblGruplar` };
+}
+
+async function fetchGroup(first: Awaited<ReturnType<typeof load>>, g: Group): Promise<Standings | null> {
   try {
-    const leaguePage = await load(first, `ctl00$ContentPlaceHolder1$rptAnaLiglerMenu$${menu}$lbl1DevreSec`);
-    // Grup düğmelerinin sırası ligden lige değişebilir; doğru düğme harfinden bulunur.
-    const groupCtl = [...leaguePage.html.matchAll(/rptGruplar\$(ctl\d+)\$lblGruplar[^>]*>\s*([A-Z])\s*</g)].find(
-      (m) => m[2] === group
-    )?.[1];
-    if (!groupCtl) throw new Error(`${league} ${group} grubu bulunamadı`);
-    const groupPage = await load(leaguePage, `ctl00$ContentPlaceHolder1$rptLigler$ctl00$rptGruplar$${groupCtl}$lblGruplar`);
+    const { leaguePage, target } = await openGroup(first, g);
+    const groupPage = await load(leaguePage, target);
     // Tablo yayınlanmamışsa (sezon başı) yalnız fikstürle döner.
-    return parseStandings(groupPage.html, league, group);
+    return parseStandings(groupPage.html, g.league, g.group);
   } catch (error) {
-    console.error(`[standings] ${league} ${group} grubu okunamadı:`, error);
+    console.error(`[standings] ${g.league} ${g.group} grubu okunamadı:`, error);
     return null;
   }
 }
@@ -206,3 +216,17 @@ async function fetchStandings(): Promise<Standings[]> {
 }
 
 export const getStandings = unstable_cache(fetchStandings, ["askf-standings-v2"], { revalidate: 3600 });
+
+/**
+ * Ziyaretçinin tarayıcısından kaynak siteye gönderilecek form alanları: lig sayfasının durumu + grup düğmesi.
+ * Kaynak site bu gönderimi oturum çerezi olmadan kabul ediyor; böylece ziyaretçi doğrudan grubun sayfasına düşer.
+ */
+async function fetchGroupPostback(slug: string): Promise<Record<string, string> | null> {
+  const g = GROUPS.find((x) => slugOf(x) === slug);
+  if (!g) return null;
+  // Hata fırlatılırsa önbelleğe alınmaz; çağıran genel puan durumu sayfasına yönlendirir.
+  const { leaguePage, target } = await openGroup(await load(), g);
+  return { ...formFields(leaguePage.html), __EVENTTARGET: target, __EVENTARGUMENT: "", __LASTFOCUS: "" };
+}
+
+export const getGroupPostback = unstable_cache(fetchGroupPostback, ["askf-group-postback"], { revalidate: 3600 });
