@@ -11,22 +11,22 @@ const detailCols: { key: keyof StandingRow; label: string; title: string }[] = [
 
 export function StandingsTable({ rows, caption }: { rows: StandingRow[]; caption: string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-soft/40 bg-white/[0.03]">
-      <table className="w-full text-sm tabular-nums">
+    <div className="@container overflow-hidden rounded-2xl border border-border-soft/40 bg-white/[0.03]">
+      <table className="w-full table-fixed text-sm tabular-nums">
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr className="bg-white/[0.06] text-xs font-semibold uppercase tracking-wide text-text-muted">
             <th scope="col" className="w-10 py-3 pl-4 text-left">#</th>
             <th scope="col" className="py-3 pl-2 text-left">Takım</th>
-            <th scope="col" className="w-10 py-3 text-center">
+            <th scope="col" className="w-8 py-3 text-center">
               <abbr title="Oynadığı maç" className="no-underline">O</abbr>
             </th>
             {detailCols.map((c) => (
-              <th key={c.key} scope="col" className="hidden w-10 py-3 text-center sm:table-cell">
+              <th key={c.key} scope="col" className="hidden w-8 py-3 text-center @lg:table-cell">
                 <abbr title={c.title} className="no-underline">{c.label}</abbr>
               </th>
             ))}
-            <th scope="col" className="w-12 py-3 text-center">
+            <th scope="col" className="w-10 py-3 text-center">
               <abbr title="Averaj" className="no-underline">AV</abbr>
             </th>
             <th scope="col" className="w-12 py-3 pr-4 text-center">
@@ -51,12 +51,12 @@ export function StandingsTable({ rows, caption }: { rows: StandingRow[]; caption
                   ) : (
                     <span className="h-6 w-6 shrink-0" />
                   )}
-                  <span className="truncate">{row.team}</span>
+                  <span className="leading-snug @lg:truncate">{row.team}</span>
                 </span>
               </th>
               <td className="py-3 text-center">{row.played}</td>
               {detailCols.map((c) => (
-                <td key={c.key} className="hidden py-3 text-center sm:table-cell">
+                <td key={c.key} className="hidden py-3 text-center @lg:table-cell">
                   {row[c.key] as number}
                 </td>
               ))}

@@ -515,15 +515,15 @@ export default async function HomePage() {
       {/* PUAN DURUMU — U17 C, U14 E, U12 F GRUPLARI (Muğla ASKF) */}
       {standings.length > 0 && (
         <section className="border-t border-border-soft/40 py-20">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <SectionHeading
               eyebrow={`Muğla ASKF · ${standings[0].title.replace(/^\S+ /, "")}`}
               title="Puan Durumu"
               description="Güncel lig tabloları. Veriler Muğla Amatör Spor Kulüpleri Federasyonu'ndan saatlik olarak alınır."
             />
-            <div className="mt-12 space-y-12">
+            <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:gap-8">
               {standings.map((s) => (
-                <div key={s.league}>
+                <div key={s.league} className={s.rows.length > 0 ? "min-w-0" : "min-w-0 lg:col-span-2"}>
                   <h3 className="mb-4 flex items-baseline justify-between gap-4 font-display text-xl uppercase text-white">
                     {s.league} {s.group} Grubu
                     {s.rows.length > 0 ? (
