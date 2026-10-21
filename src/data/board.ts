@@ -18,7 +18,6 @@ export const managementBoard: BoardMember[] = [
     values: ["Takım Ruhu", "Gelişim", "Adalet", "Saygı", "Başarı"],
     mottos: ["Birlikte Daha Güçlüyüz", "İyi Futbolcu, İyi İnsan, İyi Vatandaş", "Futbol Karakterdir!"],
   },
-  { name: "Ferat BİLGİN", role: "Yönetim Kurulu Üyesi" },
   { name: "Enes ERARSLAN", role: "Yönetim Kurulu Üyesi" },
   { name: "Koray KÖSE", role: "Yönetim Kurulu Üyesi" },
   { name: "Erdoğan KORKUT", role: "Yönetim Kurulu Üyesi" },
