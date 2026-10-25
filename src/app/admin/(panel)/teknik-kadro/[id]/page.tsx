@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { staff } from "@/db/schema";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { PEOPLE_IMAGES, getImageOptions, isUploadEnabled } from "@/lib/admin/images";
 import { updateStaff } from "../actions";
 import { StaffForm } from "../StaffForm";
@@ -11,7 +11,7 @@ import { StaffForm } from "../StaffForm";
 export const metadata = { title: "Kişiyi Düzenle" };
 
 export default async function EditStaffPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   const id = Number((await params).id);
   if (!Number.isInteger(id) || id <= 0) notFound();
   const [item] = await getDb().select().from(staff).where(eq(staff.id, id));

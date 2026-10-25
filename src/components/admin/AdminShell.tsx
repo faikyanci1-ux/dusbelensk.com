@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ExternalLink, Menu, X } from "lucide-react";
-import { ADMIN_NAV } from "./nav";
+import { navForRole } from "./nav";
+import type { AdminRole } from "@/lib/permissions";
 import { LogoutButton } from "./LogoutButton";
 import { UnsavedGuard } from "./UnsavedGuard";
 
@@ -13,10 +14,10 @@ function isActive(pathname: string, href: string) {
   return href === "/admin" ? pathname === "/admin" : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function NavLinks({ pathname, onNavigate, badges }: { pathname: string; onNavigate?: () => void; badges: Record<string, number> }) {
+function NavLinks({ pathname, onNavigate, badges, role }: { pathname: string; onNavigate?: () => void; badges: Record<string, number>; role: AdminRole }) {
   return (
     <ul className="space-y-1">
-      {ADMIN_NAV.map(({ href, label, icon: Icon }) => {
+      {navForRole(role).map(({ href, label, icon: Icon }) => {
         const active = isActive(pathname, href);
         return (
           <li key={href}>
@@ -58,9 +59,13 @@ function Brand() {
   );
 }
 
-function FooterLinks() {
+function FooterLinks({ userName, roleLabel }: { userName: string; roleLabel: string }) {
   return (
     <div className="space-y-2 border-t border-white/10 pt-4">
+      <p className="px-3 text-xs text-white/50">
+        <span className="block truncate font-semibold text-white/80">{userName}</span>
+        {roleLabel}
+      </p>
       <a
         href="/"
         target="_blank"
@@ -76,7 +81,19 @@ function FooterLinks() {
 }
 
 /** Yönetim paneli çerçevesi: masaüstünde sabit sol menü, mobilde üst çubuk + açılır menü. */
-export function AdminShell({ children, badges = {} }: { children: React.ReactNode; badges?: Record<string, number> }) {
+export function AdminShell({
+  children,
+  badges = {},
+  role,
+  userName,
+  roleLabel,
+}: {
+  children: React.ReactNode;
+  badges?: Record<string, number>;
+  role: AdminRole;
+  userName: string;
+  roleLabel: string;
+}) {
   const pathname = usePathname() ?? "/admin";
   const [open, setOpen] = useState(false);
 
@@ -92,9 +109,9 @@ export function AdminShell({ children, badges = {} }: { children: React.ReactNod
       <aside className="sticky top-0 hidden h-screen flex-col gap-6 border-r border-white/10 bg-black/20 p-5 lg:flex">
         <Brand />
         <nav aria-label="Yönetim menüsü" className="flex-1 overflow-y-auto">
-          <NavLinks pathname={pathname} badges={badges} />
+          <NavLinks pathname={pathname} badges={badges} role={role} />
         </nav>
-        <FooterLinks />
+        <FooterLinks userName={userName} roleLabel={roleLabel} />
       </aside>
 
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-bg-main/95 px-4 py-3 backdrop-blur lg:hidden">
@@ -128,8 +145,8 @@ export function AdminShell({ children, badges = {} }: { children: React.ReactNod
           aria-label="Yönetim menüsü"
           className="fixed inset-x-0 bottom-0 top-[69px] z-30 flex flex-col gap-4 overflow-y-auto bg-bg-main p-4 lg:hidden"
         >
-          <NavLinks pathname={pathname} badges={badges} onNavigate={() => setOpen(false)} />
-          <FooterLinks />
+          <NavLinks pathname={pathname} badges={badges} role={role} onNavigate={() => setOpen(false)} />
+          <FooterLinks userName={userName} roleLabel={roleLabel} />
         </nav>
       )}
 

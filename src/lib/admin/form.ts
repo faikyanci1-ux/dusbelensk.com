@@ -6,7 +6,7 @@ import { getDb } from "@/db/client";
 
 /**
  * Admin modüllerinin Server Action'larında ortak kullanılan yardımcılar.
- * Her action başında ayrıca requireAdmin() çağrılmalı (bkz. src/lib/adminSession.ts).
+ * Her action başında ayrıca requireModule("<modül>") (ya da requireRole) çağrılmalı (bkz. src/lib/adminSession.ts).
  */
 
 /** useActionState ile form <-> action arasında taşınan durum. */

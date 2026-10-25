@@ -3,8 +3,9 @@ import { count, desc, eq, gte, isNull, or } from "drizzle-orm";
 import { AlertTriangle, CalendarPlus, CheckCircle2, ImagePlus, PenSquare, Globe } from "lucide-react";
 import { getDb } from "@/db/client";
 import { boardMembers, events, faqItems, galleryItems, heroSlides, newsItems, programGroups, staff, videoItems } from "@/db/schema";
-import { ADMIN_NAV } from "@/components/admin/nav";
-import { requireAdmin } from "@/lib/adminSession";
+import { navForRole } from "@/components/admin/nav";
+import { requireUser } from "@/lib/adminSession";
+import { canAccessModule, type AdminModule } from "@/lib/permissions";
 import { isUploadEnabled } from "@/lib/admin/images";
 import { formatTurkishDate } from "@/lib/formatDate";
 import { getClubInfo, getSiteSettings } from "@/lib/queries";
@@ -12,33 +13,40 @@ import { todayInTurkey } from "@/lib/siteSettings";
 
 export const metadata = { title: "Genel Bakış" };
 
-const QUICK_ACTIONS = [
-  { href: "/admin/haberler/yeni", label: "Yeni Haber", icon: PenSquare },
-  { href: "/admin/etkinlikler/yeni", label: "Yeni Etkinlik", icon: CalendarPlus },
-  { href: "/admin/galeri/yeni", label: "Galeriye Fotoğraf", icon: ImagePlus },
+const QUICK_ACTIONS: { href: string; label: string; icon: typeof PenSquare; module: AdminModule }[] = [
+  { href: "/admin/haberler/yeni", label: "Yeni Haber", icon: PenSquare, module: "haberler" },
+  { href: "/admin/etkinlikler/yeni", label: "Yeni Etkinlik", icon: CalendarPlus, module: "etkinlikler" },
+  { href: "/admin/galeri/yeni", label: "Galeriye Fotoğraf", icon: ImagePlus, module: "galeri" },
 ];
 
-export default async function AdminDashboardPage() {
-  await requireAdmin();
+const ZERO = [{ n: 0 }];
+
+export default async function AdminDashboardPage({ searchParams }: { searchParams: Promise<{ yetki?: string }> }) {
+  const user = await requireUser();
+  const { yetki } = await searchParams;
   const db = getDb();
   const today = todayInTurkey();
+  // Editör yalnızca Haberler ve Galeri'yi görür: diğer modüllerin verisi hiç sorgulanmaz/gösterilmez.
+  const isAdmin = user.role === "admin";
 
   const [club, [news], [upcoming], [gallery], [staffCount], [board], [faq], [program], [heroCount], [videoCount], latestNews, settings, [noAlt], [noImage], [nextEvent]] = await Promise.all([
-    getClubInfo(),
+    isAdmin ? getClubInfo() : Promise.resolve(null),
     db.select({ n: count() }).from(newsItems),
-    db.select({ n: count() }).from(events).where(gte(events.date, today)),
+    isAdmin ? db.select({ n: count() }).from(events).where(gte(events.date, today)) : ZERO,
     db.select({ n: count() }).from(galleryItems),
-    db.select({ n: count() }).from(staff),
-    db.select({ n: count() }).from(boardMembers),
-    db.select({ n: count() }).from(faqItems),
-    db.select({ n: count() }).from(programGroups),
-    db.select({ n: count() }).from(heroSlides),
-    db.select({ n: count() }).from(videoItems),
+    isAdmin ? db.select({ n: count() }).from(staff) : ZERO,
+    isAdmin ? db.select({ n: count() }).from(boardMembers) : ZERO,
+    isAdmin ? db.select({ n: count() }).from(faqItems) : ZERO,
+    isAdmin ? db.select({ n: count() }).from(programGroups) : ZERO,
+    isAdmin ? db.select({ n: count() }).from(heroSlides) : ZERO,
+    isAdmin ? db.select({ n: count() }).from(videoItems) : ZERO,
     db.select().from(newsItems).orderBy(desc(newsItems.date), desc(newsItems.id)).limit(3),
-    getSiteSettings(),
+    isAdmin ? getSiteSettings() : Promise.resolve(null),
     db.select({ n: count() }).from(galleryItems).where(eq(galleryItems.alt, "")),
     db.select({ n: count() }).from(newsItems).where(or(isNull(newsItems.image), eq(newsItems.image, ""))),
-    db.select({ title: events.title, date: events.date }).from(events).where(gte(events.date, today)).orderBy(events.date).limit(1),
+    isAdmin
+      ? db.select({ title: events.title, date: events.date }).from(events).where(gte(events.date, today)).orderBy(events.date).limit(1)
+      : [],
   ]);
 
   const counts: Record<string, string> = {
@@ -52,44 +60,57 @@ export default async function AdminDashboardPage() {
     "/admin/yas-gruplari": `${program.n} grup`,
     "/admin/hero": `${heroCount.n} fotoğraf`,
     "/admin/videolar": `${videoCount.n} video`,
+    "/admin/kullanicilar": "Panel kullanıcıları ve roller",
+    "/admin/sifre": "Kendi şifrenizi değiştirin",
   };
 
   const uploadEnabled = isUploadEnabled();
 
   const warnings: { text: string; href: string }[] = [];
-  if (upcoming.n === 0) warnings.push({ text: "Yaklaşan etkinlik yok; sitedeki etkinlik bölümü boş görünür.", href: "/admin/etkinlikler/yeni" });
-  if (!settings.nextMatch.enabled) {
-    warnings.push({ text: "Sıradaki Maç kapalı; anasayfada maç kartı gösterilmiyor.", href: "/admin/ayarlar#siradaki-mac" });
-  } else if (settings.nextMatch.date < today) {
-    warnings.push({ text: "Sıradaki Maç'ın tarihi geçmiş; anasayfada gösterilmiyor. Tarihi güncelleyin ya da kapatın.", href: "/admin/ayarlar#siradaki-mac" });
+  if (isAdmin && upcoming.n === 0) warnings.push({ text: "Yaklaşan etkinlik yok; sitedeki etkinlik bölümü boş görünür.", href: "/admin/etkinlikler/yeni" });
+  if (settings) {
+    if (!settings.nextMatch.enabled) {
+      warnings.push({ text: "Sıradaki Maç kapalı; anasayfada maç kartı gösterilmiyor.", href: "/admin/ayarlar#siradaki-mac" });
+    } else if (settings.nextMatch.date < today) {
+      warnings.push({ text: "Sıradaki Maç'ın tarihi geçmiş; anasayfada gösterilmiyor. Tarihi güncelleyin ya da kapatın.", href: "/admin/ayarlar#siradaki-mac" });
+    }
   }
   if (noAlt.n > 0) warnings.push({ text: `${noAlt.n} galeri fotoğrafının açıklaması boş (erişilebilirlik ve arama için gerekli).`, href: "/admin/galeri" });
   if (noImage.n > 0) warnings.push({ text: `${noImage.n} haberin görseli yok.`, href: "/admin/haberler" });
-  if (heroCount.n === 0) warnings.push({ text: "Anasayfa slaytında hiç fotoğraf yok.", href: "/admin/hero/yeni" });
+  if (isAdmin && heroCount.n === 0) warnings.push({ text: "Anasayfa slaytında hiç fotoğraf yok.", href: "/admin/hero/yeni" });
 
-  const live = [
-    `${news.n} haber`,
-    `${upcoming.n} yaklaşan etkinlik${nextEvent ? ` (sıradaki: ${nextEvent.title}, ${formatTurkishDate(nextEvent.date)})` : ""}`,
-    `${gallery.n} galeri fotoğrafı`,
-    `${heroCount.n} slayt`,
-    `${videoCount.n} video`,
-    `${staffCount.n} antrenör/yönetici`,
-    `${board.n} kurul üyesi`,
-    `${faq.n} soru`,
-    `${program.n} yaş grubu`,
-  ];
+  const live = isAdmin
+    ? [
+        `${news.n} haber`,
+        `${upcoming.n} yaklaşan etkinlik${nextEvent ? ` (sıradaki: ${nextEvent.title}, ${formatTurkishDate(nextEvent.date)})` : ""}`,
+        `${gallery.n} galeri fotoğrafı`,
+        `${heroCount.n} slayt`,
+        `${videoCount.n} video`,
+        `${staffCount.n} antrenör/yönetici`,
+        `${board.n} kurul üyesi`,
+        `${faq.n} soru`,
+        `${program.n} yaş grubu`,
+      ]
+    : [`${news.n} haber`, `${gallery.n} galeri fotoğrafı`];
 
   return (
     <>
+      {yetki === "yok" && (
+        <p role="alert" className="mb-6 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+          Bu bölüme erişim yetkiniz yok.
+        </p>
+      )}
       <div className="mb-8">
-        <h1 className="font-display text-2xl uppercase tracking-tight sm:text-3xl">Hoş geldiniz</h1>
+        <h1 className="font-display text-2xl uppercase tracking-tight sm:text-3xl">Hoş geldiniz, {user.displayName}</h1>
         <p className="mt-1 text-sm text-white/60">
-          Sitedeki her şeyi buradan güncelleyebilirsiniz. Kaydettiğiniz değişiklikler sitede hemen görünür.
+          {isAdmin
+            ? "Sitedeki her şeyi buradan güncelleyebilirsiniz. Kaydettiğiniz değişiklikler sitede hemen görünür."
+            : "Haberleri ve galeriyi buradan güncelleyebilirsiniz. Kaydettiğiniz değişiklikler sitede hemen görünür."}
         </p>
       </div>
 
       <div className="mb-8 flex flex-wrap gap-3">
-        {QUICK_ACTIONS.map(({ href, label, icon: Icon }) => (
+        {QUICK_ACTIONS.filter((action) => canAccessModule(user.role, action.module)).map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href}
@@ -102,6 +123,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="mb-8 grid gap-3 sm:grid-cols-2">
+        {club && (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Sıradaki Maç</p>
           {club.nextMatch.show ? (
@@ -120,6 +142,7 @@ export default async function AdminDashboardPage() {
             Düzenle →
           </Link>
         </div>
+        )}
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Fotoğraf yükleme</p>
           {uploadEnabled ? (
@@ -168,7 +191,7 @@ export default async function AdminDashboardPage() {
 
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">Bölümler</h2>
       <div className="grid gap-3 sm:grid-cols-2">
-        {ADMIN_NAV.filter((item) => item.href !== "/admin").map(({ href, label, icon: Icon }) => (
+        {navForRole(user.role).filter((item) => item.href !== "/admin").map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href}

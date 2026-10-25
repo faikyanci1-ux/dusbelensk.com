@@ -53,3 +53,13 @@ Durum: **yerelde hazır, commit/push YAPILMADI.** tsc 0 hata, eslint 0 hata (2 e
 
 ## Geçici dosyalar
 `src/db/_snapshot.ts` silindi, `.claude/launch.json` eski haline döndü. `src/db/sync-hero-videos.ts` kalıcı (tek seferlik aktarım). Test sunucusu kapalı.
+
+## Kullanıcılar ve roller
+
+- **Önce migration**: `npx drizzle-kit migrate` (0005_admin_users: yalnızca yeni `admin_users` tablosu, eklemeli). Migration'dan önce de eski giriş (`admin` + `ADMIN_PASSWORD`) çalışır; Kullanıcılar sayfası ve editör girişi tablo oluşunca çalışır.
+- **Roller**: `admin` (her şey + kullanıcı yönetimi) ve `editor` (yalnızca **Haberler** ve **Galeri**, `haberler/` ve `galeri/` klasörlerine fotoğraf yükleme, kendi şifresini değiştirme). Yetki sunucuda her sayfada, her Server Action'da ve yükleme API'sinde denetlenir; editör yasak adrese giderse `/admin`e döner ("erişim yetkiniz yok" uyarısı).
+- **Yerleşik yönetici**: kullanıcı adı `admin`, şifresi `ADMIN_PASSWORD` (Vercel env). Veritabanında yoktur; panelden düzenlenemez/silinemez, böylece kilitlenme olmaz. `admin` kullanıcı adı başkasına verilemez.
+- **İlk editörü oluşturma**: `admin` + `ADMIN_PASSWORD` ile giriş → sol menü **Kullanıcılar** → **Yeni Kullanıcı** (kullanıcı adı, ad soyad, rol *Editör*, en az 10 karakterli başlangıç şifresi) → şifreyi kişiye iletin; kişi giriş yapıp **Şifremi Değiştir**den değiştirebilir.
+- **Oturumlar**: çıkış yalnızca o kullanıcının oturumlarını kapatır. Şifre sıfırlama/değiştirme, rol değişikliği, pasifleştirme ve silme ilgili kullanıcının açık oturumlarına hemen yansır (rol ve aktiflik her istekte DB'den okunur). Deploy sonrası mevcut oturumlar bir kez düşer (token biçimi değişti), yeniden giriş gerekir.
+- **Giriş sınırı**: hem IP başına hem kullanıcı adı başına 10 deneme / 15 dk; hata mesajı hep aynı ("Kullanıcı adı veya şifre hatalı"). Şifreler PBKDF2-SHA256 (310.000 iterasyon, kullanıcıya özel tuz) ile saklanır.
+- **CSP**: `Content-Security-Policy-Report-Only` başlığı eklendi (engellemez). Canlıda tarayıcı konsolunda ihlal kalmadığını gördükten sonra zorlayıcı başlığa çevrilebilir.

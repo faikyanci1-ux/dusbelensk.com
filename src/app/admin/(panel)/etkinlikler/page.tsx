@@ -3,7 +3,7 @@ import { getDb } from "@/db/client";
 import { events } from "@/db/schema";
 import { DeleteButton } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, ListRow, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { formatTurkishDate } from "@/lib/formatDate";
 import { todayInTurkey } from "@/lib/siteSettings";
 import { deleteEvent } from "./actions";
@@ -46,7 +46,7 @@ function EventList({ items, past }: { items: EventRow[]; past?: boolean }) {
 }
 
 export default async function AdminEventsPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("etkinlikler");
   const { durum } = await searchParams;
   const today = todayInTurkey();
   const db = getDb();

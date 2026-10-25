@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { events } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { orNull, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
 const RULES = {
@@ -20,7 +20,7 @@ function toRow(v: Record<string, string>) {
 }
 
 export async function createEvent(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("etkinlikler");
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
@@ -35,7 +35,7 @@ export async function createEvent(_prev: FormState, formData: FormData): Promise
 }
 
 export async function updateEvent(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("etkinlikler");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
@@ -52,7 +52,7 @@ export async function updateEvent(id: number, _prev: FormState, formData: FormDa
 }
 
 export async function deleteEvent(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("etkinlikler");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(events).where(eq(events.id, id));

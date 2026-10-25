@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { programGroups } from "@/db/schema";
 import { ageGroupSlug } from "@/lib/ageGroups";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { moveInOrder, nextSortOrder, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
 const RULES = {
@@ -29,7 +29,7 @@ function toRow(v: Record<string, string>) {
 }
 
 export async function createProgramGroup(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (!fieldErrors.code && (await codeTaken(values.code))) fieldErrors.code = "Bu grup kodu zaten var.";
@@ -46,7 +46,7 @@ export async function createProgramGroup(_prev: FormState, formData: FormData): 
 }
 
 export async function updateProgramGroup(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
@@ -68,7 +68,7 @@ export async function updateProgramGroup(id: number, _prev: FormState, formData:
 }
 
 export async function deleteProgramGroup(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(programGroups).where(eq(programGroups.id, id));
@@ -77,7 +77,7 @@ export async function deleteProgramGroup(formData: FormData): Promise<void> {
 }
 
 export async function moveProgramGroup(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   const id = parseId(formData.get("id"));
   const direction = formData.get("direction");
   if (!id || (direction !== "up" && direction !== "down")) return;

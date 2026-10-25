@@ -1,5 +1,5 @@
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { PEOPLE_IMAGES, getImageOptions, isUploadEnabled } from "@/lib/admin/images";
 import { createBoardMember } from "../actions";
 import { BoardForm } from "../BoardForm";
@@ -7,7 +7,7 @@ import { BoardForm } from "../BoardForm";
 export const metadata = { title: "Üye Ekle" };
 
 export default async function NewBoardMemberPage({ searchParams }: { searchParams: Promise<{ kurul?: string }> }) {
-  await requireAdmin();
+  await requireModule("yonetim");
   const { kurul } = await searchParams;
   return (
     <>

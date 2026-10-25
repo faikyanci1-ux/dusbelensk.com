@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { staff } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { moveInOrder, nextSortOrder, orNull, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
 const RULES = {
@@ -20,7 +20,7 @@ function toRow(v: Record<string, string>) {
 }
 
 export async function createStaff(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
@@ -36,7 +36,7 @@ export async function createStaff(_prev: FormState, formData: FormData): Promise
 }
 
 export async function updateStaff(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
@@ -53,7 +53,7 @@ export async function updateStaff(id: number, _prev: FormState, formData: FormDa
 }
 
 export async function deleteStaff(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(staff).where(eq(staff.id, id));
@@ -62,7 +62,7 @@ export async function deleteStaff(formData: FormData): Promise<void> {
 }
 
 export async function moveStaff(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   const id = parseId(formData.get("id"));
   const direction = formData.get("direction");
   if (!id || (direction !== "up" && direction !== "down")) return;

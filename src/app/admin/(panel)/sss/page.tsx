@@ -3,13 +3,13 @@ import { getDb } from "@/db/client";
 import { faqItems } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, ListRow, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteFaq, moveFaq } from "./actions";
 
 export const metadata = { title: "SSS" };
 
 export default async function AdminFaqPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("sss");
   const { durum } = await searchParams;
   const items = await getDb().select().from(faqItems).orderBy(asc(faqItems.sortOrder), asc(faqItems.id));
 

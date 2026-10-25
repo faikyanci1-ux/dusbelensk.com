@@ -1,5 +1,5 @@
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { getImageOptions, isUploadEnabled } from "@/lib/admin/images";
 import { createHeroSlide } from "../actions";
 import { HeroForm } from "../HeroForm";
@@ -7,7 +7,7 @@ import { HeroForm } from "../HeroForm";
 export const metadata = { title: "Slayt Ekle" };
 
 export default async function NewHeroSlidePage() {
-  await requireAdmin();
+  await requireModule("hero");
   return (
     <>
       <AdminPageHeader title="Slayt Ekle" back={{ href: "/admin/hero", label: "Anasayfa Slaytı" }} />

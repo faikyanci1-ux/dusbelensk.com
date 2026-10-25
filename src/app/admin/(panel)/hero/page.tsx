@@ -5,13 +5,13 @@ import { getDb } from "@/db/client";
 import { heroSlides } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteHeroSlide, moveHeroSlide } from "./actions";
 
 export const metadata = { title: "Anasayfa Slaytı" };
 
 export default async function AdminHeroPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("hero");
   const { durum } = await searchParams;
   const items = await getDb().select().from(heroSlides).orderBy(asc(heroSlides.sortOrder), asc(heroSlides.id));
 

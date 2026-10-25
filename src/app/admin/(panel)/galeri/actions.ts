@@ -4,7 +4,7 @@ import { eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { galleryItems } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { moveInOrder, nextSortOrder, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
 const RULES = {
@@ -17,7 +17,7 @@ function toRow(v: Record<string, string>) {
 }
 
 export async function createGalleryItem(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("galeri");
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
@@ -42,7 +42,7 @@ export async function createGalleryItem(_prev: FormState, formData: FormData): P
 }
 
 export async function updateGalleryItem(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("galeri");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
@@ -59,7 +59,7 @@ export async function updateGalleryItem(id: number, _prev: FormState, formData: 
 }
 
 export async function deleteGalleryItem(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("galeri");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(galleryItems).where(eq(galleryItems.id, id));
@@ -68,7 +68,7 @@ export async function deleteGalleryItem(formData: FormData): Promise<void> {
 }
 
 export async function moveGalleryItem(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("galeri");
   const id = parseId(formData.get("id"));
   const direction = formData.get("direction");
   if (!id || (direction !== "up" && direction !== "down")) return;

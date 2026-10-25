@@ -45,6 +45,7 @@ const STATUS_MESSAGES: Record<string, string> = {
   eklendi: "Eklendi ve sitede yayınlandı.",
   guncellendi: "Değişiklikler kaydedildi ve sitede güncellendi.",
   silindi: "Silindi.",
+  sifre: "Şifre güncellendi.",
   kaydedildi: "Ayarlar kaydedildi ve sitede güncellendi.",
 };
 

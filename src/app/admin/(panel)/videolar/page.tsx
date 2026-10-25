@@ -5,13 +5,13 @@ import { getDb } from "@/db/client";
 import { videoItems } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteVideo, moveVideo } from "./actions";
 
 export const metadata = { title: "Videolar" };
 
 export default async function AdminVideosPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("videolar");
   const { durum } = await searchParams;
   const items = await getDb().select().from(videoItems).orderBy(asc(videoItems.sortOrder), asc(videoItems.id));
 

@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { heroSlides } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { moveInOrder, nextSortOrder, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
 const RULES = {
@@ -22,7 +22,7 @@ function toRow(v: Record<string, string>) {
 }
 
 export async function createHeroSlide(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("hero");
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
@@ -38,7 +38,7 @@ export async function createHeroSlide(_prev: FormState, formData: FormData): Pro
 }
 
 export async function updateHeroSlide(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("hero");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
@@ -55,7 +55,7 @@ export async function updateHeroSlide(id: number, _prev: FormState, formData: Fo
 }
 
 export async function deleteHeroSlide(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("hero");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(heroSlides).where(eq(heroSlides.id, id));
@@ -64,7 +64,7 @@ export async function deleteHeroSlide(formData: FormData): Promise<void> {
 }
 
 export async function moveHeroSlide(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("hero");
   const id = parseId(formData.get("id"));
   const direction = formData.get("direction");
   if (!id || (direction !== "up" && direction !== "down")) return;

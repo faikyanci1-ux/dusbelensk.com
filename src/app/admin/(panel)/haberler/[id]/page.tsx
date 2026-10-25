@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { newsItems } from "@/db/schema";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { getImageOptions, isUploadEnabled } from "@/lib/admin/images";
 import { updateNews } from "../actions";
 import { NewsForm } from "../NewsForm";
@@ -11,7 +11,7 @@ import { NewsForm } from "../NewsForm";
 export const metadata = { title: "Haberi Düzenle" };
 
 export default async function EditNewsPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireModule("haberler");
   const id = Number((await params).id);
   if (!Number.isInteger(id) || id <= 0) notFound();
 

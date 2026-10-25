@@ -3,14 +3,14 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { events } from "@/db/schema";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { updateEvent } from "../actions";
 import { EventForm } from "../EventForm";
 
 export const metadata = { title: "Etkinliği Düzenle" };
 
 export default async function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireModule("etkinlikler");
   const id = Number((await params).id);
   if (!Number.isInteger(id) || id <= 0) notFound();
   const [item] = await getDb().select().from(events).where(eq(events.id, id));

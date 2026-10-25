@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
-import { ADMIN_SESSION_COOKIE } from "@/lib/adminAuth";
 import { isSameOrigin } from "@/lib/adminAuth";
-import { isAdminSession } from "@/lib/adminSession";
+import { getAdminUser } from "@/lib/adminSession";
+import { canUploadTo } from "@/lib/permissions";
 
 /**
  * Admin panelden tarayıcı üzerinden doğrudan Vercel Blob'a fotoğraf yükleme için kısa ömürlü
@@ -12,9 +12,9 @@ import { isAdminSession } from "@/lib/adminSession";
  */
 export async function POST(request: NextRequest) {
   if (!isSameOrigin(request)) return NextResponse.json({ error: "Geçersiz istek." }, { status: 403 });
-  if (!(await isAdminSession(request.cookies.get(ADMIN_SESSION_COOKIE)?.value))) {
-    return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
-  }
+  // Rol DB'den yeniden okunur: editör yalnızca haberler/ ve galeri/ klasörlerine yükleyebilir.
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json({ error: "Fotoğraf yükleme henüz yapılandırılmadı." }, { status: 503 });
   }
@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       request,
       onBeforeGenerateToken: async (pathname) => {
         if (!/^(haberler|galeri|kadro|yonetim)\/[\w\-. ]{1,120}$/.test(pathname) || pathname.includes("..")) throw new Error("Geçersiz klasör.");
+        if (!canUploadTo(user.role, pathname.split("/")[0])) throw new Error("Bu klasöre yükleme yetkiniz yok.");
         return {
           allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"],
           maximumSizeInBytes: 15 * 1024 * 1024,

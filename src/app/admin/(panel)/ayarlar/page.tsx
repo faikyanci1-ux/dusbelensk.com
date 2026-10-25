@@ -1,5 +1,5 @@
 import { AdminPageHeader, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { getSiteSettings } from "@/lib/queries";
 import { saveSettings } from "./actions";
 import { SettingsForm } from "./SettingsForm";
@@ -7,7 +7,7 @@ import { SettingsForm } from "./SettingsForm";
 export const metadata = { title: "Site Ayarları" };
 
 export default async function AdminSettingsPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("ayarlar");
   const { durum } = await searchParams;
   const s = await getSiteSettings();
 

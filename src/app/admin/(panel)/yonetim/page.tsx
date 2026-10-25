@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import { boardMembers } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, ListRow, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteBoardMember, moveBoardMember } from "./actions";
 
 export const metadata = { title: "Yönetim Kurulu" };
@@ -44,7 +44,7 @@ function MemberList({ members }: { members: Member[] }) {
 }
 
 export default async function AdminBoardPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("yonetim");
   const { durum } = await searchParams;
   const rows = await getDb().select().from(boardMembers).orderBy(asc(boardMembers.sortOrder), asc(boardMembers.id));
 

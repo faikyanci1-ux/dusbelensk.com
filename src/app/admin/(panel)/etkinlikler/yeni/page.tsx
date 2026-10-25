@@ -1,5 +1,5 @@
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { todayInTurkey } from "@/lib/siteSettings";
 import { createEvent } from "../actions";
 import { EventForm } from "../EventForm";
@@ -7,7 +7,7 @@ import { EventForm } from "../EventForm";
 export const metadata = { title: "Yeni Etkinlik" };
 
 export default async function NewEventPage() {
-  await requireAdmin();
+  await requireModule("etkinlikler");
   return (
     <>
       <AdminPageHeader title="Yeni Etkinlik" back={{ href: "/admin/etkinlikler", label: "Etkinlikler" }} />

@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { heroSlides } from "@/db/schema";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { getImageOptions, isUploadEnabled } from "@/lib/admin/images";
 import { updateHeroSlide } from "../actions";
 import { HeroForm } from "../HeroForm";
@@ -17,7 +17,7 @@ function parseFocus(focus: string | null) {
 }
 
 export default async function EditHeroSlidePage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireModule("hero");
   const id = Number((await params).id);
   if (!Number.isInteger(id) || id <= 0) notFound();
   const [item] = await getDb().select().from(heroSlides).where(eq(heroSlides.id, id));

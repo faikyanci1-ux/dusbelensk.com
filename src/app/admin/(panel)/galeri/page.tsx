@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import { galleryItems } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteGalleryItem, moveGalleryItem } from "./actions";
 
 export const metadata = { title: "Galeri" };
@@ -13,7 +13,7 @@ export const metadata = { title: "Galeri" };
 const SIZE_LABELS: Record<string, string> = { large: "Büyük", wide: "Geniş" };
 
 export default async function AdminGalleryPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("galeri");
   const { durum } = await searchParams;
   const items = await getDb().select().from(galleryItems).orderBy(asc(galleryItems.sortOrder), asc(galleryItems.id));
 

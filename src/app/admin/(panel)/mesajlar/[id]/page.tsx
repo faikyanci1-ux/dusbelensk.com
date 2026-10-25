@@ -4,7 +4,7 @@ import { getDb } from "@/db/client";
 import { contactMessages } from "@/db/schema";
 import { DeleteButton } from "@/components/admin/form";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteMessage, setMessageRead } from "../actions";
 
 export const metadata = { title: "Mesaj" };
@@ -21,7 +21,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 }
 
 export default async function MessageDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireModule("mesajlar");
   const id = Number((await params).id);
   if (!Number.isInteger(id) || id <= 0) notFound();
   const db = getDb();

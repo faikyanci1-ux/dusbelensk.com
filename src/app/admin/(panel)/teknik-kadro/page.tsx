@@ -4,13 +4,13 @@ import { getDb } from "@/db/client";
 import { staff } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, ListRow, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteStaff, moveStaff } from "./actions";
 
 export const metadata = { title: "Teknik Kadro" };
 
 export default async function AdminStaffPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   const { durum } = await searchParams;
   const items = await getDb().select().from(staff).orderBy(asc(staff.sortOrder), asc(staff.id));
 

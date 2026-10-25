@@ -3,14 +3,14 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { programGroups } from "@/db/schema";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { updateProgramGroup } from "../actions";
 import { ProgramForm } from "../ProgramForm";
 
 export const metadata = { title: "Grubu Düzenle" };
 
 export default async function EditProgramGroupPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   const id = Number((await params).id);
   if (!Number.isInteger(id) || id <= 0) notFound();
   const [item] = await getDb().select().from(programGroups).where(eq(programGroups.id, id));

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { ADMIN_SESSION_COOKIE } from "@/lib/adminAuth";
-import { isAdminSession } from "@/lib/adminSession";
+import { getAdminUser } from "@/lib/adminSession";
 import { LoginForm } from "./LoginForm";
 
 export const metadata: Metadata = {
@@ -15,6 +13,6 @@ export const metadata: Metadata = {
  * iptal edilmiş oturumu göremez ve panel ile giriş sayfası arasında yönlendirme döngüsü oluşurdu.
  */
 export default async function AdminLoginPage() {
-  if (await isAdminSession((await cookies()).get(ADMIN_SESSION_COOKIE)?.value)) redirect("/admin");
+  if (await getAdminUser()) redirect("/admin");
   return <LoginForm />;
 }

@@ -5,11 +5,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { contactMessages } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { parseId } from "@/lib/admin/form";
 
 export async function deleteMessage(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("mesajlar");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(contactMessages).where(eq(contactMessages.id, id));
@@ -19,7 +19,7 @@ export async function deleteMessage(formData: FormData): Promise<void> {
 
 /** Okundu / okunmadı durumunu değiştirir. read=1 -> okundu. */
 export async function setMessageRead(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("mesajlar");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb()

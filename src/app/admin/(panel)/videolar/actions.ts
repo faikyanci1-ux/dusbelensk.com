@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { videoItems } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { moveInOrder, nextSortOrder, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
 const RULES = {
@@ -33,7 +33,7 @@ function check(values: Record<string, string>) {
 }
 
 export async function createVideo(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("videolar");
   const values = readForm(formData);
   const fieldErrors = check(values);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
@@ -49,7 +49,7 @@ export async function createVideo(_prev: FormState, formData: FormData): Promise
 }
 
 export async function updateVideo(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("videolar");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = check(values);
@@ -70,7 +70,7 @@ export async function updateVideo(id: number, _prev: FormState, formData: FormDa
 }
 
 export async function deleteVideo(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("videolar");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(videoItems).where(eq(videoItems.id, id));
@@ -79,7 +79,7 @@ export async function deleteVideo(formData: FormData): Promise<void> {
 }
 
 export async function moveVideo(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("videolar");
   const id = parseId(formData.get("id"));
   const direction = formData.get("direction");
   if (!id || (direction !== "up" && direction !== "down")) return;

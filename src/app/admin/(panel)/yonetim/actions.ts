@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { boardMembers } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import {
   lines,
   moveInOrder,
@@ -43,7 +43,7 @@ function toRow(v: Record<string, string>) {
 }
 
 export async function createBoardMember(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("yonetim");
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
@@ -60,7 +60,7 @@ export async function createBoardMember(_prev: FormState, formData: FormData): P
 }
 
 export async function updateBoardMember(id: number, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("yonetim");
   if (!parseId(id)) return { error: "Geçersiz kayıt." };
   const values = readForm(formData);
   const fieldErrors = validate(values, RULES);
@@ -88,7 +88,7 @@ export async function updateBoardMember(id: number, _prev: FormState, formData: 
 }
 
 export async function deleteBoardMember(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("yonetim");
   const id = parseId(formData.get("id"));
   if (!id) return;
   await getDb().delete(boardMembers).where(eq(boardMembers.id, id));
@@ -97,7 +97,7 @@ export async function deleteBoardMember(formData: FormData): Promise<void> {
 }
 
 export async function moveBoardMember(formData: FormData): Promise<void> {
-  await requireAdmin();
+  await requireModule("yonetim");
   const id = parseId(formData.get("id"));
   const direction = formData.get("direction");
   if (!id || (direction !== "up" && direction !== "down")) return;

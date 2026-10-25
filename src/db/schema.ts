@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, bigint, text, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 
 /**
  * Admin panelden yönetilen içerik. Site bu tabloları src/lib/queries.ts üzerinden okur;
@@ -109,6 +109,23 @@ export const adminLoginAttempts = pgTable("admin_login_attempts", {
   ip: text("ip").primaryKey(),
   failures: integer("failures").default(0).notNull(),
   windowStart: timestamp("window_start", { withTimezone: true }).defaultNow().notNull(),
+});
+
+/**
+ * Yönetim paneli kullanıcıları. Yerleşik süper yönetici (env ADMIN_PASSWORD, kullanıcı adı "admin") bu tabloda YOKTUR.
+ * role: "admin" | "editor". password_hash: "pbkdf2-sha256$<iterasyon>$<tuz>$<özet>" (bkz. src/lib/passwordHash.ts).
+ * sessions_valid_after: bu andan (ms) önce açılmış oturumlar geçersizdir (çıkış, şifre sıfırlama, rol/pasif değişikliği).
+ */
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  displayName: text("display_name").notNull(),
+  role: text("role").notNull().default("editor"),
+  passwordHash: text("password_hash").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  sessionsValidAfter: bigint("sessions_valid_after", { mode: "number" }).default(0).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 });
 
 export const contactMessages = pgTable("contact_messages", {

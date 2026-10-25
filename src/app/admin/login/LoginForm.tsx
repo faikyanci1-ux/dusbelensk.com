@@ -6,9 +6,10 @@ import { Loader2, Lock } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState("Şifre hatalı. Tekrar deneyin.");
+  const [errorMessage, setErrorMessage] = useState("Kullanıcı adı veya şifre hatalı.");
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -16,14 +17,14 @@ export function LoginForm() {
     const res = await fetch("/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password }),
     });
     if (res.ok) {
       router.push("/admin");
       router.refresh();
     } else {
       const data = await res.json().catch(() => null);
-      setErrorMessage(res.status === 429 && data?.error ? data.error : "Şifre hatalı. Tekrar deneyin.");
+      setErrorMessage(res.status === 429 && data?.error ? data.error : "Kullanıcı adı veya şifre hatalı.");
       setStatus("error");
     }
   }
@@ -44,14 +45,34 @@ export function LoginForm() {
           </div>
         </div>
 
+        <label htmlFor="username" className="mb-2 block text-xs font-medium text-white/70">
+          Kullanıcı adı
+        </label>
+        <input
+          id="username"
+          type="text"
+          autoFocus
+          required
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            if (status === "error") setStatus("idle");
+          }}
+          className="mb-4 w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-accent-bright"
+          placeholder="admin"
+        />
+
         <label htmlFor="password" className="mb-2 block text-xs font-medium text-white/70">
           Şifre
         </label>
         <input
           id="password"
           type="password"
-          autoFocus
           required
+          autoComplete="current-password"
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
@@ -69,7 +90,7 @@ export function LoginForm() {
 
         <button
           type="submit"
-          disabled={status === "loading" || password.length === 0}
+          disabled={status === "loading" || username.trim().length === 0 || password.length === 0}
           className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-accent-bright px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "loading" ? <Loader2 size={16} className="animate-spin" /> : null}

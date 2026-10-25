@@ -3,13 +3,13 @@ import { getDb } from "@/db/client";
 import { programGroups } from "@/db/schema";
 import { DeleteButton, MoveButtons } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, ListRow, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteProgramGroup, moveProgramGroup } from "./actions";
 
 export const metadata = { title: "Yaş Grupları" };
 
 export default async function AdminProgramPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   const { durum } = await searchParams;
   const items = await getDb().select().from(programGroups).orderBy(asc(programGroups.sortOrder), asc(programGroups.id));
 

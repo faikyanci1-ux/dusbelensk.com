@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import { contactMessages } from "@/db/schema";
 import { DeleteButton } from "@/components/admin/form";
 import { AdminPageHeader, EmptyState, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { deleteMessage } from "./actions";
 
 export const metadata = { title: "Gelen Mesajlar" };
@@ -17,7 +17,7 @@ function formatMessageDate(iso: string): string {
 }
 
 export default async function AdminMessagesPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("mesajlar");
   const { durum } = await searchParams;
   const items = await getDb().select().from(contactMessages).orderBy(desc(contactMessages.createdAt), desc(contactMessages.id));
   const unread = items.filter((m) => !m.isRead).length;

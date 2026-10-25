@@ -5,14 +5,14 @@ import { getDb } from "@/db/client";
 import { newsItems } from "@/db/schema";
 import { DeleteButton } from "@/components/admin/form";
 import { AdminPageHeader, EditLink, EmptyState, ListRow, StatusBanner } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { formatTurkishDate } from "@/lib/formatDate";
 import { deleteNews } from "./actions";
 
 export const metadata = { title: "Haberler" };
 
 export default async function AdminNewsPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
-  await requireAdmin();
+  await requireModule("haberler");
   const { durum } = await searchParams;
   const items = await getDb().select().from(newsItems).orderBy(desc(newsItems.date), desc(newsItems.id));
 

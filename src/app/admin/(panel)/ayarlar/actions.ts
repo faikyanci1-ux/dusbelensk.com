@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { siteSettings } from "@/db/schema";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { lines, paragraphs, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 import type { ClubSettings } from "@/lib/siteSettings";
 
@@ -33,7 +33,7 @@ const RULES = {
 };
 
 export async function saveSettings(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireModule("ayarlar");
   const v = readForm(formData);
   const fieldErrors = validate(v, RULES);
 

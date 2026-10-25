@@ -1,12 +1,12 @@
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { createProgramGroup } from "../actions";
 import { ProgramForm } from "../ProgramForm";
 
 export const metadata = { title: "Grup Ekle" };
 
 export default async function NewProgramGroupPage() {
-  await requireAdmin();
+  await requireModule("yas-gruplari");
   return (
     <>
       <AdminPageHeader title="Yaş Grubu Ekle" back={{ href: "/admin/yas-gruplari", label: "Yaş Grupları" }} />

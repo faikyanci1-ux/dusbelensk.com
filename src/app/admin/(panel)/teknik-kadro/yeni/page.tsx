@@ -1,5 +1,5 @@
 import { AdminPageHeader } from "@/components/admin/ui";
-import { requireAdmin } from "@/lib/adminSession";
+import { requireModule } from "@/lib/adminSession";
 import { PEOPLE_IMAGES, getImageOptions, isUploadEnabled } from "@/lib/admin/images";
 import { createStaff } from "../actions";
 import { StaffForm } from "../StaffForm";
@@ -7,7 +7,7 @@ import { StaffForm } from "../StaffForm";
 export const metadata = { title: "Kişi Ekle" };
 
 export default async function NewStaffPage() {
-  await requireAdmin();
+  await requireModule("teknik-kadro");
   return (
     <>
       <AdminPageHeader title="Teknik Kadroya Kişi Ekle" back={{ href: "/admin/teknik-kadro", label: "Teknik Kadro" }} />

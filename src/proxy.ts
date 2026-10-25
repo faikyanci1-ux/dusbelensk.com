@@ -20,7 +20,7 @@ export async function proxy(request: NextRequest) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
     }
-    // Server Action (form kaydetme) istekleri: her action kendi içinde requireAdmin() ile oturumu
+    // Server Action (form kaydetme) istekleri: her action kendi içinde requireModule() ile oturumu ve rolü
     // doğrular ve oturum yoksa giriş sayfasına düzgün yönlendirir. Burada 307 ile yönlendirmek
     // POST'u giriş sayfasına taşıyıp istemcide "This page couldn't load" hatasına yol açıyordu.
     if (request.method === "POST" && request.headers.has("next-action")) {
