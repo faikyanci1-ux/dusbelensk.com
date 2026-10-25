@@ -51,6 +51,9 @@ export async function saveSettings(_prev: FormState, formData: FormData): Promis
   if (nextMatchEnabled) {
     if (!v.nextMatchOpponent) fieldErrors.nextMatchOpponent = "Sıradaki maç gösterilecekse rakip zorunlu.";
     if (!v.nextMatchDate) fieldErrors.nextMatchDate = "Sıradaki maç gösterilecekse tarih zorunlu.";
+    else if (!fieldErrors.nextMatchDate && v.nextMatchDate < new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Istanbul" })) {
+      fieldErrors.nextMatchDate = "Geçmiş tarihli maç sitede gösterilmez; ileri bir tarih girin veya kutuyu kapatın.";
+    }
   }
   if (Object.keys(fieldErrors).length) {
     return { fieldErrors, values: v, error: "Bazı alanlar hatalı — kırmızı işaretli alanları kontrol edin." };

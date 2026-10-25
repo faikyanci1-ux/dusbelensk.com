@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      // Dosya adı aynı kalıp içerik değişebileceği için "immutable" yerine kısa önbellek + arka planda yenileme.
+      ...["/videos/:path*", "/images/:path*"].map((source) => ({
+        source,
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      })),
     ];
   },
 };

@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getDb } from "@/db/client";
 import { contactMessages } from "@/db/schema";
+import { isSameOrigin } from "@/lib/adminAuth";
 import { clientIp, hitRateLimit } from "@/lib/rateLimit";
 
 const MAX_FIELD_LENGTH = 200;
 const MAX_MESSAGE_LENGTH = 2000;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@?&#]+@[^\s@?&#]+\.[^\s@?&#]+$/;
 
 /** Aynı IP'den bu süre içinde en fazla bu kadar mesaj (e-posta kotası ve spam için). */
 const MAX_MESSAGES = 5;
@@ -14,7 +15,8 @@ const WINDOW_MINUTES = 60;
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) return NextResponse.json({ error: "Geçersiz istek." }, { status: 403 });
   const body: unknown = await request.json().catch(() => null);
   if (!body || typeof body !== "object") {
     return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });

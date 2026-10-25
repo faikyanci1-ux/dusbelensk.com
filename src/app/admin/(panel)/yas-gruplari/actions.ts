@@ -1,9 +1,10 @@
 "use server";
 
-import { and, eq, ne, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db/client";
 import { programGroups } from "@/db/schema";
+import { ageGroupSlug } from "@/lib/ageGroups";
 import { requireAdmin } from "@/lib/adminSession";
 import { moveInOrder, nextSortOrder, parseId, readForm, revalidateSite, validate, type FormState } from "@/lib/admin/form";
 
@@ -17,13 +18,10 @@ const RULES = {
 
 /** Grup kodları sitede anahtar olarak kullanılıyor; aynı kod iki kez girilemez (büyük/küçük harf fark etmez). */
 async function codeTaken(code: string, exceptId?: number): Promise<boolean> {
-  const sameCode = sql`lower(${programGroups.code}) = lower(${code})`;
-  const [row] = await getDb()
-    .select({ id: programGroups.id })
-    .from(programGroups)
-    .where(exceptId ? and(sameCode, ne(programGroups.id, exceptId)) : sameCode)
-    .limit(1);
-  return Boolean(row);
+  // Sayfa adresi ageGroupSlug(code) ile üretildiği için "U-12" ile "U12" de aynı sayılır.
+  const slug = ageGroupSlug(code);
+  const rows = await getDb().select({ id: programGroups.id, code: programGroups.code }).from(programGroups);
+  return rows.some((r) => r.id !== exceptId && ageGroupSlug(r.code) === slug);
 }
 
 function toRow(v: Record<string, string>) {

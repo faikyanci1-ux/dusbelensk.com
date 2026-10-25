@@ -96,7 +96,7 @@ export default async function NewsDetailPage({ params }: Params) {
           {/* Admin panelde boş satırla ayrılan paragraflar ayrı gösterilir; tek satır sonları korunur. */}
           <div className="mt-8 space-y-5">
             {item.summary.split(/\r?\n\s*\r?\n/).map((paragraph, i) => (
-              <p key={i} className="whitespace-pre-line text-lg leading-relaxed text-ink-muted">
+              <p key={i} className="whitespace-pre-line break-words text-lg leading-relaxed text-ink-muted">
                 {paragraph.trim()}
               </p>
             ))}

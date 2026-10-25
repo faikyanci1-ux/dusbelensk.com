@@ -28,7 +28,7 @@ export function PageHero({
           <span className="h-px w-6 bg-accent-bright" />
           {eyebrow}
         </span>
-        <h1 className="mt-4 max-w-2xl font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
+        <h1 className="mt-4 max-w-2xl break-words font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
           {title}
         </h1>
         {description && <p className="mt-4 max-w-xl text-text-muted">{description}</p>}

@@ -43,7 +43,7 @@ export default async function MessageDetailPage({ params }: { params: Promise<{ 
           {m.phone ? <a className="text-accent-bright hover:underline" href={`tel:${m.phone.replace(/[^\d+]/g, "")}`}>{m.phone}</a> : "—"}
         </Row>
         <Row label="E-posta">
-          {m.email ? <a className="text-accent-bright hover:underline" href={`mailto:${m.email}`}>{m.email}</a> : "—"}
+          {m.email ? <a className="text-accent-bright hover:underline" href={`mailto:${encodeURI(m.email)}`}>{m.email}</a> : "—"}
         </Row>
         {m.requestType === "trial" && (
           <>

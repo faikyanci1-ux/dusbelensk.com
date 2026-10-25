@@ -22,8 +22,13 @@ export function UnsavedGuard() {
     const markDirty = (event: Event) => {
       if (isFormField(event.target)) dirty.current = true;
     };
-    const clear = () => {
+    // Kayıt başarılıysa sayfa değişir/sıfırlanır; sunucu hata döndürdüyse form yazılanlarla kalır, uyarı geri açılır.
+    const clear = (event: Event) => {
       dirty.current = false;
+      const form = event.target instanceof HTMLFormElement ? event.target : null;
+      window.setTimeout(() => {
+        if (form?.isConnected && form.querySelector('[role="alert"]')) dirty.current = true;
+      }, 2500);
     };
     const warn = (event: BeforeUnloadEvent) => {
       if (!dirty.current) return;
