@@ -129,7 +129,7 @@ export default async function AboutPage() {
                 className="min-w-[110px] rounded-xl border border-black/10 bg-white px-4 py-3 text-center shadow-sm"
               >
                 <div className="font-display text-2xl text-accent-2">{stat.number}</div>
-                <div className="mt-1 text-[11px] uppercase tracking-wide text-ink-muted">{stat.label}</div>
+                <div className="mt-1 text-xs uppercase tracking-wide text-ink-muted">{stat.label}</div>
               </div>
             ))}
           </div>

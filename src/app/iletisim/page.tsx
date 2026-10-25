@@ -8,7 +8,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { buildMetadata } from "@/lib/metadata";
 import { siteUrl } from "@/lib/site";
-import { jsonLdHtml } from "@/lib/jsonLd";
+import { breadcrumbJsonLd, clubId, jsonLdHtml } from "@/lib/jsonLd";
 
 function ContactInfoRow({
   icon: Icon,
@@ -26,16 +26,16 @@ function ContactInfoRow({
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="group flex items-center gap-3"
+      className="group flex items-start gap-3"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-bright/10 text-accent-bright transition group-hover:bg-accent-bright/20">
         <Icon size={17} />
       </span>
       <span className="min-w-0">
-        <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-muted/70">
+        <span className="block text-xs font-semibold uppercase tracking-wider text-ink-muted">
           {label}
         </span>
-        <span className="block truncate text-sm font-medium text-ink transition group-hover:text-accent-bright">
+        <span className="block break-words text-sm font-medium text-ink transition group-hover:text-accent-bright">
           {value}
         </span>
       </span>
@@ -53,36 +53,28 @@ export const metadata: Metadata = buildMetadata({
 export default async function ContactPage() {
   const club = await getClubInfo();
 
-  // SportsOrganization (layout.tsx) haritada/saat kartında görünmez; konum bilgisi için
-  // gerçek adres + koordinat (club.ts -> geo) içeren ayrı bir LocalBusiness kaydı ekliyoruz.
-  const localBusinessJsonLd = {
+  // Kulüp varlığı layout.tsx'te tek kez (@id) tanımlıdır; burada ikinci bir LocalBusiness açılmaz,
+  // sayfa ContactPage olarak ona bağlanır.
+  const contactJsonLd = {
     "@context": "https://schema.org",
-    "@type": ["SportsActivityLocation", "LocalBusiness"],
-    name: club.name,
+    "@type": "ContactPage",
+    "@id": `${siteUrl}/iletisim#webpage`,
     url: `${siteUrl}/iletisim`,
-    telephone: club.phoneHref.replace("tel:", ""),
-    image: `${siteUrl}/images/logo.png`,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: club.address,
-      addressLocality: "Köyceğiz",
-      addressRegion: "Muğla",
-      addressCountry: "TR",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: club.geo.latitude,
-      longitude: club.geo.longitude,
-    },
-    hasMap: club.mapsUrl,
-    sameAs: [club.instagramUrl],
+    name: "İletişim | Düşbelen SK",
+    inLanguage: "tr-TR",
+    mainEntity: { "@id": clubId },
   };
+  const breadcrumb = breadcrumbJsonLd([{ name: "İletişim", path: "/iletisim" }]);
 
   return (
     <>
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: jsonLdHtml(localBusinessJsonLd) }}
+      dangerouslySetInnerHTML={{ __html: jsonLdHtml(contactJsonLd) }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumb) }}
     />
     <PageHero
       eyebrow="İletişim"
@@ -164,12 +156,12 @@ export default async function ContactPage() {
             <iframe
               src={club.mapsEmbedSrc}
               width="100%"
-              height="480"
+              height="360"
               style={{ border: 0, display: "block" }}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title={`${club.name} Konum`}
-              className="min-h-[320px] lg:h-[560px]"
+              className="h-[300px] sm:h-[360px] lg:h-[560px]"
             />
           </div>
         </div>

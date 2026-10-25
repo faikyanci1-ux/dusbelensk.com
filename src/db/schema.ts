@@ -118,4 +118,27 @@ export const contactMessages = pgTable("contact_messages", {
   phone: text("phone"),
   message: text("message").notNull(),
   createdAt: text("created_at").notNull(),
+  /** "message" | "trial" (deneme antrenmanı / kayıt başvurusu). */
+  requestType: text("request_type").default("message").notNull(),
+  childName: text("child_name"),
+  ageGroup: text("age_group"),
+  isRead: boolean("is_read").default(false).notNull(),
+});
+
+/** Anasayfa hero slider fotoğrafları (sort_order küçükten büyüğe). focus: CSS object-position, ör. "50% 25%". */
+export const heroSlides = pgTable("hero_slides", {
+  id: serial("id").primaryKey(),
+  src: text("src").notNull(),
+  caption: text("caption").notNull(),
+  focus: text("focus"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+});
+
+/** Anasayfa slider'ı ve Hakkımızda'daki videolar. src: "/videos/..." dosyası ya da https video adresi. */
+export const videoItems = pgTable("video_items", {
+  id: serial("id").primaryKey(),
+  src: text("src").notNull(),
+  caption: text("caption").notNull(),
+  poster: text("poster").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
 });

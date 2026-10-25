@@ -10,8 +10,9 @@ import { getGroupPostback, STANDINGS_SOURCE_URL } from "@/lib/standings";
 const escape = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-export async function GET(_request: Request, { params }: { params: Promise<{ grup: string }> }) {
-  const { grup } = await params;
+export async function GET(request: Request, { params }: { params: Promise<{ grup: string }> }) {
+  const { grup: rawGrup } = await params;
+  const grup = rawGrup.toLowerCase();
   let fields: Record<string, string> | null;
   try {
     fields = await getGroupPostback(grup);
@@ -19,7 +20,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ gru
     console.error(`[askf] ${grup} yönlendirmesi hazırlanamadı:`, error);
     return Response.redirect(STANDINGS_SOURCE_URL, 302);
   }
-  if (!fields) return new Response("Bulunamadı", { status: 404 });
+  // Bilinmeyen grup: markasız metin yerine yaş grupları sayfasına yönlendir.
+  if (!fields) return Response.redirect(new URL("/yas-gruplari", request.url), 302);
 
   const inputs = Object.entries(fields)
     .map(([name, value]) => `<input type="hidden" name="${escape(name)}" value="${escape(value)}">`)

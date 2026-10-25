@@ -44,12 +44,16 @@ export function VideoCard({
           type="button"
           onClick={() => videoRef.current?.play()}
           aria-label={`${caption} videosunu oynat`}
-          className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/10 to-transparent p-5 text-left transition group-hover:from-black/95"
+          className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/10 to-transparent p-3 text-left sm:p-5 transition group-hover:from-black/95"
         >
-          <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-bg-main shadow-lg transition group-hover:scale-110 group-hover:animate-pulse-ring">
-            <Play size={22} fill="currentColor" className="ml-0.5" />
+          <span className="absolute left-1/2 top-[42%] flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-bg-main shadow-lg transition group-hover:scale-110 group-hover:animate-pulse-ring sm:h-14 sm:w-14 sm:top-[45%]">
+            <Play size={20} fill="currentColor" className="ml-0.5" />
           </span>
-          <span className={`font-bold text-white drop-shadow ${featured ? "text-xl" : "text-sm"}`}>
+          <span
+            className={`line-clamp-2 font-bold leading-snug text-white drop-shadow ${
+              featured ? "text-base sm:text-xl" : "text-xs sm:text-sm"
+            }`}
+          >
             {caption}
           </span>
         </button>

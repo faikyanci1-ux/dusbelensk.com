@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE, createSessionToken, verifyPassword } from "@/lib/adminAuth";
+import { isSameOrigin, ADMIN_SESSION_COOKIE, createSessionToken, verifyPassword } from "@/lib/adminAuth";
 import { clearRateLimit, clientIp, hitRateLimit, pruneRateLimits } from "@/lib/rateLimit";
 
 /** Aynı IP'den bu süre içinde MAX_ATTEMPTS denemeden sonra giriş geçici olarak kilitlenir. */
@@ -7,6 +7,7 @@ const MAX_ATTEMPTS = 10;
 const WINDOW_MINUTES = 15;
 
 export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) return NextResponse.json({ error: "Geçersiz istek." }, { status: 403 });
   const body = await request.json().catch(() => null);
   const password = typeof body?.password === "string" ? body.password : "";
   const key = `login:${clientIp(request)}`;

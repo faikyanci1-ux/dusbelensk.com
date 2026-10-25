@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Anton, Caveat } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -9,7 +9,7 @@ import { getClubInfo } from "@/lib/queries";
 import type { ClubInfo } from "@/lib/siteSettings";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
-import { jsonLdHtml } from "@/lib/jsonLd";
+import { clubId, jsonLdHtml, websiteId } from "@/lib/jsonLd";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,10 +33,12 @@ const caveat = Caveat({
   display: "swap",
 });
 
-const title = "Düşbelen SK | Resmi Web Sitesi";
+const title = "Düşbelen SK | Köyceğiz Futbol Okulu ve Muğla Futbol Altyapısı";
 const description =
-  "Düşbelen SK, Köyceğiz/Muğla'da 2022'den beri genç yetenekleri yetiştiren altyapı odaklı futbol kulübü.";
+  "Köyceğiz'de lisanslı antrenörlerle çocuk futbol okulu; U12, U14, U17 altyapı grupları. Online ön kayıt ve deneme antrenmanı.";
 
+// Kök seviyede canonical YOK: her sayfa kendi canonical'ını verir (buildMetadata). Varsayılan paylaşım
+// görseli src/app/opengraph-image.tsx dosyasından otomatik gelir.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -44,16 +46,11 @@ export const metadata: Metadata = {
     template: "%s | Düşbelen SK",
   },
   description,
-  keywords: [
-    "Köyceğiz futbol okulu",
-    "Muğla futbol altyapı",
-    "Düşbelen SK",
-    "çocuk futbol okulu Köyceğiz",
-  ],
+  applicationName: club.name,
   icons: {
     icon: "/favicon.png",
+    apple: "/images/logo.png",
   },
-  alternates: { canonical: "/" },
   openGraph: {
     title,
     description,
@@ -61,34 +58,57 @@ export const metadata: Metadata = {
     siteName: club.name,
     locale: "tr_TR",
     type: "website",
-    images: [{ url: "/images/hero-bg.jpg", width: 1200, height: 630, alt: club.name }],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
-    images: ["/images/hero-bg.jpg"],
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#0a1628",
+};
+
+// Kulüp varlığı sitede TEK kez, sabit @id ile tanımlanır; diğer sayfalar (iletisim, yaş grupları) ona @id ile bağlanır.
 function buildJsonLd(club: ClubInfo) {
   return {
-  "@context": "https://schema.org",
-  "@type": "SportsOrganization",
-  name: club.name,
-  url: siteUrl,
-  logo: `${siteUrl}/images/logo.png`,
-  sport: "Football",
-  foundingDate: String(club.foundedYear),
-  telephone: club.phoneHref.replace("tel:", ""),
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: club.address,
-    addressLocality: "Köyceğiz",
-    addressRegion: "Muğla",
-    addressCountry: "TR",
-  },
-  sameAs: [club.instagramUrl],
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["SportsClub", "LocalBusiness"],
+        "@id": clubId,
+        name: club.name,
+        url: siteUrl,
+        logo: `${siteUrl}/images/logo.png`,
+        image: `${siteUrl}/images/logo.png`,
+        sport: "Football",
+        foundingDate: String(club.foundedYear),
+        telephone: club.phoneHref.replace("tel:", ""),
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: club.address,
+          addressLocality: "Köyceğiz",
+          addressRegion: "Muğla",
+          addressCountry: "TR",
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: club.geo.latitude,
+          longitude: club.geo.longitude,
+        },
+        hasMap: club.mapsUrl,
+        sameAs: [club.instagramUrl],
+      },
+      {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: siteUrl,
+        name: club.name,
+        inLanguage: "tr-TR",
+        publisher: { "@id": clubId },
+      },
+    ],
   };
 }
 

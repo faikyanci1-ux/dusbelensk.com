@@ -1,4 +1,6 @@
 import "server-only";
+import { readdir } from "node:fs/promises";
+import path from "node:path";
 import { asc } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { galleryItems } from "@/db/schema";
@@ -41,4 +43,10 @@ export async function getImageOptions(extra: ImageOption[] = []): Promise<ImageO
 /** Vercel Blob depolaması bağlı mı? (BLOB_READ_WRITE_TOKEN Vercel'de Blob store projeye bağlanınca eklenir.) */
 export function isUploadEnabled(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
+/** public/videos altındaki hazır video dosyaları ("/videos/x.mp4"). */
+export async function getVideoFiles(): Promise<string[]> {
+  const files = await readdir(path.join(process.cwd(), "public", "videos")).catch(() => []);
+  return files.filter((f) => /\.(mp4|webm|mov)$/i.test(f)).sort().map((f) => `/videos/${f}`);
 }

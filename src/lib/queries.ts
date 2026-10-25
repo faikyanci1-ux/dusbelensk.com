@@ -3,7 +3,7 @@
  *
  * Admin panelden yönetilen içerik (site ayarları, haberler, etkinlikler, galeri, teknik kadro,
  * yönetim, SSS, yaş grupları) Postgres'ten okunur (hata davranışı için bkz. dbQuery).
- * Videolar, veli bilgileri ve değerler hâlâ statik dosyalardan gelir.
+ * Hero slider fotoğrafları ve videolar da veritabanından gelir; veli bilgileri ve değerler hâlâ statik dosyalardan gelir.
  *
  * getSiteSettings React cache() ile sarıldığı için aynı istek içinde birden çok bileşen
  * getClubInfo() çağırsa da veritabanına tek sorgu gider.
@@ -16,10 +16,12 @@ import {
   events as eventsTable,
   faqItems,
   galleryItems,
+  heroSlides,
   newsItems,
   programGroups,
   siteSettings,
   staff as staffTable,
+  videoItems,
 } from "@/db/schema";
 import { formatTurkishDate } from "@/lib/formatDate";
 import {
@@ -36,7 +38,7 @@ import { lineup, lineupNote, type LineupSlot } from "@/data/lineup";
 import type { GalleryItem } from "@/data/gallery";
 import type { NewsItem } from "@/data/news";
 import { statsBlurb, values, parentInfo, type ValueItem } from "@/data/club";
-import { videos, type VideoItem } from "@/data/videos";
+import type { VideoItem } from "@/data/videos";
 import type { FaqItem } from "@/data/faq";
 import type { EventItem } from "@/data/events";
 import type { ProgramGroup } from "@/data/program";
@@ -192,9 +194,29 @@ export const getNews = cache(async (): Promise<NewsItem[]> =>
   )
 );
 
-export async function getVideos(): Promise<VideoItem[]> {
-  return videos;
-}
+export const getVideos = cache(async (): Promise<VideoItem[]> =>
+  dbQuery(
+    "getVideos",
+    async () => {
+      const rows = await getDb().select().from(videoItems).orderBy(asc(videoItems.sortOrder), asc(videoItems.id));
+      return rows.map((r) => ({ id: r.id, src: r.src, caption: r.caption, poster: r.poster }));
+    }
+  )
+);
+
+// ---------- Anasayfa hero slider fotoğrafları ----------
+
+export type HeroImageSlide = { src: string; caption: string; focus?: string };
+
+export const getHeroSlides = cache(async (): Promise<HeroImageSlide[]> =>
+  dbQuery(
+    "getHeroSlides",
+    async () => {
+      const rows = await getDb().select().from(heroSlides).orderBy(asc(heroSlides.sortOrder), asc(heroSlides.id));
+      return rows.map((r) => ({ src: r.src, caption: r.caption, focus: r.focus ?? undefined }));
+    }
+  )
+);
 
 // ---------- SSS ----------
 

@@ -44,8 +44,8 @@ export function PlayerGrid({ players }: { players: Player[] }) {
             <PlayerAvatar name={player.name} jerseyNumber={player.jerseyNumber} />
             <div>
               <p className="text-sm font-semibold text-white">{player.name}</p>
-              <p className="text-xs text-accent-light">{player.position}</p>
-              <p className="mt-1 text-[11px] text-text-muted">Doğum Tarihi: {player.birthYear}</p>
+              <p className="text-sm text-accent-light">{player.position}</p>
+              <p className="mt-1 text-xs text-text-muted">Doğum Tarihi: {player.birthYear}</p>
             </div>
           </div>
         ))}

@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { count, desc, gte } from "drizzle-orm";
-import { AlertTriangle, CalendarPlus, CheckCircle2, ImagePlus, PenSquare } from "lucide-react";
+import { count, desc, eq, gte, isNull, or } from "drizzle-orm";
+import { AlertTriangle, CalendarPlus, CheckCircle2, ImagePlus, PenSquare, Globe } from "lucide-react";
 import { getDb } from "@/db/client";
-import { boardMembers, events, faqItems, galleryItems, newsItems, programGroups, staff } from "@/db/schema";
+import { boardMembers, events, faqItems, galleryItems, heroSlides, newsItems, programGroups, staff, videoItems } from "@/db/schema";
 import { ADMIN_NAV } from "@/components/admin/nav";
 import { requireAdmin } from "@/lib/adminSession";
 import { isUploadEnabled } from "@/lib/admin/images";
 import { formatTurkishDate } from "@/lib/formatDate";
-import { getClubInfo } from "@/lib/queries";
+import { getClubInfo, getSiteSettings } from "@/lib/queries";
 import { todayInTurkey } from "@/lib/siteSettings";
 
 export const metadata = { title: "Genel Bakış" };
@@ -23,7 +23,7 @@ export default async function AdminDashboardPage() {
   const db = getDb();
   const today = todayInTurkey();
 
-  const [club, [news], [upcoming], [gallery], [staffCount], [board], [faq], [program], latestNews] = await Promise.all([
+  const [club, [news], [upcoming], [gallery], [staffCount], [board], [faq], [program], [heroCount], [videoCount], latestNews, settings, [noAlt], [noImage], [nextEvent]] = await Promise.all([
     getClubInfo(),
     db.select({ n: count() }).from(newsItems),
     db.select({ n: count() }).from(events).where(gte(events.date, today)),
@@ -32,7 +32,13 @@ export default async function AdminDashboardPage() {
     db.select({ n: count() }).from(boardMembers),
     db.select({ n: count() }).from(faqItems),
     db.select({ n: count() }).from(programGroups),
+    db.select({ n: count() }).from(heroSlides),
+    db.select({ n: count() }).from(videoItems),
     db.select().from(newsItems).orderBy(desc(newsItems.date), desc(newsItems.id)).limit(3),
+    getSiteSettings(),
+    db.select({ n: count() }).from(galleryItems).where(eq(galleryItems.alt, "")),
+    db.select({ n: count() }).from(newsItems).where(or(isNull(newsItems.image), eq(newsItems.image, ""))),
+    db.select({ title: events.title, date: events.date }).from(events).where(gte(events.date, today)).orderBy(events.date).limit(1),
   ]);
 
   const counts: Record<string, string> = {
@@ -44,9 +50,34 @@ export default async function AdminDashboardPage() {
     "/admin/yonetim": `${board.n} kurul üyesi`,
     "/admin/sss": `${faq.n} soru`,
     "/admin/yas-gruplari": `${program.n} grup`,
+    "/admin/hero": `${heroCount.n} fotoğraf`,
+    "/admin/videolar": `${videoCount.n} video`,
   };
 
   const uploadEnabled = isUploadEnabled();
+
+  const warnings: { text: string; href: string }[] = [];
+  if (upcoming.n === 0) warnings.push({ text: "Yaklaşan etkinlik yok; sitedeki etkinlik bölümü boş görünür.", href: "/admin/etkinlikler/yeni" });
+  if (!settings.nextMatch.enabled) {
+    warnings.push({ text: "Sıradaki Maç kapalı; anasayfada maç kartı gösterilmiyor.", href: "/admin/ayarlar#siradaki-mac" });
+  } else if (settings.nextMatch.date < today) {
+    warnings.push({ text: "Sıradaki Maç'ın tarihi geçmiş; anasayfada gösterilmiyor. Tarihi güncelleyin ya da kapatın.", href: "/admin/ayarlar#siradaki-mac" });
+  }
+  if (noAlt.n > 0) warnings.push({ text: `${noAlt.n} galeri fotoğrafının açıklaması boş (erişilebilirlik ve arama için gerekli).`, href: "/admin/galeri" });
+  if (noImage.n > 0) warnings.push({ text: `${noImage.n} haberin görseli yok.`, href: "/admin/haberler" });
+  if (heroCount.n === 0) warnings.push({ text: "Anasayfa slaytında hiç fotoğraf yok.", href: "/admin/hero/yeni" });
+
+  const live = [
+    `${news.n} haber`,
+    `${upcoming.n} yaklaşan etkinlik${nextEvent ? ` (sıradaki: ${nextEvent.title}, ${formatTurkishDate(nextEvent.date)})` : ""}`,
+    `${gallery.n} galeri fotoğrafı`,
+    `${heroCount.n} slayt`,
+    `${videoCount.n} video`,
+    `${staffCount.n} antrenör/yönetici`,
+    `${board.n} kurul üyesi`,
+    `${faq.n} soru`,
+    `${program.n} yaş grubu`,
+  ];
 
   return (
     <>
@@ -104,19 +135,50 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
+      <section aria-labelledby="live-heading" className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <h2 id="live-heading" className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/50">
+          <Globe size={14} /> Sitede şu an yayında olanlar
+        </h2>
+        <ul className="flex flex-wrap gap-2">
+          {live.map((item) => (
+            <li key={item} className="max-w-full break-words rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {warnings.length > 0 && (
+        <section aria-labelledby="warn-heading" className="mb-8 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-5">
+          <h2 id="warn-heading" className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-200">
+            <AlertTriangle size={14} /> Dikkat edilmesi gerekenler
+          </h2>
+          <ul className="space-y-2">
+            {warnings.map((w) => (
+              <li key={w.text} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm text-amber-50">
+                <span className="min-w-0 break-words">{w.text}</span>
+                <Link href={w.href} className="shrink-0 text-xs font-semibold text-accent-bright">
+                  Düzelt →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/50">Bölümler</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {ADMIN_NAV.filter((item) => item.href !== "/admin").map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href}
-            className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/25 hover:bg-white/[0.08]"
+            className="group flex min-w-0 items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/25 hover:bg-white/[0.08]"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-bright/15 text-accent-bright">
               <Icon size={18} />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-semibold">{label}</span>
+              <span className="block truncate font-semibold">{label}</span>
               <span className="block truncate text-xs text-white/50">{counts[href]}</span>
             </span>
             <span className="text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/70">→</span>

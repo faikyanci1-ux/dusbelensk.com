@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
+import { StatusMessage } from "./StatusMessage";
 
 /** Admin sayfa başlığı: geri linki, başlık, açıklama ve sağda isteğe bağlı "Yeni ..." butonu. */
 export function AdminPageHeader({
@@ -51,15 +52,7 @@ const STATUS_MESSAGES: Record<string, string> = {
 export function StatusBanner({ status }: { status?: string }) {
   const message = status ? STATUS_MESSAGES[status] : undefined;
   if (!message) return null;
-  return (
-    <p
-      role="status"
-      className="mb-5 flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200"
-    >
-      <CheckCircle2 size={16} className="shrink-0" />
-      {message}
-    </p>
-  );
+  return <StatusMessage message={message} />;
 }
 
 export function EmptyState({ children }: { children: React.ReactNode }) {

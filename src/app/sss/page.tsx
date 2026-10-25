@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getFaq } from "@/lib/queries";
 import { SectionHeading } from "@/components/SectionHeading";
 import { buildMetadata } from "@/lib/metadata";
+import { breadcrumbJsonLd, jsonLdHtml } from "@/lib/jsonLd";
 
 export const metadata: Metadata = buildMetadata({
   title: "Sık Sorulan Sorular",
@@ -13,8 +14,24 @@ export const metadata: Metadata = buildMetadata({
 export default async function FaqPage() {
   const faq = await getFaq();
 
+  // Yalnızca sayfada görünen sorular (aynı DB kaynağı) şemaya girer.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+  const breadcrumb = breadcrumbJsonLd([{ name: "Sık Sorulan Sorular", path: "/sss" }]);
+
   return (
     <div className="bg-cream py-16 text-ink">
+      {faq.length > 0 && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqJsonLd) }} />
+      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumb) }} />
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <SectionHeading
           as="h1"

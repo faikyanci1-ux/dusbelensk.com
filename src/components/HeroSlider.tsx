@@ -11,6 +11,8 @@ export type HeroSlide =
   | { type: "image"; src: string; caption: string; focus?: string };
 
 const INTERVAL_MS = 6000;
+const ctrlBtn =
+  "flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/15 focus-visible:outline-white";
 
 function subscribeReducedMotion(callback: () => void) {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -40,6 +42,23 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const paused = manuallyPaused || prefersReducedMotion;
   const isDesktop = useIsDesktop();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Video, ilk boyamadan (LCP) ve hidrasyondan sonra, tarayıcı boştayken yüklenir;
+  // o ana kadar poster statik görsel olarak görünür, video hazır olunca üstüne yumuşakça biner.
+  const [videoAllowed, setVideoAllowed] = useState(false);
+  const [readyKey, setReadyKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (w.requestIdleCallback) {
+      const id = w.requestIdleCallback(() => setVideoAllowed(true), { timeout: 2500 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const t = setTimeout(() => setVideoAllowed(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     if (paused) return;
@@ -56,102 +75,90 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   }
 
   const slide = slides[index];
-  const showVideo = slide.type === "video" && isDesktop;
+  const showVideo = slide.type === "video" && isDesktop && videoAllowed;
+  const posterSrc = slide.type === "video" ? slide.poster : slide.src;
+  const videoReady = slide.type === "video" && readyKey === slide.src;
+  // Video oynarken Ken Burns videonun kendisinde; poster sabit kalır ki geçişte kayma olmasın.
+  const animatePoster = !prefersReducedMotion && !(slide.type === "video" && isDesktop);
 
   return (
     <>
-      {showVideo ? (
+      <Image
+        key={posterSrc}
+        src={posterSrc}
+        style={
+          slide.type === "image" && slide.focus
+            ? { objectPosition: slide.focus, transformOrigin: slide.focus }
+            : undefined
+        }
+        alt={slide.caption}
+        fill
+        sizes="100vw"
+        priority={index === 0}
+        className={`object-cover brightness-110 contrast-105 saturate-110 ${
+          animatePoster ? "animate-ken-burns" : ""
+        }`}
+      />
+      {showVideo && (
         <video
           key={slide.src}
           autoPlay
           muted
           loop
           playsInline
-          // LCP elementi genelde bu video (desktop hero, viewport'un çoğunu kaplıyor):
-          // poster next/image optimize edicisinden geçiriliyor, preload="auto" ile ilk kare erken hazır olur.
           preload="auto"
-          poster={`/_next/image?url=${encodeURIComponent(slide.poster)}&w=1920&q=75`}
-          className={`h-full w-full object-cover brightness-110 contrast-105 saturate-110 ${
-            prefersReducedMotion ? "" : "animate-ken-burns"
-          }`}
+          aria-hidden="true"
+          onPlaying={() => setReadyKey(slide.src)}
+          className={`absolute inset-0 h-full w-full object-cover brightness-110 contrast-105 saturate-110 transition-opacity duration-700 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          } ${prefersReducedMotion ? "" : "animate-ken-burns"}`}
         >
           <source src={slide.src} type="video/mp4" />
         </video>
-      ) : (
-        <Image
-          key={slide.type === "video" ? slide.poster : slide.src}
-          src={slide.type === "video" ? slide.poster : slide.src}
-          style={
-            slide.type === "image" && slide.focus
-              ? { objectPosition: slide.focus, transformOrigin: slide.focus }
-              : undefined
-          }
-          alt=""
-          fill
-          sizes="100vw"
-          priority={index === 0}
-          className={`object-cover brightness-110 contrast-105 saturate-110 ${
-            prefersReducedMotion ? "" : "animate-ken-burns"
-          }`}
-        />
       )}
 
-      <div className="pointer-events-none absolute bottom-20 left-1/2 z-20 hidden -translate-x-1/2 text-xs font-semibold uppercase tracking-wide text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] sm:block sm:bottom-24 lg:left-auto lg:right-36 lg:translate-x-0">
-        {slide.caption}
-      </div>
+      {/* Mobilde metin okunurluğu için ek karartma (sayfadaki gradyanların altında). */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/40 sm:hidden" />
 
+      {/* Kontroller: mobilde üst sağ (WhatsApp FAB ve alt içerikle çakışmaz), sm+ altta sağda;
+          sabit WhatsApp düğmesinin (sağ 20px + 56px) soluna oturur. Tüm hedefler >= 44px. */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex items-center justify-center gap-3 sm:bottom-16 lg:justify-end lg:pr-24"
+        className="absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-black/40 px-1 py-0.5 backdrop-blur-sm sm:bottom-6 sm:right-24 sm:top-auto sm:px-2"
         role="group"
         aria-label="Slayt gösterisi kontrolleri"
       >
-        {/* Mobil: slayt çok olunca noktalar ekrana sığmıyor; önceki/sonraki + sayaç gösterilir. */}
-        <div className="pointer-events-auto flex items-center gap-1 sm:hidden">
-          <button
-            type="button"
-            aria-label="Önceki görsel"
-            onClick={() => goTo((index - 1 + slides.length) % slides.length)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <span className="min-w-12 text-center text-xs font-semibold tabular-nums text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]">
-            {index + 1} / {slides.length}
-          </span>
-          <button
-            type="button"
-            aria-label="Sonraki görsel"
-            onClick={() => goTo((index + 1) % slides.length)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
-          >
-            <ChevronRight size={20} />
-          </button>
-        </div>
-        <div className="pointer-events-auto hidden gap-3 sm:flex">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`${i + 1}. görsele geç`}
-              aria-current={i === index}
-              onClick={() => goTo(i)}
-              className="flex items-center justify-center p-2"
-            >
-              <span
-                className={`block h-1.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-[width,background-color] duration-300 ${
-                  i === index ? "w-6 bg-accent" : "w-1.5 bg-white/50 hover:bg-white/80"
-                }`}
-              />
-            </button>
-          ))}
-        </div>
+        <span className="mr-1 hidden max-w-[10rem] truncate pl-2 text-xs font-semibold uppercase tracking-wide text-white/90 md:block xl:max-w-[16rem]" aria-hidden="true">
+          {slide.caption}
+        </span>
+        <button
+          type="button"
+          aria-label="Önceki görsel"
+          onClick={() => goTo((index - 1 + slides.length) % slides.length)}
+          className={ctrlBtn}
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <span
+          className="min-w-14 text-center text-xs font-semibold tabular-nums text-white"
+          aria-live="off"
+        >
+          {index + 1} / {slides.length}
+        </span>
+        <button
+          type="button"
+          aria-label="Sonraki görsel"
+          onClick={() => goTo((index + 1) % slides.length)}
+          className={ctrlBtn}
+        >
+          <ChevronRight size={20} />
+        </button>
         <button
           type="button"
           onClick={() => setManuallyPaused((p) => !p)}
           aria-label={paused ? "Slayt gösterisini oynat" : "Slayt gösterisini duraklat"}
-          className="pointer-events-auto relative flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_1px_3px_rgba(0,0,0,0.6)] outline-none transition hover:bg-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-bright before:absolute before:-inset-2.5 before:content-['']"
+          className={ctrlBtn}
         >
-          {paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
+          {paused ? <Play size={16} fill="currentColor" /> : <Pause size={16} fill="currentColor" />}
         </button>
       </div>
     </>

@@ -2,19 +2,61 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/lib/nav";
 import { club } from "@/data/club";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const [lastPath, setLastPath] = useState(pathname);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
+
+  // Sayfa değişince menü kapanır (render sırasında durum ayarı: effect gerekmez).
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setOpen(false);
+  }
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
+  }, [open]);
+
+  // Menü açıkken: Esc kapatır ve odağı butona döndürür; Tab menü + buton arasında döner.
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+        buttonRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = [
+        buttonRef.current,
+        ...(menuRef.current?.querySelectorAll<HTMLElement>("a[href]") ?? []),
+      ].filter((el): el is HTMLElement => !!el);
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
   return (
@@ -24,7 +66,7 @@ export function Header() {
           <Image src="/images/logo.png" alt="Düşbelen SK Logo" width={40} height={40} className="h-10 w-10" />
           <span className="flex flex-col whitespace-nowrap leading-tight lg:hidden xl:flex">
             <span className="text-sm font-bold tracking-wide text-white sm:text-base">DÜŞBELEN SK</span>
-            <span className="text-[11px] uppercase tracking-wide text-text-muted sm:text-xs lg:hidden">{club.tagline}</span>
+            <span className="text-xs uppercase tracking-wide text-text-muted lg:hidden">{club.tagline}</span>
           </span>
         </Link>
 
@@ -50,6 +92,7 @@ export function Header() {
         </div>
 
         <button
+          ref={buttonRef}
           type="button"
           className="flex h-11 w-11 items-center justify-center rounded-lg border border-border-soft text-white lg:hidden"
           aria-label="Menüyü aç/kapat"
@@ -62,14 +105,14 @@ export function Header() {
       </div>
 
       {open && (
-        <nav id="mobile-menu" aria-label="Mobil menü" className="border-t border-border-soft/60 bg-bg-main px-4 py-4 lg:hidden">
+        <nav ref={menuRef} id="mobile-menu" aria-label="Mobil menü" className="border-t border-border-soft/60 bg-bg-main px-4 py-4 lg:hidden">
           <ul className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-text-muted hover:bg-white/5 hover:text-accent-bright"
+                  className="block rounded-lg px-3 py-3 text-xs font-semibold uppercase tracking-wider text-text-muted hover:bg-white/5 hover:text-accent-bright"
                 >
                   {link.label}
                 </Link>
@@ -79,7 +122,7 @@ export function Header() {
               <Link
                 href="/futbol-okulu"
                 onClick={() => setOpen(false)}
-                className="block rounded-full bg-accent px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-wider text-white"
+                className="block rounded-full bg-accent px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white"
               >
                 Ön Kayıt
               </Link>

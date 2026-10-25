@@ -8,6 +8,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Gizlilik Politikası",
   description: "Düşbelen SK web sitesinin gizlilik politikası: hangi verileri topluyoruz, nasıl kullanıyoruz.",
   path: "/gizlilik-politikasi",
+  noindex: true,
 });
 
 export default async function PrivacyPolicyPage() {

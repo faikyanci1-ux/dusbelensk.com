@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { ADMIN_SESSION_COOKIE } from "@/lib/adminAuth";
+import { isSameOrigin } from "@/lib/adminAuth";
 import { isAdminSession } from "@/lib/adminSession";
 
 /**
@@ -10,6 +11,7 @@ import { isAdminSession } from "@/lib/adminSession";
  * BLOB_READ_WRITE_TOKEN tanımlı değilse yükleme kapalıdır (ImageField yükle butonunu göstermez).
  */
 export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) return NextResponse.json({ error: "Geçersiz istek." }, { status: 403 });
   if (!(await isAdminSession(request.cookies.get(ADMIN_SESSION_COOKIE)?.value))) {
     return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
   }
@@ -23,7 +25,7 @@ export async function POST(request: NextRequest) {
       body,
       request,
       onBeforeGenerateToken: async (pathname) => {
-        if (!/^(haberler|galeri|kadro|yonetim)\//.test(pathname)) throw new Error("Geçersiz klasör.");
+        if (!/^(haberler|galeri|kadro|yonetim)\/[\w\-. ]{1,120}$/.test(pathname) || pathname.includes("..")) throw new Error("Geçersiz klasör.");
         return {
           allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"],
           maximumSizeInBytes: 15 * 1024 * 1024,

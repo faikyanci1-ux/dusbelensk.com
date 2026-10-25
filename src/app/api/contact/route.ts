@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { getDb } from "@/db/client";
+import { contactMessages } from "@/db/schema";
 import { clientIp, hitRateLimit } from "@/lib/rateLimit";
 
 const MAX_FIELD_LENGTH = 200;
@@ -60,14 +62,6 @@ export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_EMAIL_TO;
 
-  if (!apiKey || !to) {
-    console.error("RESEND_API_KEY veya CONTACT_EMAIL_TO tanımlı değil.");
-    return NextResponse.json(
-      { error: "İletişim formu henüz yapılandırılmadı. Lütfen telefonla ulaşın." },
-      { status: 503 }
-    );
-  }
-
   // Sınır sayacına (veritabanı) ulaşılamazsa form yine çalışır: mesajı kaybetmek, sınırı bir süre
   // uygulayamamaktan daha kötü.
   const allowed = await hitRateLimit(`contact:${clientIp(request)}`, MAX_MESSAGES, WINDOW_MINUTES).catch((error) => {
@@ -81,36 +75,61 @@ export async function POST(request: Request) {
     );
   }
 
-  const resend = new Resend(apiKey);
+  // Mesaj önce veritabanına kaydedilir (admin panel > Gelen Mesajlar); e-posta ek bildirimdir.
+  const saved = await getDb()
+    .insert(contactMessages)
+    .values({
+      name,
+      email: email || "",
+      phone: phone || null,
+      message: message || "",
+      createdAt: new Date().toISOString(),
+      requestType: isTrial ? "trial" : "message",
+      childName: childName || null,
+      ageGroup: ageGroup || null,
+    })
+    .then(() => true)
+    .catch((error) => {
+      console.error("[contact] mesaj kaydedilemedi:", error);
+      return false;
+    });
 
-  const subject = isTrial
-    ? `Deneme Antrenmanı / Kayıt Başvurusu: ${name}`
-    : `Web sitesi mesajı: ${name}`;
+  let emailed = false;
+  if (apiKey && to) {
+    const resend = new Resend(apiKey);
 
-  const bodyLines = [
-    `Talep Türü: ${isTrial ? "Deneme Antrenmanı / Kayıt Başvurusu" : "Genel Mesaj"}`,
-    `Veli Ad Soyad: ${name}`,
-    `Telefon: ${phone || "-"}`,
-    `E-posta: ${email || "-"}`,
-  ];
+    const subject = isTrial
+      ? `Deneme Antrenmanı / Kayıt Başvurusu: ${name}`
+      : `Web sitesi mesajı: ${name}`;
 
-  if (isTrial) {
-    bodyLines.push(`Çocuğun Adı Soyadı: ${childName || "-"}`, `Yaş Grubu: ${ageGroup || "-"}`);
+    const bodyLines = [
+      `Talep Türü: ${isTrial ? "Deneme Antrenmanı / Kayıt Başvurusu" : "Genel Mesaj"}`,
+      `Veli Ad Soyad: ${name}`,
+      `Telefon: ${phone || "-"}`,
+      `E-posta: ${email || "-"}`,
+    ];
+
+    if (isTrial) {
+      bodyLines.push(`Çocuğun Adı Soyadı: ${childName || "-"}`, `Yaş Grubu: ${ageGroup || "-"}`);
+    }
+
+    bodyLines.push("", "Not / Mesaj:", message || "-");
+
+    const { error } = await resend.emails.send({
+      from: "Düşbelen SK Web Sitesi <onboarding@resend.dev>",
+      to,
+      replyTo: email || undefined,
+      subject,
+      text: bodyLines.join("\n"),
+    });
+    if (error) console.error(error);
+    else emailed = true;
+  } else {
+    console.error("RESEND_API_KEY veya CONTACT_EMAIL_TO tanımlı değil; e-posta bildirimi gönderilmedi.");
   }
 
-  bodyLines.push("", "Not / Mesaj:", message || "-");
-
-  const { error } = await resend.emails.send({
-    from: "Düşbelen SK Web Sitesi <onboarding@resend.dev>",
-    to,
-    replyTo: email || undefined,
-    subject,
-    text: bodyLines.join("\n"),
-  });
-
-  if (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Mesaj gönderilirken bir hata oluştu." }, { status: 502 });
+  if (!saved && !emailed) {
+    return NextResponse.json({ error: "Mesaj gönderilirken bir hata oluştu. Lütfen telefonla ulaşın." }, { status: 502 });
   }
 
   return NextResponse.json({ ok: true });

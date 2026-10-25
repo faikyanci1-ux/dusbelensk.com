@@ -54,7 +54,7 @@ export default async function NewsPage() {
                     className="object-cover"
                   />
                   {item.tag && (
-                    <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-white">
+                    <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-white">
                       {item.tag}
                     </span>
                   )}

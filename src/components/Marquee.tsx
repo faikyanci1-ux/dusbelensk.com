@@ -39,7 +39,7 @@ export function Marquee() {
   const paused = manuallyPaused || prefersReducedMotion;
 
   return (
-    <div className="relative overflow-hidden border-y border-white/5 bg-bg-pitch py-3 [-webkit-mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)] [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+    <div className="marquee-host relative overflow-hidden border-y border-white/5 bg-bg-pitch py-3 [-webkit-mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)] [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
       <div
         className="animate-marquee flex w-max gap-8 whitespace-nowrap"
         style={{ animationPlayState: paused ? "paused" : "running" }}

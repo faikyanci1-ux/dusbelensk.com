@@ -83,3 +83,19 @@ export async function readSessionToken(token: string | undefined): Promise<{ iss
 export async function verifySessionToken(token: string | undefined): Promise<boolean> {
   return (await readSessionToken(token)) !== null;
 }
+
+/**
+ * Çapraz site (CSRF) koruması: tarayıcı Origin başlığı gönderiyorsa istek adresiyle aynı site olmalı.
+ * (SameSite=Lax çerez zaten korur; bu ikinci katmandır. Origin yoksa — sunucudan sunucuya/curl — izin verilir,
+ * çünkü o durumda zaten geçerli çerez gerekir.)
+ */
+export function isSameOrigin(request: { headers: Headers; nextUrl: { host: string } }): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try {
+    const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? request.nextUrl.host;
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}

@@ -18,7 +18,7 @@ export function LeadershipSlider({ items }: { items: LeadershipHighlight[] }) {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" role="region" aria-roledescription="carousel" aria-label="Yönetim ve teknik kadro">
       <div
         ref={trackRef}
         className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -39,7 +39,7 @@ export function LeadershipSlider({ items }: { items: LeadershipHighlight[] }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-4">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-light">{item.role}</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-accent-light">{item.role}</span>
               <p className="mt-1 font-bold text-white">{item.name}</p>
             </div>
           </Link>
@@ -50,16 +50,16 @@ export function LeadershipSlider({ items }: { items: LeadershipHighlight[] }) {
         <button
           type="button"
           onClick={() => scrollByCard(-1)}
-          aria-label="Önceki"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-white transition hover:border-accent hover:text-accent"
+          aria-label="Önceki kişi"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border-soft text-white transition hover:border-accent-bright hover:text-accent-bright"
         >
           <ChevronLeft size={18} />
         </button>
         <button
           type="button"
           onClick={() => scrollByCard(1)}
-          aria-label="Sonraki"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-white transition hover:border-accent hover:text-accent"
+          aria-label="Sonraki kişi"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border-soft text-white transition hover:border-accent-bright hover:text-accent-bright"
         >
           <ChevronRight size={18} />
         </button>

@@ -33,13 +33,13 @@ function ContactRow({
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="group flex items-center gap-3"
+      className="group flex min-h-11 items-center gap-3"
     >
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-bright/10 text-accent-bright transition group-hover:bg-accent-bright/20">
         <Icon size={16} />
       </span>
       <span className="min-w-0">
-        <span className="block text-[10px] font-semibold uppercase tracking-wider text-text-muted/70">
+        <span className="block text-xs font-semibold uppercase tracking-wider text-text-muted">
           {label}
         </span>
         <span className="block truncate text-sm text-white transition group-hover:text-accent-bright">
@@ -60,7 +60,7 @@ export async function Footer() {
             <Image src="/images/logo.png" alt="Düşbelen SK Logo" width={44} height={44} className="h-11 w-11" />
             <div>
               <h3 className="text-lg font-bold text-white">{club.name}</h3>
-              <span className="text-[11px] uppercase tracking-wide text-accent-bright">{club.tagline}</span>
+              <span className="text-xs uppercase tracking-wide text-accent-light">{club.tagline}</span>
             </div>
           </div>
           <p className="mt-4 text-sm text-text-muted">
@@ -69,15 +69,15 @@ export async function Footer() {
           <div className="mt-6 flex items-center gap-4">
             <SchoolQrCode size={84} className="rounded-xl p-2" />
             <div>
-              <span className="block text-[10px] font-semibold uppercase tracking-wider text-text-muted/70">
+              <span className="block text-xs font-semibold uppercase tracking-wider text-text-muted">
                 Futbol Okulu
               </span>
-              <span className="block text-xs text-accent-bright">{club.footballSchool.birthYears} doğumlular</span>
+              <span className="block text-xs text-accent-light">{club.footballSchool.birthYears} doğumlular</span>
               <a
                 href={club.footballSchool.registrationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-semibold text-white transition hover:text-accent-bright"
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-white transition hover:text-accent-bright"
               >
                 Online Ön Kayıt →
               </a>
@@ -87,10 +87,10 @@ export async function Footer() {
 
         <div>
           <FooterHeading>Kulüp</FooterHeading>
-          <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-text-muted">
-            {navLinks.map((link) => (
+          <ul className="mt-5 grid grid-cols-2 gap-x-4 text-sm text-text-muted">
+            {[...navLinks, { href: "/yas-gruplari", label: "Yaş Grupları" }].map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="hover:text-accent-bright">
+                <Link href={link.href} className="flex min-h-11 items-center hover:text-accent-bright">
                   {link.label}
                 </Link>
               </li>
@@ -120,27 +120,27 @@ export async function Footer() {
       </div>
 
       {/* Mobilde sabit WhatsApp butonu en alt satırı kapatmasın diye altta ek boşluk. */}
-      <div className="border-t border-border-soft/40 pt-6 pb-24 sm:pb-6">
+      <div className="border-t border-border-soft/40 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 text-center text-xs text-text-muted sm:flex-row sm:justify-between sm:px-6 sm:text-left">
           <span>
-            © {new Date().getFullYear()} · All Rights Reserved · Powered by{" "}
+            © {new Date().getFullYear()} · Tüm hakları saklıdır · Powered by{" "}
             <a
               href="https://www.btmbilisim.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-white/80 transition hover:text-white"
+              className="inline-flex min-h-11 items-center font-semibold text-white/90 transition hover:text-white"
             >
               BTM Bilişim
             </a>
           </span>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-            <Link href="/gizlilik-politikasi" className="hover:text-white">
+          <div className="flex flex-wrap justify-center gap-x-4">
+            <Link href="/gizlilik-politikasi" className="flex min-h-11 items-center hover:text-white">
               Gizlilik Politikası
             </Link>
-            <Link href="/kullanim-sartlari" className="hover:text-white">
+            <Link href="/kullanim-sartlari" className="flex min-h-11 items-center hover:text-white">
               Kullanım Şartları
             </Link>
-            <Link href="/kvkk" className="hover:text-white">
+            <Link href="/kvkk" className="flex min-h-11 items-center hover:text-white">
               KVKK Aydınlatma Metni
             </Link>
           </div>

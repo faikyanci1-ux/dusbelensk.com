@@ -8,6 +8,7 @@ export const metadata: Metadata = buildMetadata({
   title: "KVKK Aydınlatma Metni",
   description: "Düşbelen SK 6698 sayılı KVKK kapsamında kişisel verilerin işlenmesine ilişkin aydınlatma metni.",
   path: "/kvkk",
+  noindex: true,
 });
 
 export default async function KvkkPage() {

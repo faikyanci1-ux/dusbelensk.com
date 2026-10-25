@@ -5,6 +5,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { buildMetadata } from "@/lib/metadata";
+import { breadcrumbJsonLd, jsonLdHtml } from "@/lib/jsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { footballSchool } = await getClubInfo();
@@ -49,13 +50,17 @@ export default async function FootballSchoolPage() {
     (_, i) => footballSchool.birthYearFrom + i
   );
 
+  const breadcrumb = breadcrumbJsonLd([{ name: "Futbol Okulu", path: "/futbol-okulu" }]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumb) }} />
       <PageHero
         eyebrow="Futbol Okulu"
         title={footballSchool.name}
         description={`${schoolBirthYears} doğumlu çocuklar için; ${footballSchool.athleteCount} sporcumuzla birlikte Köyceğiz'de futbolu sevdiriyor, geleceğin sporcularını yetiştiriyoruz.`}
         image="/images/gallery/kadro-toplu-foto.jpg"
+        imageAlt="Düşbelen SK futbol okulu sporcuları toplu fotoğraf"
       />
 
       {/* KAYIT — QR + BUTON */}
@@ -134,7 +139,7 @@ export default async function FootballSchoolPage() {
                 className="rounded-2xl border border-white/10 bg-black/20 py-5 text-center"
               >
                 <span className="font-display text-2xl text-white sm:text-3xl">{year}</span>
-                <span className="mt-1 block text-[10px] uppercase tracking-wider text-accent-light">doğumlu</span>
+                <span className="mt-1 block text-xs uppercase tracking-wider text-accent-light">doğumlu</span>
               </li>
             ))}
           </ul>

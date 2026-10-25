@@ -8,6 +8,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Kullanım Şartları",
   description: "Düşbelen SK web sitesinin kullanım şartları.",
   path: "/kullanim-sartlari",
+  noindex: true,
 });
 
 export default async function TermsPage() {

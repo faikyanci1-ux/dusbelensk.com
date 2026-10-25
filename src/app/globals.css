@@ -53,9 +53,19 @@
 }
 
 body {
-  background: radial-gradient(circle at top, #132844 0, #0a1628 45%, #000 100%);
-  background-attachment: fixed;
+  background-color: #0a1628;
   color: var(--color-text-main);
+}
+
+/* background-attachment: fixed iOS Safari'de desteklenmiyor/takılıyor; aynı görünümü
+   veren sabit bir katman kullanılır. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at top, #132844 0, #0a1628 45%, #000 100%);
 }
 
 /* WCAG 2.4.7 Focus Visible: klavyeyle gezinirken tüm etkileşimli öğelerde
@@ -65,6 +75,13 @@ body {
   outline: 2px solid var(--color-accent-bright);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Kırmızı (accent) zeminli butonlarda kırmızı halka görünmez; beyaz halka + koyu dış halka. */
+.bg-accent:focus-visible,
+.bg-accent-bright:focus-visible {
+  outline-color: #fff;
+  box-shadow: 0 0 0 4px rgba(10, 22, 40, 0.9);
 }
 
 @keyframes ken-burns {
@@ -91,6 +108,29 @@ body {
 
 .animate-marquee {
   animation: marquee 26s linear infinite;
+}
+
+/* Üzerine gelince / odaklanınca kayan yazı durur (WCAG 2.2.2 ek kolaylık). */
+.marquee-host:hover .animate-marquee,
+.marquee-host:focus-within .animate-marquee {
+  animation-play-state: paused !important;
+}
+
+/* Hero üst metni: koyu fotoğraf dokusu üstünde okunur olsun diye açık kırmızı ton,
+   eyebrow tek satırda kalsın (page.tsx hero bloğuna dokunmadan, kardeş seçiciyle). */
+.font-script.text-accent-bright {
+  color: var(--color-accent-light);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+.font-script.text-accent-bright + span.text-accent-bright {
+  color: var(--color-accent-light);
+  white-space: nowrap;
+  letter-spacing: 0.12em;
+}
+@media (min-width: 640px) {
+  .font-script.text-accent-bright + span.text-accent-bright {
+    letter-spacing: 0.2em;
+  }
 }
 
 @keyframes pulse-ring {

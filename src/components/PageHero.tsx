@@ -5,17 +5,20 @@ export function PageHero({
   title,
   description,
   image,
+  imageAlt = "",
 }: {
   eyebrow: string;
   title: string;
   description?: string;
   image?: string;
+  /** Görsel bilgi taşıyorsa (ör. haber fotoğrafı) açıklayıcı alt metin; süs görseli için boş bırakılır. */
+  imageAlt?: string;
 }) {
   return (
     <section className="relative isolate overflow-hidden bg-bg-main py-16 sm:py-24">
       {image && (
         <div className="absolute inset-0 -z-10">
-          <Image src={image} alt="" fill sizes="100vw" preload className="object-cover opacity-35" />
+          <Image src={image} alt={imageAlt} fill sizes="100vw" preload className="object-cover opacity-35" />
           <div className="absolute inset-0 bg-gradient-to-r from-bg-main via-bg-main/85 to-bg-main/50" />
           <div className="absolute inset-0 bg-gradient-to-t from-bg-main via-transparent to-bg-main/40" />
         </div>

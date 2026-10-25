@@ -67,9 +67,9 @@ export function StaffLightbox({ items }: { items: StaffMember[] }) {
             <div className="relative aspect-[2/3] w-full overflow-hidden">
               <Image
                 src={member.photo}
-                alt=""
+                alt={`Düşbelen SK — ${member.name}, ${member.role}`}
                 fill
-                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw"
                 className="object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/40 group-hover:opacity-100">
@@ -77,7 +77,7 @@ export function StaffLightbox({ items }: { items: StaffMember[] }) {
               </div>
             </div>
             <div className="p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-accent">{member.role}</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-accent-deep">{member.role}</h3>
               <p className="mt-2 font-semibold text-ink">{member.name}</p>
               <p className="mt-2 line-clamp-3 text-sm text-ink-muted">{member.description}</p>
               {member.quote && (
@@ -105,7 +105,7 @@ export function StaffLightbox({ items }: { items: StaffMember[] }) {
             onClick={() => setOpenIndex(null)}
             aria-label="Kapat"
             ref={closeButtonRef}
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:text-accent"
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:text-accent"
           >
             <X size={20} />
           </button>
@@ -117,7 +117,7 @@ export function StaffLightbox({ items }: { items: StaffMember[] }) {
               setOpenIndex((openIndex! - 1 + items.length) % items.length);
             }}
             aria-label="Önceki"
-            className="absolute left-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:text-accent"
+            className="absolute left-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:text-accent"
           >
             <ChevronLeft size={20} />
           </button>
@@ -157,7 +157,7 @@ export function StaffLightbox({ items }: { items: StaffMember[] }) {
               setOpenIndex((openIndex! + 1) % items.length);
             }}
             aria-label="Sonraki"
-            className="absolute right-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:text-accent"
+            className="absolute right-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-accent hover:text-accent"
           >
             <ChevronRight size={20} />
           </button>

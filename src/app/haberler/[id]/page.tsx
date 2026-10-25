@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { getNews } from "@/lib/queries";
 import { PageHero } from "@/components/PageHero";
-import { buildMetadata } from "@/lib/metadata";
+import { buildMetadata, truncateDescription } from "@/lib/metadata";
 import { siteUrl } from "@/lib/site";
 import { club } from "@/data/club";
 import { toIsoDate } from "@/lib/formatDate";
-import { jsonLdHtml } from "@/lib/jsonLd";
+import { breadcrumbJsonLd, jsonLdHtml } from "@/lib/jsonLd";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -23,16 +23,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const item = news.find((n) => String(n.id) === id);
 
   if (!item) {
-    return buildMetadata({
-      title: "Haber Bulunamadı",
-      description: "Aradığınız haber bulunamadı.",
-      path: "/haberler",
-    });
+    return {
+      title: "Haber bulunamadı",
+      robots: { index: false, follow: true },
+    };
   }
 
   return buildMetadata({
     title: item.title,
-    description: item.summary,
+    description: truncateDescription(item.summary),
     path: `/haberler/${item.id}`,
     image: item.image,
   });
@@ -66,15 +65,10 @@ export default async function NewsDetailPage({ params }: Params) {
     mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
   };
 
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Anasayfa", item: siteUrl },
-      { "@type": "ListItem", position: 2, name: "Haberler", item: `${siteUrl}/haberler` },
-      { "@type": "ListItem", position: 3, name: item.title, item: articleUrl },
-    ],
-  };
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Haberler", path: "/haberler" },
+    { name: item.title, path: `/haberler/${item.id}` },
+  ]);
 
   return (
     <>
@@ -84,9 +78,9 @@ export default async function NewsDetailPage({ params }: Params) {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumb) }}
       />
-      <PageHero eyebrow={item.tag ?? "Haber"} title={item.title} image={item.image} />
+      <PageHero eyebrow={item.tag ?? "Haber"} title={item.title} image={item.image} imageAlt={item.title} />
       <div className="bg-cream py-16 text-ink">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Link href="/haberler" className="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-ink">

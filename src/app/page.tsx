@@ -17,6 +17,7 @@ import {
   getStats,
   getValues,
   getVideos,
+  getHeroSlides,
   getGallery,
   getLeadershipHighlights,
   getNews,
@@ -36,10 +37,13 @@ import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import { SchoolQrBlock, SchoolRegisterButton } from "@/components/SchoolRegistration";
 import { getDateBadge } from "@/lib/formatDate";
 import type { GalleryItem } from "@/data/gallery";
-import { heroImageSlides } from "@/data/heroSlides";
 import { FixtureList } from "@/components/FixtureList";
 import { StandingsTable } from "@/components/StandingsTable";
 import { askfGroupHref, getStandings } from "@/lib/standings";
+
+import { ageGroupPath } from "@/lib/ageGroups";
+
+export const metadata = { alternates: { canonical: "/" } };
 
 const STAT_ICONS = [Users, GraduationCap, CalendarDays, Trophy];
 
@@ -69,12 +73,13 @@ const PROGRAM_ACCENT_CLASSES: Record<string, string> = {
 };
 
 export default async function HomePage() {
-  const [club, stats, values, videos, gallery, leadership, news, upcomingEvents, faq, program, standings] =
+  const [club, stats, values, videos, heroImageSlides, gallery, leadership, news, upcomingEvents, faq, program, standings] =
     await Promise.all([
       getClubInfo(),
       getStats(),
       getValues(),
       getVideos(),
+      getHeroSlides(),
       getGallery(),
       getLeadershipHighlights(),
       getNews(),
@@ -88,7 +93,7 @@ export default async function HomePage() {
   )}`;
   const facilityVideo = videos.find((v) => v.caption.includes("Havadan")) ?? videos[1];
 
-  // Slayt fotoğrafları en yeniden eskiye (src/data/heroSlides.ts); her iki fotoğraftan sonra bir video gelir,
+  // Slayt fotoğrafları en yeniden eskiye (admin: Anasayfa Slaytı); her iki fotoğraftan sonra bir video gelir,
   // böylece en son eklenen kareler slider'ın en başında görünür.
   const videoSlides: HeroSlide[] = videos.map((v) => ({ type: "video", src: v.src, poster: v.poster, caption: v.caption }));
   const imageSlides: HeroSlide[] = heroImageSlides.map((s) => ({ type: "image", ...s }));
@@ -106,24 +111,25 @@ export default async function HomePage() {
           <HeroSlider slides={heroSlides} />
           {/* Okunabilirlik: üstte menü, altta içerik geçişi; solda metnin arkası koyu, sağda fotoğraf canlı kalır.
               Mobilde metin tüm genişliği kapladığı için karartma tüm fotoğrafa yayılır. */}
-          <div className="absolute inset-0 bg-gradient-to-b from-bg-main/60 via-transparent via-25% to-bg-main" />
-          <div className="absolute inset-0 bg-bg-main/55 sm:hidden" />
-          <div className="absolute inset-0 hidden bg-gradient-to-r from-bg-main/90 via-bg-main/60 via-40% to-transparent to-75% sm:block" />
+          <div className="absolute inset-0 bg-gradient-to-b from-bg-main/70 via-bg-main/15 via-30% to-bg-main" />
+          <div className="absolute inset-0 bg-bg-main/70 sm:hidden" />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-bg-main/95 via-bg-main/75 via-45% to-transparent to-80% sm:block" />
         </div>
 
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-center px-4 pt-20 pb-8 sm:px-6 sm:pt-0 sm:pb-0">
           <div className="max-w-2xl">
-            <span className="font-script mb-5 block -rotate-2 text-3xl leading-none text-accent-bright drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] sm:text-4xl">
+            <span className="font-script mb-5 block -rotate-2 text-3xl leading-none text-accent-light drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] sm:text-4xl">
               {club.motto}
             </span>
-            <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent-bright drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
-              <span className="h-px w-6 bg-accent-bright" />
+            <span className="flex items-center gap-2 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.1em] text-accent-light drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] sm:tracking-[0.2em]">
+              <span className="hidden h-px w-6 bg-accent-light sm:block" />
               Köyceğiz&apos;in genç futbolcuları için
             </span>
             <h1 className="mt-5 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)] sm:text-6xl lg:text-7xl">
+              <span className="sr-only">Köyceğiz Futbol Okulu · </span>
               Geleceğin
               <br />
-              <span className="text-accent-bright">Sporcularını</span>
+              <span className="text-accent-light">Sporcularını</span>
               <br />
               Yetiştiriyoruz.
             </h1>
@@ -147,7 +153,7 @@ export default async function HomePage() {
         </div>
 
         <div className="absolute bottom-24 right-6 z-10 hidden h-24 w-24 shrink-0 items-center justify-center rounded-full bg-accent-bright text-center shadow-xl sm:flex">
-          <span className="text-[11px] font-bold uppercase leading-tight text-bg-main">
+          <span className="text-xs font-bold uppercase leading-tight text-bg-main">
             {club.foundedYear}&apos;den
             <br />
             Beri Sahadayız
@@ -156,7 +162,7 @@ export default async function HomePage() {
       </section>
 
       {club.nextMatch.show && (
-      <div className="relative z-20 mx-auto -mt-10 max-w-6xl px-4 sm:px-6">
+      <div className="relative z-20 mx-auto -mt-6 max-w-6xl sm:-mt-10 px-4 sm:px-6">
         <div className="flex flex-col gap-5 rounded-2xl border border-border-soft bg-bg-raised/90 p-5 shadow-2xl backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-center gap-4">
             <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-text-muted">
@@ -218,7 +224,7 @@ export default async function HomePage() {
                 <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
                   {club.athleteCount} sporcu
                 </span>
-                <span className="rounded-full border border-accent-2/30 bg-accent-2-soft px-3 py-1 text-xs font-semibold text-accent-2">
+                <span className="rounded-full border border-accent/30 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent-deep">
                   Altyapı odaklı kulüp
                 </span>
               </div>
@@ -239,14 +245,6 @@ export default async function HomePage() {
                   </div>
                 ))}
               </div>
-
-              <blockquote className="mt-6 rounded-r-xl border-l-2 border-accent bg-accent-soft/30 py-3 pl-4 pr-4 text-ink-muted italic">
-                &ldquo;{club.quote.text}&rdquo;
-                <span className="mt-2 block font-script text-xl not-italic text-accent-deep">{club.quote.author}</span>
-                <span className="block text-xs not-italic uppercase tracking-wide text-ink-muted">
-                  {club.quote.role}
-                </span>
-              </blockquote>
 
               <Link
                 href="/hakkimizda"
@@ -280,7 +278,7 @@ export default async function HomePage() {
             src="/images/gallery/kadro-toplu-foto.jpg"
             alt=""
             fill
-            sizes="100vw"
+            sizes="(min-width: 1280px) 1280px, 100vw"
             className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-bg-main via-bg-main/90 to-bg-main/60" />
@@ -329,13 +327,14 @@ export default async function HomePage() {
           <div className="mt-10 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-sm">
             <div className="grid lg:grid-cols-[1.3fr_1fr] lg:items-center">
               <VideoCard src={facilityVideo.src} poster={facilityVideo.poster} caption={facilityVideo.caption} />
-              <div className="grid grid-cols-2 gap-4 p-8 sm:p-10">
+              <div className="flex flex-col gap-6 p-6 sm:p-10">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {stats.map((stat, i) => {
                   const Icon = STAT_ICONS[i];
                   return (
                     <div
                       key={stat.label}
-                      className="rounded-xl border border-black/10 bg-black/[0.02] p-4 text-center transition duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-accent-soft/20"
+                      className="rounded-2xl border border-black/10 bg-black/[0.02] p-3 text-center transition duration-300 hover:-translate-y-0.5 sm:p-4 hover:border-accent/30 hover:bg-accent-soft/20"
                     >
                       {Icon && <Icon className="mx-auto mb-2 text-accent" size={22} strokeWidth={1.75} />}
                       <div className="font-display text-3xl text-accent sm:text-4xl">{stat.number}</div>
@@ -346,13 +345,21 @@ export default async function HomePage() {
                   );
                 })}
               </div>
+              <blockquote className="rounded-r-xl border-l-4 border-accent bg-accent-soft/30 py-3 pl-4 pr-4 text-sm text-ink-muted italic">
+                &ldquo;{club.quote.text}&rdquo;
+                <span className="mt-2 block font-script text-xl not-italic text-accent-deep">{club.quote.author}</span>
+                <span className="block text-xs not-italic uppercase tracking-wide text-ink-muted">
+                  {club.quote.role}
+                </span>
+              </blockquote>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* GELİŞİM PROGRAMI */}
-      <section className="border-t border-border-soft/40 bg-bg-pitch py-20">
+      <section className="border-t border-border-soft/40 bg-bg-pitch pt-20 pb-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid gap-6 lg:grid-cols-[1fr_0.7fr] lg:items-end">
             <div>
@@ -365,81 +372,84 @@ export default async function HomePage() {
                 <span className="text-accent-bright">Bir Sonraki Adım.</span>
               </h2>
             </div>
-            <p className="text-text-muted">
-              Çocuğun yaşına ve gelişim seviyesine göre şekillenen, disiplinli ama keyifli antrenmanlar.
-            </p>
+            <div>
+              <p className="text-text-muted">
+                Çocuğun yaşına ve gelişim seviyesine göre şekillenen, disiplinli ama keyifli antrenmanlar.
+              </p>
+              <Link
+                href="/yas-gruplari"
+                className="group mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white underline decoration-accent-bright decoration-2 underline-offset-4"
+              >
+                Tüm Yaş Grupları
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+            </div>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-6">
             {program.map((group, i) => (
-              <div
+              <Link
                 key={`${group.code}-${i}`}
-                className={`group relative overflow-hidden rounded-b-2xl border border-t-4 border-white/10 bg-black/20 p-5 transition duration-300 hover:-translate-y-1 hover:bg-black/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${PROGRAM_ACCENT_CLASSES[group.accent]}`}
+                href={ageGroupPath(group.code)}
+                aria-label={`${group.code} yaş grubu: ${group.range}, ${group.title}`}
+                className={`group relative block overflow-hidden rounded-2xl border border-t-4 border-white/10 bg-black/20 p-4 transition sm:p-5 duration-300 hover:-translate-y-1 hover:bg-black/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${PROGRAM_ACCENT_CLASSES[group.accent]}`}
               >
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -right-2 -top-3 font-display text-6xl text-white/[0.06] transition duration-300 group-hover:text-white/10"
+                  className="pointer-events-none absolute right-3 top-2 font-display text-5xl leading-none text-white/[0.06] transition duration-300 group-hover:text-white/10"
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="relative">
                   <div className="font-display text-3xl text-white">{group.code}</div>
-                  <div className="mt-1 text-xs font-semibold uppercase tracking-wide text-accent-light">
+                  <div className="mt-1 text-xs font-semibold uppercase leading-snug tracking-wide text-accent-light">
                     {group.range} · {group.title}
                   </div>
-                  <p className="mt-3 text-sm text-text-muted">{group.description}</p>
+                  <p className="mt-3 text-sm leading-snug text-text-muted">{group.description}</p>
                   {group.days && (
                     <p className="mt-3 text-xs font-medium uppercase tracking-wide text-white/60">{group.days}</p>
                   )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
 
-      {/* DEĞERLERİMİZ */}
-      <section className="bg-bg-pitch py-20">
+      {/* DEĞERLERİMİZ — kompakt şerit */}
+      <section className="bg-bg-pitch pb-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="text-center">
-            <span className="text-sm font-semibold uppercase tracking-wider text-accent-light">Düşbelen SK</span>
-            <h2 className="mt-2 font-display text-4xl uppercase leading-[1.6] tracking-tight text-white sm:text-5xl">
-              Takım Değerlerimiz
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-text-muted">
-              Sahada kazanmaktan önce doğru karakteri kazanmayı hedefleriz.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-center">
-            <div>
-              <h3 className="font-display text-2xl uppercase tracking-tight text-white">Düşbelen ruhu nedir?</h3>
-              <p className="mt-4 text-text-muted">
-                Düşbelen SK&apos;da &ldquo;kazanan takım&rdquo; olmanın yolu; skordan önce doğru duruşa sahip
-                oyuncular yetiştirmekten geçer. Antrenmanlardan maç gününe kadar, her adımda bu dört temel değeri
-                merkeze alırız.
-              </p>
-              <p className="mt-4 border-l-2 border-accent-bright py-3 pl-4 pr-4 text-text-muted">
-                Aile ortamı, disiplin ve saygı üzerine kurulu bu yapı; çocuklarımızın hem sahada hem de hayatta
-                güçlü bireyler olarak büyümesini hedefler.
+          <div className="border-t border-white/10 pt-12">
+            <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+              <div>
+                <span className="text-sm font-semibold uppercase tracking-wider text-accent-light">Düşbelen ruhu</span>
+                <h2 className="mt-2 font-display text-2xl uppercase leading-[1.5] tracking-tight text-white sm:text-3xl">
+                  Takım Değerlerimiz
+                </h2>
+              </div>
+              <p className="text-text-muted">
+                Sahada kazanmaktan önce doğru karakteri kazanmayı hedefleriz. Aile ortamı, disiplin ve saygı üzerine
+                kurulu bu yapı; çocuklarımızın hem sahada hem de hayatta güçlü bireyler olarak büyümesini sağlar.
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {values.map((value) => (
-                <div
+                <li
                   key={value.title}
-                  className="rounded-2xl border border-l-4 border-border-soft border-l-accent-bright bg-bg-raised p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_24px_rgba(0,0,0,0.25)] transition duration-300 hover:-translate-y-1 hover:border-accent-bright/40 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_34px_rgba(0,0,0,0.4)]"
+                  className="flex items-start gap-3 rounded-2xl border border-l-4 border-border-soft border-l-accent-bright bg-bg-raised/60 p-4"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-accent-bright bg-accent-bright/10">
-                    <value.icon size={24} strokeWidth={2} className="text-accent-bright" aria-hidden="true" />
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-bright/10">
+                    <value.icon size={20} strokeWidth={2} className="text-accent-light" aria-hidden="true" />
                   </span>
-                  <h3 className="mt-4 font-semibold text-white">{value.title}</h3>
-                  <p className="mt-2 text-sm text-text-muted">{value.description}</p>
-                </div>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-white">{value.title}</h3>
+                    <p className="mt-1 text-sm leading-snug text-text-muted">{value.description}</p>
+                  </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </section>
@@ -453,7 +463,7 @@ export default async function HomePage() {
             title="Kulüpten Kareler"
             description="Sahamızdan drone görüntüleri, maç anları ve kulüp atmosferi."
           />
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-flow-dense lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-flow-dense lg:grid-cols-3">
             {videos.map((video, i) => (
               <VideoCard
                 key={video.id}
@@ -466,16 +476,16 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-16 border-t border-black/10 pt-16">
-            <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <span className="text-sm font-semibold uppercase tracking-wider text-accent-2">Fotoğraf Galerisi</span>
+                <span className="text-sm font-semibold uppercase tracking-wider text-accent-deep">Fotoğraf Galerisi</span>
                 <h3 className="mt-2 font-display text-2xl uppercase tracking-tight text-ink sm:text-3xl">
                   Maçlardan, Antrenmanlardan Kareler
                 </h3>
               </div>
               <Link
                 href="/galeri"
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent-2 decoration-2 underline-offset-4"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4"
               >
                 Tüm Galeriyi Gör
                 <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -547,7 +557,7 @@ export default async function HomePage() {
                       href={askfGroupHref(s)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                      className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
                     >
                       {s.league} {s.group} Grubunu Muğla ASKF&apos;de Görüntüle
                       <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -583,7 +593,7 @@ export default async function HomePage() {
                   >
                     <div className="flex w-14 shrink-0 flex-col items-center">
                       <span className="font-display text-2xl leading-none text-ink">{day}</span>
-                      <span className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                      <span className="mt-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
                         {month}
                       </span>
                     </div>
@@ -763,7 +773,7 @@ export default async function HomePage() {
                 href={club.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-bg-main/90 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur transition hover:bg-accent-2"
+                className="group absolute right-3 top-3 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-bg-main/90 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur transition hover:bg-accent-2"
               >
                 Haritada Aç
                 <ArrowUpRight

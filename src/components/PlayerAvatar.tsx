@@ -1,9 +1,9 @@
 const PALETTE = [
   "from-accent-2/40 to-bg-navy/70 text-white",
-  "from-sky-500/30 to-sky-900/40 text-sky-300",
-  "from-rose-500/30 to-rose-900/40 text-rose-300",
-  "from-amber-500/30 to-amber-900/40 text-amber-300",
-  "from-violet-500/30 to-violet-900/40 text-violet-300",
+  "from-accent/30 to-bg-navy/70 text-accent-light",
+  "from-bg-raised to-bg-main text-white",
+  "from-accent-2/50 to-bg-main text-accent-light",
+  "from-accent/20 to-accent-2/40 text-white",
 ];
 
 function initials(name: string) {

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_SESSION_COOKIE } from "@/lib/adminAuth";
+import { isSameOrigin, ADMIN_SESSION_COOKIE } from "@/lib/adminAuth";
 import { isAdminSession, revokeAdminSessions } from "@/lib/adminSession";
 
 export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) return NextResponse.json({ error: "Geçersiz istek." }, { status: 403 });
   // Çerez silinse de kopyalanmış bir token 12 saat geçerli kalırdı: oturumlar sunucuda da iptal edilir.
   // Yalnızca geçerli oturumla (başkası dışarıdan tetikleyip yöneticiyi çıkaramasın).
   let revoked = true;
